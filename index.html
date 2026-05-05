@@ -1284,57 +1284,140 @@ function renderOverviewPreview(parsed) {
 }
 
 function renderOverviewChart(monthlyData) {
-  const W = 900, H = 300;
+  const container = document.getElementById('ov-equity-chart');
+  if (!container || !monthlyData || monthlyData.length === 0) return;
+
+  const series = [];
+  let cumulative = 0;
+  const monthNames = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+  monthlyData.forEach(row => {
+    row.months.forEach((val, i) => {
+      if (val === null || isNaN(val)) return;
+      cumulative += val;
+      series.push({
+        year: row.year, month: i + 1, monthName: monthNames[i], value: val,
+        cumulative: Math.round(cumulative * 100) / 100,
+        label: `${monthNames[i]} ${row.year}`
+      });
+    });
+  });
+
+  if (series.length === 0) return;
+
+  const W = 600, H = 280;
   const pad = { top: 20, right: 20, bottom: 40, left: 70 };
   const cw = W - pad.left - pad.right, ch = H - pad.top - pad.bottom;
 
-  const allMonths = [];
-  monthlyData.forEach(yr => yr.months.forEach((v, i) => allMonths.push({ year: yr.year, month: i, val: v })));
-  if (!allMonths.length) return;
+  const minVal = Math.min(0, ...series.map(d => d.cumulative));
+  const maxVal = Math.max(...series.map(d => d.cumulative));
+  const range  = maxVal - minVal || 1;
 
-  let cum = 0;
-  const eq = allMonths.map(m => { cum += m.val; return cum; });
-  const minEq = Math.min(0, ...eq), maxEq = Math.max(0, ...eq);
-  const range  = maxEq - minEq || 1;
-  const n = allMonths.length;
-  const xS = i => pad.left + (i / Math.max(n - 1, 1)) * cw;
-  const yS = v => pad.top + ch - ((v - minEq) / range) * ch;
-  const y0 = yS(0);
+  const xScale = i => (i / (series.length - 1)) * cw;
+  const yScale = v => ch - ((v - minVal) / range) * ch;
 
-  const pts  = eq.map((v, i) => `${xS(i).toFixed(1)},${yS(v).toFixed(1)}`).join(' ');
-  const barW = Math.max(1, (cw / n) * 0.7);
-  const bars = allMonths.map((m, i) => {
-    const x = xS(i) - barW / 2;
-    const yTop = m.val >= 0 ? yS(m.val) : y0;
-    const h = Math.max(1, Math.abs(yS(m.val) - y0));
-    return `<rect x="${x.toFixed(1)}" y="${yTop.toFixed(1)}" width="${barW.toFixed(1)}" height="${h.toFixed(1)}" fill="${m.val >= 0 ? '#b2dfc8' : '#fcc'}" opacity="0.7"/>`;
-  }).join('');
+  const pts = series.map((d, i) => `${pad.left + xScale(i)},${pad.top + yScale(d.cumulative)}`).join(' ');
+  const areaPath = [
+    `M ${pad.left + xScale(0)},${pad.top + yScale(0)}`,
+    ...series.map((d, i) => `L ${pad.left + xScale(i)},${pad.top + yScale(d.cumulative)}`),
+    `L ${pad.left + xScale(series.length - 1)},${pad.top + yScale(0)}`, 'Z'
+  ].join(' ');
 
+  const y0 = pad.top + yScale(0);
   const yTicks = 5;
-  const grid = Array.from({ length: yTicks + 1 }, (_, i) => {
-    const v = minEq + (range / yTicks) * i, y = yS(v).toFixed(1);
-    const lbl = Math.abs(v) >= 1000 ? (v/1000).toFixed(1)+'k' : v.toFixed(0);
-    return `<text x="${pad.left - 6}" y="${y}" text-anchor="end" font-size="10" fill="#9098a8" dominant-baseline="middle">$${lbl}</text>
-    <line x1="${pad.left}" y1="${y}" x2="${pad.left + cw}" y2="${y}" stroke="#e0e3e8" stroke-dasharray="3,3"/>`;
-  }).join('');
+  const yLabels = Array.from({ length: yTicks + 1 }, (_, i) => {
+    const v = minVal + (range * i) / yTicks;
+    return {
+      v, y: pad.top + yScale(v),
+      label: v >= 1000 ? `$${(v/1000).toFixed(1)}k` : v <= -1000 ? `-$${(Math.abs(v)/1000).toFixed(1)}k` : `$${Math.round(v)}`
+    };
+  });
 
-  const years = [...new Set(allMonths.map(m => m.year))];
+  const years = [...new Set(series.map(d => d.year))];
   const xLabels = years.map(yr => {
-    const x = xS(allMonths.findIndex(m => m.year === yr)).toFixed(0);
-    return `<text x="${x}" y="${H - pad.bottom + 16}" text-anchor="middle" font-size="10" fill="#9098a8">${yr}</text>`;
-  }).join('');
+    const idx = series.findIndex(d => d.year === yr && d.month === 1) !== -1
+      ? series.findIndex(d => d.year === yr && d.month === 1)
+      : series.findIndex(d => d.year === yr);
+    return { yr, x: pad.left + xScale(idx) };
+  }).filter((_, i) => i % 2 === 0);
 
-  document.getElementById('ov-equity-chart').innerHTML = `
-    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:300px;display:block">
-      ${bars}
-      <line x1="${pad.left}" y1="${y0.toFixed(1)}" x2="${pad.left+cw}" y2="${y0.toFixed(1)}" stroke="#4a5060" stroke-width="1"/>
-      ${grid}
-      ${xLabels}
-      <polyline points="${pts}" fill="none" stroke="#4f46e5" stroke-width="2"/>
-      <line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${pad.top+ch}" stroke="#c8cdd5"/>
-      <line x1="${pad.left}" y1="${pad.top+ch}" x2="${pad.left+cw}" y2="${pad.top+ch}" stroke="#c8cdd5"/>
-    </svg>`;
+  const tooltipPoints = series.map((d, i) => `
+    <circle cx="${pad.left + xScale(i)}" cy="${pad.top + yScale(d.cumulative)}" r="6"
+      fill="transparent" stroke="none" class="eq-point"
+      data-label="${d.label}"
+      data-val="${d.cumulative >= 0 ? '+' : ''}$${d.cumulative.toLocaleString('es-AR', {maximumFractionDigits:0})}"
+      data-monthly="${d.value >= 0 ? '+' : ''}$${d.value.toLocaleString('es-AR', {maximumFractionDigits:0})}"
+      onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"/>
+  `).join('');
+
+  const gridLines = yLabels.map(t =>
+    `<line x1="${pad.left}" y1="${t.y}" x2="${pad.left + cw}" y2="${t.y}" stroke="#e0e3e8" stroke-width="0.5" stroke-dasharray="3,3"/>`
+  ).join('');
+
+  const finalVal = series[series.length - 1]?.cumulative || 0;
+  const areaColor = finalVal >= 0 ? '#1a7f4b' : '#b91c1c';
+  const lineColor = finalVal >= 0 ? '#1a7f4b' : '#b91c1c';
+
+  container.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
+      <div style="border:1px solid #e0e3e8;border-radius:8px;padding:12px;background:#fff">
+        <div style="font-size:11px;font-weight:700;color:#4a5060;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+          <span style="width:8px;height:8px;border-radius:50%;background:#1a7f4b;display:inline-block"></span>
+          Backtest SQX
+        </div>
+        <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">
+          <defs>
+            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="${areaColor}" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="${areaColor}" stop-opacity="0.01"/>
+            </linearGradient>
+          </defs>
+          ${gridLines}
+          <line x1="${pad.left}" y1="${y0}" x2="${pad.left + cw}" y2="${y0}" stroke="#9098a8" stroke-width="0.8"/>
+          <path d="${areaPath}" fill="url(#areaGrad)" stroke="none"/>
+          <polyline points="${pts}" fill="none" stroke="${lineColor}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+          ${yLabels.map(t => `<text x="${pad.left - 6}" y="${t.y + 4}" text-anchor="end" font-size="9" fill="#9098a8">${t.label}</text>`).join('')}
+          ${xLabels.map(t => `
+            <text x="${t.x}" y="${pad.top + ch + 14}" text-anchor="middle" font-size="9" fill="#9098a8">${t.yr}</text>
+            <line x1="${t.x}" y1="${pad.top + ch}" x2="${t.x}" y2="${pad.top + ch + 4}" stroke="#9098a8" stroke-width="0.8"/>
+          `).join('')}
+          ${tooltipPoints}
+        </svg>
+      </div>
+      <div style="border:1px solid #e0e3e8;border-radius:8px;padding:12px;background:#f8f9fa">
+        <div style="font-size:11px;font-weight:700;color:#4a5060;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+          <span style="width:8px;height:8px;border-radius:50%;background:#6366f1;display:inline-block"></span>
+          Incubación Live
+        </div>
+        <div style="height:${H}px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#9098a8;font-size:12px;text-align:center;gap:8px">
+          <div style="font-size:28px">📊</div>
+          <div>Sin datos live cargados</div>
+          <div style="font-size:11px">Cargalos desde la pestaña<br><strong>Myfxbook — Incubación</strong></div>
+        </div>
+      </div>
+    </div>`;
 }
+
+function showEqTooltip(event, el) {
+  const tt = document.getElementById('eq-tooltip');
+  if (!tt) return;
+  tt.innerHTML = `<strong>${el.getAttribute('data-label')}</strong><br>Acumulado: ${el.getAttribute('data-val')}<br>Mensual: ${el.getAttribute('data-monthly')}`;
+  tt.style.display = 'block';
+  tt.style.left = (event.clientX + 14) + 'px';
+  tt.style.top  = (event.clientY - 10) + 'px';
+}
+function hideEqTooltip() {
+  const tt = document.getElementById('eq-tooltip');
+  if (tt) tt.style.display = 'none';
+}
+
+document.addEventListener('mousemove', e => {
+  const tt = document.getElementById('eq-tooltip');
+  if (tt && tt.style.display !== 'none') {
+    tt.style.left = (e.clientX + 14) + 'px';
+    tt.style.top  = (e.clientY - 10) + 'px';
+  }
+});
 
 // Init
 updateDbCount();
@@ -1342,4 +1425,5 @@ render();
 </script>
 
 
+<div id="eq-tooltip" style="position:fixed;display:none;background:#111318;color:#fff;font-size:11px;padding:6px 10px;border-radius:6px;pointer-events:none;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,0.2);white-space:nowrap"></div>
 </body></html>
