@@ -638,6 +638,12 @@ function evalS(s) {
   return fails;
 }
 
+function cls(key, val) {
+  if (val === null || val === undefined || isNaN(val)) return 'na';
+  const c = CRIT[key]; if (!c) return '';
+  return (c.dir === 1 ? val >= c.min : val <= c.max) ? 'pass' : 'fail';
+}
+
 function pfCls(val) {
   if (val === null || val === undefined || isNaN(val)) return 'na';
   if (val >= 1.30) return 'pass';
