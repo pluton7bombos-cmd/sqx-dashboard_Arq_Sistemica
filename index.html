@@ -265,6 +265,41 @@
     </div>
   </div>
 
+  <!-- OVERVIEW SECTION -->
+  <div class="section-card" id="overview-section">
+    <div class="section-head" onclick="toggleOverview()">
+      <span class="section-title">📋 Cargar Overview (SQX)</span>
+      <span class="chevron" id="chev-overview">▼</span>
+    </div>
+    <div class="collapse-body" id="overview-body">
+      <div class="form-inner">
+        <div class="field" style="margin-bottom:12px">
+          <label>Bot al que pertenece este Overview</label>
+          <select id="ov-bot-select"><option value="">— Seleccioná un bot —</option></select>
+        </div>
+        <div class="field" style="margin-bottom:12px">
+          <label>Pegá el texto completo del Overview de SQX</label>
+          <textarea id="ov-text" rows="10"
+            style="width:100%;border:1px solid var(--border2);border-radius:var(--radius);
+                   padding:10px;font-size:12px;font-family:monospace;background:var(--bg);
+                   color:var(--text);resize:vertical"
+            placeholder="Copiá todo el texto del Overview de SQX y pegalo acá..."></textarea>
+        </div>
+        <div class="btn-row" style="margin-bottom:1.5rem">
+          <button class="btn-primary" onclick="processOverview()">⚡ Parsear y cargar</button>
+          <button onclick="document.getElementById('ov-text').value=''">Limpiar</button>
+        </div>
+        <div id="ov-preview" style="display:none">
+          <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px">Métricas detectadas</div>
+          <div id="ov-metrics-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:1.5rem"></div>
+          <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px">Equity Curve Mensual</div>
+          <div id="ov-equity-chart" style="width:100%;overflow-x:auto"></div>
+        </div>
+        <div id="ov-err" style="display:none;color:var(--red);font-size:12px;margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- SUMMARY -->
   <div class="summary-grid" id="sum-grid" style="display: grid;">
     <div class="stat"><div class="stat-lbl">Total bots</div><div class="stat-val" id="s-tot">3</div></div>
@@ -282,8 +317,9 @@
         <div class="t-sub" id="t-sub">Mostrando 3 de 3 estrategias — Vista IS</div>
       </div>
       <div class="view-tabs">
-        <button class="vtab active" onclick="setView('IS',this)">Vista IS</button>
-        <button class="vtab" onclick="setView('OOS',this)">Vista OOS</button>
+        <button class="vtab active" onclick="setView('IS',this)">IS</button>
+        <button class="vtab" onclick="setView('OOS',this)">OOS</button>
+        <button class="vtab" onclick="setView('Full',this)">Full</button>
       </div>
     </div>
     <div class="filter-bar">
@@ -785,6 +821,29 @@ function processFile(file) {
 // ── VIEW DATA ─────────────────────────────────────────────────────
 function getVD(s) {
   if (s.source === 'csv') {
+    if (view === 'Full') {
+      const is = s.is || {}, oos = s.oos || {};
+      const avg = (a, b) => {
+        if (a !== null && a !== undefined && !isNaN(a) && b !== null && b !== undefined && !isNaN(b)) return (a + b) / 2;
+        return a ?? b ?? null;
+      };
+      return {
+        pf:        avg(is.pf, oos.pf),
+        cagr:      avg(is.cagr, oos.cagr),
+        wr:        avg(is.wr, oos.wr),
+        trades:    (is.trades || 0) + (oos.trades || 0),
+        sharpe:    avg(is.sharpe, oos.sharpe),
+        dd:        Math.max(is.dd || 0, oos.dd || 0),
+        np:        (is.np || 0) + (oos.np || 0),
+        retdd:     avg(is.retdd, oos.retdd),
+        cagrdd:    avg(is.cagrdd, oos.cagrdd),
+        fitness:   avg(is.fitness, oos.fitness),
+        stability: avg(is.stability, oos.stability),
+        sqn:       s.sqn ?? null,
+        stag:      s.stag ?? null,
+        zp:        s.zp ?? null,
+      };
+    }
     const src = (view === 'OOS' && s.oos && s.oos.pf !== null) ? s.oos : (s.is || {});
     return {
       pf: src.pf ?? null, cagr: src.cagr ?? null, wr: src.wr ?? null,
@@ -919,6 +978,7 @@ function render() {
     });
   }
 
+  updateBotDropdown();
   tbody.innerHTML = sorted.map(s => {
     const d = getVD(s);
     const fails = evalS(s);
@@ -1066,6 +1126,203 @@ function exportCSV() {
 window.addEventListener('beforeunload', e => {
   if (dirty) { e.preventDefault(); e.returnValue = ''; }
 });
+
+// ── OVERVIEW ──────────────────────────────────────────────────────
+let overviewOpen = false;
+function toggleOverview() {
+  overviewOpen = !overviewOpen;
+  document.getElementById('overview-body').classList.toggle('open', overviewOpen);
+  document.getElementById('chev-overview').classList.toggle('open', overviewOpen);
+}
+
+function ovErr(m) {
+  const e = document.getElementById('ov-err');
+  e.textContent = m;
+  e.style.display = 'block';
+}
+
+function updateBotDropdown() {
+  const sel = document.getElementById('ov-bot-select');
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— Seleccioná un bot —</option>';
+  DB.forEach(b => {
+    const opt = document.createElement('option');
+    opt.value = b.id;
+    opt.textContent = b.name + (b.symbol ? ' — ' + b.symbol : '');
+    sel.appendChild(opt);
+  });
+  if (current) sel.value = current;
+}
+
+function parseMonthlyTable(text) {
+  const headerIdx = text.indexOf('Year\t');
+  if (headerIdx < 0) return [];
+  const lines = text.substring(headerIdx).split('\n').map(l => l.trim()).filter(l => l);
+  const result = [];
+  for (let i = 1; i < lines.length; i++) {
+    const parts = lines[i].split('\t');
+    const year = parseInt(parts[0]);
+    if (isNaN(year) || year < 1990 || year > 2100) break;
+    const months = [];
+    for (let m = 1; m <= 12; m++) months.push(parts[m] !== undefined ? (parseFloat(parts[m]) || 0) : 0);
+    const ytd = parts[13] !== undefined ? (parseFloat(parts[13]) || 0) : months.reduce((a,b) => a+b, 0);
+    result.push({ year, months, ytd });
+  }
+  return result.sort((a, b) => a.year - b.year);
+}
+
+function parseOverview(text) {
+  const lines = text.split('\n');
+  const getNext = (label) => {
+    const idx = lines.findIndex(l => l.trim() === label);
+    if (idx < 0) return null;
+    for (let i = idx + 1; i < lines.length; i++) { const v = lines[i].trim(); if (v) return v; }
+    return null;
+  };
+  const num = s => { if (!s) return null; const v = parseFloat(s.replace(/[^0-9.\-]/g,'')); return isNaN(v) ? null : v; };
+
+  const totalProfit = num(getNext('TOTAL PROFIT'));
+  const trades      = num(getNext('# OF TRADES'));
+  const sharpe      = num(getNext('SHARPE RATIO'));
+  const pf          = num(getNext('PROFIT FACTOR'));
+  const retdd       = num(getNext('RETURN / DD RATIO'));
+  const winPct      = num(getNext('WINNING PERCENTAGE'));
+  const dd          = num(getNext('DRAWDOWN'));
+  const ddPct       = num(getNext('% DRAWDOWN'));
+  const rExp        = num(getNext('R EXPECTANCY'));
+  const strQuality  = num(getNext('STR QUALITY NUMBER'));
+  const sqn         = num(getNext('SQN SCORE'));
+
+  const cagrM   = text.match(/^CAGR([\d.]+)\s*%/m);
+  const cagr    = cagrM ? parseFloat(cagrM[1]) : null;
+
+  const stagM   = text.match(/Stagnation in Days\t(\d+)/);
+  const stag    = stagM ? parseInt(stagM[1]) : null;
+  const stagPctM= text.match(/Stagnation in %\t([\d.]+)/);
+  const stagPct = stagPctM ? parseFloat(stagPctM[1]) : null;
+  const zScoreM = text.match(/Z-Score\t([-\d.]+)/);
+  const zScore  = zScoreM ? parseFloat(zScoreM[1]) : null;
+  const zProbM  = text.match(/Z-Probability\t([\d.]+)/);
+  const zp      = zProbM ? parseFloat(zProbM[1]) : null;
+  const ahprM   = text.match(/AHPR\t([\d.]+)/);
+  const ahpr    = ahprM ? parseFloat(ahprM[1]) : null;
+
+  if (sqn === null && pf === null && sharpe === null) return null;
+
+  const monthlyData = parseMonthlyTable(text);
+  return { sqn, strQuality, stag, stagPct, zScore, zp, ahpr, cagr,
+           totalProfit, sharpe, pf, trades, winPct, dd, ddPct, retdd, rExp, monthlyData };
+}
+
+function processOverview() {
+  const text  = document.getElementById('ov-text').value.trim();
+  const botId = document.getElementById('ov-bot-select').value;
+  if (!text)  { ovErr('Pegá el texto del Overview.'); return; }
+  if (!botId) { ovErr('Seleccioná el bot al que pertenece.'); return; }
+  const parsed = parseOverview(text);
+  if (!parsed){ ovErr('No se pudo parsear. Verificá que sea un Overview de SQX.'); return; }
+  const bot = DB.find(b => b.id === botId);
+  if (!bot)   { ovErr('Bot no encontrado.'); return; }
+  if (parsed.sqn  !== null) bot.sqn  = parsed.sqn;
+  if (parsed.stag !== null) bot.stag = parsed.stag;
+  if (parsed.zp   !== null) bot.zp   = parsed.zp;
+  bot.overviewData = parsed;
+  markDirty();
+  render();
+  renderOverviewPreview(parsed);
+  document.getElementById('ov-preview').style.display = 'block';
+  document.getElementById('ov-err').style.display = 'none';
+}
+
+function renderOverviewPreview(parsed) {
+  const fields = [
+    ['SQN Score',    parsed.sqn,         2],
+    ['STR Quality',  parsed.strQuality,  2],
+    ['Profit Factor',parsed.pf,          2],
+    ['Sharpe Ratio', parsed.sharpe,      2],
+    ['CAGR %',       parsed.cagr  !== null ? parsed.cagr + '%'  : null, null],
+    ['Drawdown $',   parsed.dd    !== null ? '$' + Math.abs(parsed.dd).toFixed(0) : null, null],
+    ['DD %',         parsed.ddPct !== null ? parsed.ddPct + '%' : null, null],
+    ['Trades',       parsed.trades,      0],
+    ['Win %',        parsed.winPct !== null ? parsed.winPct + '%' : null, null],
+    ['Ret/DD',       parsed.retdd,       2],
+    ['R Exp.',       parsed.rExp,        2],
+    ['Stagnation d', parsed.stag,        0],
+    ['Stag %',       parsed.stagPct !== null ? parsed.stagPct + '%' : null, null],
+    ['Z-Prob %',     parsed.zp     !== null ? parsed.zp + '%'     : null, null],
+    ['Z-Score',      parsed.zScore,      2],
+    ['AHPR',         parsed.ahpr,        2],
+    ['Net Profit',   parsed.totalProfit !== null ? '$' + parsed.totalProfit.toFixed(0) : null, null],
+  ];
+  document.getElementById('ov-metrics-grid').innerHTML = fields.map(([lbl, val, dec]) => {
+    const display = (val === null || val === undefined) ? '—' :
+      (typeof val === 'string' ? val : (dec !== null ? Number(val).toFixed(dec) : val));
+    return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-bottom:4px">${lbl}</div>
+      <div style="font-size:18px;font-weight:700;color:var(--text)">${display}</div>
+    </div>`;
+  }).join('');
+  if (parsed.monthlyData && parsed.monthlyData.length > 0) {
+    renderOverviewChart(parsed.monthlyData);
+  } else {
+    document.getElementById('ov-equity-chart').innerHTML =
+      '<p style="color:var(--text3);font-size:12px;padding:1rem 0">No se encontraron datos mensuales en el Overview.</p>';
+  }
+}
+
+function renderOverviewChart(monthlyData) {
+  const W = 900, H = 300;
+  const pad = { top: 20, right: 20, bottom: 40, left: 70 };
+  const cw = W - pad.left - pad.right, ch = H - pad.top - pad.bottom;
+
+  const allMonths = [];
+  monthlyData.forEach(yr => yr.months.forEach((v, i) => allMonths.push({ year: yr.year, month: i, val: v })));
+  if (!allMonths.length) return;
+
+  let cum = 0;
+  const eq = allMonths.map(m => { cum += m.val; return cum; });
+  const minEq = Math.min(0, ...eq), maxEq = Math.max(0, ...eq);
+  const range  = maxEq - minEq || 1;
+  const n = allMonths.length;
+  const xS = i => pad.left + (i / Math.max(n - 1, 1)) * cw;
+  const yS = v => pad.top + ch - ((v - minEq) / range) * ch;
+  const y0 = yS(0);
+
+  const pts  = eq.map((v, i) => `${xS(i).toFixed(1)},${yS(v).toFixed(1)}`).join(' ');
+  const barW = Math.max(1, (cw / n) * 0.7);
+  const bars = allMonths.map((m, i) => {
+    const x = xS(i) - barW / 2;
+    const yTop = m.val >= 0 ? yS(m.val) : y0;
+    const h = Math.max(1, Math.abs(yS(m.val) - y0));
+    return `<rect x="${x.toFixed(1)}" y="${yTop.toFixed(1)}" width="${barW.toFixed(1)}" height="${h.toFixed(1)}" fill="${m.val >= 0 ? '#b2dfc8' : '#fcc'}" opacity="0.7"/>`;
+  }).join('');
+
+  const yTicks = 5;
+  const grid = Array.from({ length: yTicks + 1 }, (_, i) => {
+    const v = minEq + (range / yTicks) * i, y = yS(v).toFixed(1);
+    const lbl = Math.abs(v) >= 1000 ? (v/1000).toFixed(1)+'k' : v.toFixed(0);
+    return `<text x="${pad.left - 6}" y="${y}" text-anchor="end" font-size="10" fill="#9098a8" dominant-baseline="middle">$${lbl}</text>
+    <line x1="${pad.left}" y1="${y}" x2="${pad.left + cw}" y2="${y}" stroke="#e0e3e8" stroke-dasharray="3,3"/>`;
+  }).join('');
+
+  const years = [...new Set(allMonths.map(m => m.year))];
+  const xLabels = years.map(yr => {
+    const x = xS(allMonths.findIndex(m => m.year === yr)).toFixed(0);
+    return `<text x="${x}" y="${H - pad.bottom + 16}" text-anchor="middle" font-size="10" fill="#9098a8">${yr}</text>`;
+  }).join('');
+
+  document.getElementById('ov-equity-chart').innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:300px;display:block">
+      ${bars}
+      <line x1="${pad.left}" y1="${y0.toFixed(1)}" x2="${pad.left+cw}" y2="${y0.toFixed(1)}" stroke="#4a5060" stroke-width="1"/>
+      ${grid}
+      ${xLabels}
+      <polyline points="${pts}" fill="none" stroke="#4f46e5" stroke-width="2"/>
+      <line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${pad.top+ch}" stroke="#c8cdd5"/>
+      <line x1="${pad.left}" y1="${pad.top+ch}" x2="${pad.left+cw}" y2="${pad.top+ch}" stroke="#c8cdd5"/>
+    </svg>`;
+}
 
 // Init
 updateDbCount();
