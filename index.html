@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SQX Dashboard — M1 Backtest</title>
@@ -167,9 +165,9 @@
     <span class="module-tag">M1 — Backtest Tracker</span>
   </div>
   <div class="topbar-right">
-    <span id="db-count" style="font-size:11px;color:var(--text3);margin-right:4px"></span>
-    <span id="sync-status" style="font-size:11px;margin-right:4px"></span>
-    <button onclick="saveToGitHub()" id="btn-save">☁ Guardar en GitHub</button>
+    <span id="db-count" style="font-size:11px;color:var(--text3);margin-right:4px">3 bots guardados</span>
+    <span id="sync-status" style="font-size: 11px; margin-right: 4px; color: rgb(217, 119, 6);">⏳ Guardando...</span>
+    <button onclick="saveToGitHub()" id="btn-save" disabled="">☁ Guardar en GitHub</button>
     <button onclick="exportCSV()">⬇ CSV</button>
     <button onclick="showConfig()">⚙ Config</button>
     <button class="btn-danger" onclick="clearAll()">Borrar todo</button>
@@ -179,7 +177,7 @@
 <div class="main">
 
   <!-- CONFIG MODAL -->
-  <div id="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center">
+  <div id="modal-overlay" style="display: none; position: fixed; inset: 0px; background: rgba(0, 0, 0, 0.4); z-index: 1000; align-items: center; justify-content: center;">
     <div style="background:#fff;border-radius:12px;padding:2rem;width:480px;max-width:95vw;border:1px solid var(--border)">
       <div style="font-size:15px;font-weight:700;margin-bottom:1rem;color:var(--text)">⚙ Configuración GitHub</div>
       <p style="font-size:12px;color:var(--text3);margin-bottom:1.2rem">Ingresá tu token una sola vez. Queda guardado en el navegador (no viaja a ningún servidor).</p>
@@ -196,7 +194,7 @@
   </div>
 
   <!-- SAVE NOTICE -->
-  <div class="save-notice" id="save-notice">
+  <div class="save-notice" id="save-notice" style="display: block;">
     ⚠ Hay cambios sin guardar. Hacé clic en <strong>☁ Guardar en GitHub</strong> para sincronizar.
   </div>
 
@@ -211,8 +209,8 @@
       <span class="fmt fmt-off">Overview — próximamente</span>
     </div>
   </div>
-  <div class="alert alert-ok" id="alert-ok"></div>
-  <div class="alert alert-err" id="alert-err"></div>
+  <div class="alert alert-ok" id="alert-ok" style="display: block;">✓ 3 bots importados desde "DatabankExport_audusd.csv". Hacé clic en ☁ Guardar en GitHub para persistirlos.</div>
+  <div class="alert alert-err" id="alert-err" style="display: none;"></div>
 
   <!-- CRITERIOS -->
   <div class="criteria-bar">
@@ -238,8 +236,8 @@
         <div class="form-grid">
           <div class="field"><label>Nombre / Magic ID</label><input id="f-name" placeholder="ej. 2623 AUDUSD H1"></div>
           <div class="field"><label>Símbolo</label><input id="f-symbol" placeholder="AUDUSD"></div>
-          <div class="field"><label>Timeframe</label><select id="f-tf"><option>M1</option><option>M5</option><option>M15</option><option>M30</option><option selected>H1</option><option>H4</option><option>D1</option></select></div>
-          <div class="field"><label>Fase</label><select id="f-phase"><option>IS</option><option>OOS</option><option selected>IS+OOS</option><option>WFM</option><option>Demo Live</option></select></div>
+          <div class="field"><label>Timeframe</label><select id="f-tf"><option>M1</option><option>M5</option><option>M15</option><option>M30</option><option selected="">H1</option><option>H4</option><option>D1</option></select></div>
+          <div class="field"><label>Fase</label><select id="f-phase"><option>IS</option><option>OOS</option><option selected="">IS+OOS</option><option>WFM</option><option>Demo Live</option></select></div>
           <div class="field"><label>Profit Factor</label><input id="f-pf" type="number" step="0.01" placeholder="1.45"></div>
           <div class="field"><label>SQN ★</label><input id="f-sqn" type="number" step="0.01" placeholder="2.10"></div>
           <div class="field"><label>DD $ (absoluto)</label><input id="f-dd" type="number" placeholder="1350"></div>
@@ -267,12 +265,12 @@
   </div>
 
   <!-- SUMMARY -->
-  <div class="summary-grid" id="sum-grid" style="display:none">
-    <div class="stat"><div class="stat-lbl">Total bots</div><div class="stat-val" id="s-tot">0</div></div>
+  <div class="summary-grid" id="sum-grid" style="display: grid;">
+    <div class="stat"><div class="stat-lbl">Total bots</div><div class="stat-val" id="s-tot">3</div></div>
     <div class="stat"><div class="stat-lbl">Aprobados</div><div class="stat-val green" id="s-ok">0</div></div>
-    <div class="stat"><div class="stat-lbl">Parciales (1-2 fallos)</div><div class="stat-val amber" id="s-warn">0</div></div>
-    <div class="stat"><div class="stat-lbl">Descartados</div><div class="stat-val red" id="s-fail">0</div></div>
-    <div class="stat"><div class="stat-lbl">Desde CSV</div><div class="stat-val blue" id="s-csv">0</div></div>
+    <div class="stat"><div class="stat-lbl">Parciales (1-2 fallos)</div><div class="stat-val amber" id="s-warn">1</div></div>
+    <div class="stat"><div class="stat-lbl">Descartados</div><div class="stat-val red" id="s-fail">2</div></div>
+    <div class="stat"><div class="stat-lbl">Desde CSV</div><div class="stat-val blue" id="s-csv">3</div></div>
   </div>
 
   <!-- TABLE -->
@@ -280,7 +278,7 @@
     <div class="table-topbar">
       <div>
         <div class="t-title">Base de datos de estrategias</div>
-        <div class="t-sub" id="t-sub">Sin datos cargados</div>
+        <div class="t-sub" id="t-sub">Mostrando 3 de 3 estrategias — Vista IS</div>
       </div>
       <div class="view-tabs">
         <button class="vtab active" onclick="setView('IS',this)">Vista IS</button>
@@ -325,7 +323,70 @@
             <th></th>
           </tr>
         </thead>
-        <tbody id="tbody"></tbody>
+        <tbody id="tbody"><tr>
+      <td class="left name-cell" title="Strategy 2.7.19(1) - Improved 1.1.7 — 2026-05-05">Strategy 2.7.19(1) - Impro…<span class="src-tag">CSV</span></td>
+      <td class="left">AUDUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="fail">1.18</td>
+      <td class="na">—</td>
+      <td>$1.349</td>
+      <td class="fail">2.41%</td>
+      <td class="pass">1.06</td>
+      <td>3.58</td>
+      <td>0.22</td>
+      <td class="pass">901</td>
+      <td class="fail">0.43</td>
+      <td>0.77</td>
+      <td>$4.826</td>
+      <td>0.75</td>
+      <td class="na">—</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td><span class="fail-list">PF, Ann%, Sharpe</span></td>
+      <td><button class="del-btn" onclick="delS(0)" title="Eliminar">×</button></td>
+    </tr><tr>
+      <td class="left name-cell" title="Strategy 4.9.14 - Improved 1.1.5 — 2026-05-05">Strategy 4.9.14 - Improved…<span class="src-tag">CSV</span></td>
+      <td class="left">AUDUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="fail">1.18</td>
+      <td class="na">—</td>
+      <td>$1.345</td>
+      <td class="fail">2.65%</td>
+      <td class="pass">1.16</td>
+      <td>3.94</td>
+      <td>0.16</td>
+      <td class="pass">1168</td>
+      <td class="pass">0.51</td>
+      <td>0.89</td>
+      <td>$5.302</td>
+      <td>0.76</td>
+      <td class="na">—</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td><span class="fail-list">PF, Ann%</span></td>
+      <td><button class="del-btn" onclick="delS(1)" title="Eliminar">×</button></td>
+    </tr><tr>
+      <td class="left name-cell" title="Strategy 2.6.23 - Improved 2.1.4 — 2026-05-05">Strategy 2.6.23 - Improved…<span class="src-tag">CSV</span></td>
+      <td class="left">AUDUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="fail">1.20</td>
+      <td class="na">—</td>
+      <td>$1.326</td>
+      <td class="fail">3.22%</td>
+      <td class="pass">1.05</td>
+      <td>4.86</td>
+      <td>0.34</td>
+      <td class="pass">1027</td>
+      <td class="fail">0.49</td>
+      <td>0.85</td>
+      <td>$6.437</td>
+      <td>0.80</td>
+      <td class="na">—</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td><span class="fail-list">PF, Ann%, Sharpe</span></td>
+      <td><button class="del-btn" onclick="delS(2)" title="Eliminar">×</button></td>
+    </tr></tbody>
       </table>
     </div>
   </div>
@@ -333,7 +394,137 @@
 </div>
 
 <!-- EMBEDDED DATABASE — NO EDITAR MANUALMENTE -->
-<script id="db-store" type="application/json">[]</script>
+<script id="db-store" type="application/json">[
+  {
+    "id": "moszwz6yzecvfufgpwb",
+    "name": "Strategy 2.7.19(1) - Improved 1.1.7",
+    "symbol": "AUDUSD",
+    "symbolFull": "AUDUSD_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-05",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 4825.54,
+      "trades": 901,
+      "pf": 1.18,
+      "sharpe": 0.43,
+      "cagr": 2.41,
+      "stability": 0.77,
+      "dd": 1348.97,
+      "wr": 1.06,
+      "retdd": 3.58,
+      "cagrdd": 0.22,
+      "fitness": 0.75,
+      "exposure": 3.36,
+      "rexp": 0.09
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "moszwz6zha02zegcx0c",
+    "name": "Strategy 4.9.14 - Improved 1.1.5",
+    "symbol": "AUDUSD",
+    "symbolFull": "AUDUSD_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-05",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 5301.79,
+      "trades": 1168,
+      "pf": 1.18,
+      "sharpe": 0.51,
+      "cagr": 2.65,
+      "stability": 0.89,
+      "dd": 1344.88,
+      "wr": 1.16,
+      "retdd": 3.94,
+      "cagrdd": 0.16,
+      "fitness": 0.76,
+      "exposure": 1.72,
+      "rexp": 0.08
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "moszwz6zw5m18rvt4h",
+    "name": "Strategy 2.6.23 - Improved 2.1.4",
+    "symbol": "AUDUSD",
+    "symbolFull": "AUDUSD_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-05",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 6436.52,
+      "trades": 1027,
+      "pf": 1.2,
+      "sharpe": 0.49,
+      "cagr": 3.22,
+      "stability": 0.85,
+      "dd": 1325.69,
+      "wr": 1.05,
+      "retdd": 4.86,
+      "cagrdd": 0.34,
+      "fitness": 0.8,
+      "exposure": 3.25,
+      "rexp": 0.1
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  }
+]</script>
 
 <script>
 // ── LOAD DATA FROM EMBEDDED SCRIPT TAG ─────────────────────────
@@ -841,5 +1032,6 @@ window.addEventListener('beforeunload', e => {
 updateDbCount();
 render();
 </script>
-</body>
-</html>
+
+
+</body></html>
