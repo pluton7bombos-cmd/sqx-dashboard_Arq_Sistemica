@@ -166,7 +166,7 @@
     <span class="module-tag">M1 — Backtest Tracker</span>
   </div>
   <div class="topbar-right">
-    <span id="db-count" style="font-size:11px;color:var(--text3);margin-right:4px"></span>
+    <span id="db-count" style="font-size:11px;color:var(--text3);margin-right:4px">3 bots guardados</span>
     <span id="sync-status" style="font-size: 11px; margin-right: 4px; color: rgb(217, 119, 6);">⏳ Guardando...</span>
     <button onclick="saveToGitHub()" id="btn-save" disabled="">☁ Guardar en GitHub</button>
     <button onclick="exportCSV()">⬇ CSV</button>
@@ -195,7 +195,7 @@
   </div>
 
   <!-- SAVE NOTICE -->
-  <div class="save-notice" id="save-notice">
+  <div class="save-notice" id="save-notice" style="display: block;">
     ⚠ Hay cambios sin guardar. Hacé clic en <strong>☁ Guardar en GitHub</strong> para sincronizar.
   </div>
 
@@ -210,8 +210,8 @@
       <span class="fmt fmt-off">Overview — próximamente</span>
     </div>
   </div>
-  <div class="alert alert-ok" id="alert-ok" style="display: none;">✓ Configuración guardada. Ahora podés usar ☁ Guardar en GitHub.</div>
-  <div class="alert alert-err" id="alert-err" style="display: none;"></div>
+  <div class="alert alert-ok" id="alert-ok" style="display: none;">✓ 0 bots guardados en GitHub. La web se actualiza en ~30 segundos.</div>
+  <div class="alert alert-err" id="alert-err" style="display: block;">Error: cls is not defined</div>
 
   <!-- CRITERIOS -->
   <div class="criteria-bar">
@@ -266,12 +266,12 @@
   </div>
 
   <!-- SUMMARY -->
-  <div class="summary-grid" id="sum-grid" style="display:none">
-    <div class="stat"><div class="stat-lbl">Total bots</div><div class="stat-val" id="s-tot">0</div></div>
+  <div class="summary-grid" id="sum-grid" style="display: grid;">
+    <div class="stat"><div class="stat-lbl">Total bots</div><div class="stat-val" id="s-tot">3</div></div>
     <div class="stat"><div class="stat-lbl">Aprobados</div><div class="stat-val green" id="s-ok">0</div></div>
-    <div class="stat"><div class="stat-lbl">Parciales (1-2 fallos)</div><div class="stat-val amber" id="s-warn">0</div></div>
-    <div class="stat"><div class="stat-lbl">Descartados</div><div class="stat-val red" id="s-fail">0</div></div>
-    <div class="stat"><div class="stat-lbl">Desde CSV</div><div class="stat-val blue" id="s-csv">0</div></div>
+    <div class="stat"><div class="stat-lbl">Parciales (1-2 fallos)</div><div class="stat-val amber" id="s-warn">1</div></div>
+    <div class="stat"><div class="stat-lbl">Descartados</div><div class="stat-val red" id="s-fail">2</div></div>
+    <div class="stat"><div class="stat-lbl">Desde CSV</div><div class="stat-val blue" id="s-csv">3</div></div>
   </div>
 
   <!-- TABLE -->
@@ -279,7 +279,7 @@
     <div class="table-topbar">
       <div>
         <div class="t-title">Base de datos de estrategias</div>
-        <div class="t-sub" id="t-sub">Sin datos cargados</div>
+        <div class="t-sub" id="t-sub">Mostrando 3 de 3 estrategias — Vista IS</div>
       </div>
       <div class="view-tabs">
         <button class="vtab active" onclick="setView('IS',this)">Vista IS</button>
@@ -334,7 +334,137 @@
 </div>
 
 <!-- EMBEDDED DATABASE — NO EDITAR MANUALMENTE -->
-<script id="db-store" type="application/json">[]</script>
+<script id="db-store" type="application/json">[
+  {
+    "id": "mot749g636yle66tyie",
+    "name": "Strategy 2.7.19(1) - Improved 1.1.7",
+    "symbol": "AUDUSD",
+    "symbolFull": "AUDUSD_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-05",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 4825.54,
+      "trades": 901,
+      "pf": 1.18,
+      "sharpe": 0.43,
+      "cagr": 2.41,
+      "stability": 0.77,
+      "dd": 1348.97,
+      "wr": 1.06,
+      "retdd": 3.58,
+      "cagrdd": 0.22,
+      "fitness": 0.75,
+      "exposure": 3.36,
+      "rexp": 0.09
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mot749g78zku9u8y88",
+    "name": "Strategy 4.9.14 - Improved 1.1.5",
+    "symbol": "AUDUSD",
+    "symbolFull": "AUDUSD_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-05",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 5301.79,
+      "trades": 1168,
+      "pf": 1.18,
+      "sharpe": 0.51,
+      "cagr": 2.65,
+      "stability": 0.89,
+      "dd": 1344.88,
+      "wr": 1.16,
+      "retdd": 3.94,
+      "cagrdd": 0.16,
+      "fitness": 0.76,
+      "exposure": 1.72,
+      "rexp": 0.08
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mot749g7ljqmu046r1",
+    "name": "Strategy 2.6.23 - Improved 2.1.4",
+    "symbol": "AUDUSD",
+    "symbolFull": "AUDUSD_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-05",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 6436.52,
+      "trades": 1027,
+      "pf": 1.2,
+      "sharpe": 0.49,
+      "cagr": 3.22,
+      "stability": 0.85,
+      "dd": 1325.69,
+      "wr": 1.05,
+      "retdd": 4.86,
+      "cagrdd": 0.34,
+      "fitness": 0.8,
+      "exposure": 3.25,
+      "rexp": 0.1
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  }
+]</script>
 
 <script>
 // ── LOAD DATA FROM EMBEDDED SCRIPT TAG ─────────────────────────
