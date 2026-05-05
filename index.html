@@ -823,9 +823,21 @@ function getVD(s) {
   if (s.source === 'csv') {
     if (view === 'Full') {
       const is = s.is || {}, oos = s.oos || {};
+      const hasOOS = oos.pf !== null && oos.pf !== undefined && !isNaN(oos.pf) && oos.pf !== 0;
+      if (!hasOOS) {
+        return {
+          pf: is.pf ?? null, cagr: is.cagr ?? null, wr: is.wr ?? null,
+          trades: is.trades ?? null, sharpe: is.sharpe ?? null, dd: is.dd ?? null,
+          np: is.np ?? null, retdd: is.retdd ?? null, cagrdd: is.cagrdd ?? null,
+          fitness: is.fitness ?? null, stability: is.stability ?? null,
+          sqn: s.sqn ?? null, stag: s.stag ?? null, zp: s.zp ?? null,
+        };
+      }
       const avg = (a, b) => {
-        if (a !== null && a !== undefined && !isNaN(a) && b !== null && b !== undefined && !isNaN(b)) return (a + b) / 2;
-        return a ?? b ?? null;
+        const aOk = a !== null && a !== undefined && !isNaN(a);
+        const bOk = b !== null && b !== undefined && !isNaN(b) && b !== 0;
+        if (aOk && bOk) return (a + b) / 2;
+        return aOk ? a : (bOk ? b : null);
       };
       return {
         pf:        avg(is.pf, oos.pf),
