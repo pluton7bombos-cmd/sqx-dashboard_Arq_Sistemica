@@ -4266,8 +4266,10 @@ function getLiveBadge(mfx) {
 
 function buildMyfxbookBlock(mfx, idx) {
   if (!mfx) return '<div style="color:#9098a8;font-size:12px;padding:8px 0">Sin datos live cargados.</div>';
-  const statusColor = mfx.pf >= 1.30 ? '#1a7f4b' : mfx.pf >= 1.10 ? '#d97706' : '#b91c1c';
-  const winRate = mfx.winRate !== null ? mfx.winRate + '%' : '—';
+  const fv = (v, dec=2) => (v===null||v===undefined||isNaN(v)) ? '—' : Number(v).toFixed(dec);
+  const pfColor  = mfx.pf    >= 1.30 ? '#1a7f4b' : mfx.pf    >= 1.20 ? '#d97706' : '#b91c1c';
+  const ddColor  = mfx.ddPct <= 15   ? '#1a7f4b' : mfx.ddPct <= 25   ? '#d97706' : '#b91c1c';
+  const winColor = mfx.winRate >= 55  ? '#1a7f4b' : mfx.winRate >= 50  ? '#d97706' : '#b91c1c';
   const kpi = (lbl, val, color, borderColor) => `
     <div style="background:#fff;border:1px solid #e0e3e8;border-top:3px solid ${borderColor};border-radius:8px;padding:10px 12px">
       <div style="font-size:9px;font-weight:700;color:#9098a8;text-transform:uppercase;margin-bottom:4px">${lbl}</div>
@@ -4280,13 +4282,14 @@ function buildMyfxbookBlock(mfx, idx) {
     </div>`;
   const kpis = `
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px">
-      ${kpi('Profit Factor', mfx.pf ? mfx.pf.toFixed(2) : '—', statusColor, statusColor)}
-      ${kpi('Drawdown %', mfx.ddPct ? mfx.ddPct.toFixed(2) + '%' : '—', '#111318', '#b91c1c')}
-      ${kpi('# Trades', mfx.trades || '—', '#111318', '#1d4ed8')}
-      ${kpi('Win Rate', winRate, '#111318', '#d97706')}
+      ${kpi('Profit Factor', fv(mfx.pf), mfx.pf!==null ? pfColor : '#9098a8', '#1a7f4b')}
+      ${kpi('DD %', mfx.ddPct!==null ? fv(mfx.ddPct)+'%' : '—', mfx.ddPct!==null ? ddColor : '#9098a8', '#b91c1c')}
+      ${kpi('Win %', mfx.winRate!==null ? fv(mfx.winRate)+'%' : '—', mfx.winRate!==null ? winColor : '#9098a8', '#6366f1')}
+      ${kpi('Ret/DD', fv(mfx.retdd ?? null), '#111318', '#1d4ed8')}
     </div>`;
   const stats = `
-    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px">
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:12px">
+      ${sec('# Trades', mfx.trades || '—')}
       ${sec('Gain', mfx.gain !== null ? (mfx.gain >= 0 ? '+' : '') + mfx.gain.toFixed(2) + '%' : '—')}
       ${sec('Balance', mfx.balance ? '$' + mfx.balance.toLocaleString('es-AR',{maximumFractionDigits:0}) : '—')}
       ${sec('Sharpe', mfx.sharpe ? mfx.sharpe.toFixed(2) : '—')}
