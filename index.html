@@ -156,6 +156,27 @@
     .topbar { padding: 0 1rem; }
     .criteria-bar { display: grid; grid-template-columns: repeat(3,1fr); }
   }
+
+  /* EXPANDABLE ROWS */
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .expanded-row td { padding: 0 !important; }
+  tbody tr.data-row { cursor: pointer; }
+  tbody tr.data-row:hover { background: #eff6ff !important; }
+  .expand-arrow { font-size: 11px; color: #9098a8; transition: transform 0.2s; display: inline-block; }
+  .expand-arrow.open { transform: rotate(90deg); }
+  .ficha-subsection { overflow: hidden; transition: max-height 0.25s ease; max-height: 2000px; }
+  .ficha-subsection.collapsed { max-height: 0; }
+  .ficha-sub-header { font-size:11px;font-weight:700;color:#4a5060;text-transform:uppercase;letter-spacing:0.8px;
+    margin-bottom:8px;background:#e8f4ff;padding:6px 12px;border-radius:6px;cursor:pointer;user-select:none; }
+  .ficha-sub-header:hover { background:#dbeafe; }
+
+  @media (max-width: 600px) {
+    .kpi-grid { grid-template-columns: repeat(2,1fr) !important; }
+    .sec-grid  { grid-template-columns: repeat(4,1fr) !important; }
+  }
 </style>
 </head>
 <body>
@@ -265,25 +286,6 @@
     </div>
   </div>
 
-  <!-- FICHA DE BOT -->
-  <div class="section-card" id="ficha-section">
-    <div class="section-head" onclick="toggleFicha()">
-      <span class="section-title">🤖 Ficha de Bot</span>
-      <span class="chevron" id="chev-ficha">▼</span>
-    </div>
-    <div class="collapse-body" id="ficha-body">
-      <div class="form-inner">
-        <div class="field" style="margin-bottom:16px">
-          <label>Seleccioná un bot para ver su ficha completa</label>
-          <select id="ficha-bot-select" onchange="selectBotFicha(this.value)">
-            <option value="">— Seleccioná un bot —</option>
-          </select>
-        </div>
-        <div id="ficha-content"></div>
-      </div>
-    </div>
-  </div>
-
   <!-- SUMMARY -->
   <div class="summary-grid" id="sum-grid" style="display: grid;">
     <div class="stat"><div class="stat-lbl">Total bots</div><div class="stat-val" id="s-tot">3</div></div>
@@ -327,21 +329,12 @@
             <th class="left" onclick="sort('tf')">TF</th>
             <th onclick="sort('sqxFilter')">SQX</th>
             <th onclick="sort('pf')">PF</th>
-            <th onclick="sort('sqn')">SQN★</th>
-            <th onclick="sort('dd')">DD $</th>
             <th onclick="sort('cagr')">Ann.Ret%</th>
             <th onclick="sort('wr')">W/L</th>
-            <th onclick="sort('retdd')">Ret/DD</th>
-            <th onclick="sort('cagrdd')">CAGR/DD%</th>
             <th onclick="sort('trades')"># Trades</th>
             <th onclick="sort('sharpe')">Sharpe</th>
-            <th onclick="sort('stability')">Stability</th>
-            <th onclick="sort('np')">Net Profit</th>
-            <th onclick="sort('fitness')">Fitness</th>
-            <th onclick="sort('stag')">Stag.d★</th>
             <th>Estado</th>
-            <th>Fallos</th>
-            <th></th>
+            <th style="width:30px"></th>
           </tr>
         </thead>
         <tbody id="tbody"><tr>
@@ -956,7 +949,7 @@ function render() {
   }
 
   if (rows.length === 0) {
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="20">
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="11">
       Sin resultados. Arrastrá un CSV de SQX o agregá manualmente.
     </td></tr>`;
     return;
@@ -974,7 +967,6 @@ function render() {
     });
   }
 
-  updateBotDropdown();
   tbody.innerHTML = sorted.map(s => {
     const d = getVD(s);
     const fails = evalS(s);
@@ -985,39 +977,23 @@ function render() {
       : st === 'warn'
       ? '<span class="badge badge-warn">~ Parcial</span>'
       : '<span class="badge badge-fail">✗ Descartar</span>';
-
     const sqxB = s.sqxFilter === 'PASSED'
       ? '<span class="sqx-ok">PASSED</span>'
       : s.sqxFilter ? `<span class="sqx-fail">${s.sqxFilter}</span>` : '—';
-
     const srcT = `<span class="src-tag">${s.source === 'csv' ? 'CSV' : 'Manual'}</span>`;
-    const failsStr = fails.length
-      ? `<span class="fail-list">${fails.join(', ')}</span>`
-      : '<span class="na">—</span>';
-
-    const nm = s.name.length > 26 ? s.name.slice(0,26)+'…' : s.name;
-
-    return `<tr>
+    const nm = s.name.length > 30 ? s.name.slice(0,30)+'…' : s.name;
+    return `<tr id="datarow-${idx}" class="data-row" onclick="toggleRow(${idx})">
       <td class="left name-cell" title="${s.name} — ${s.added||''}">${nm}${srcT}</td>
       <td class="left">${s.symbol||'—'}</td>
       <td class="left">${s.tf||'—'}</td>
       <td>${sqxB}</td>
       <td class="${pfCls(d.pf)}">${f(d.pf)}</td>
-      <td class="${d.sqn!==null&&d.sqn!==undefined?cls('sqn',d.sqn):'na'}">${d.sqn!==null&&d.sqn!==undefined?f(d.sqn):'—'}</td>
-      <td>${d.dd!==null?fm(d.dd):'—'}</td>
       <td class="${cls('cagr',d.cagr)}">${d.cagr!==null?f(d.cagr)+'%':'—'}</td>
       <td class="${cls('wr',d.wr)}">${f(d.wr)}</td>
-      <td>${f(d.retdd)}</td>
-      <td>${f(d.cagrdd)}</td>
       <td class="${cls('trades',d.trades)}">${d.trades!==null?d.trades:'—'}</td>
       <td class="${cls('sharpe',d.sharpe)}">${f(d.sharpe)}</td>
-      <td>${f(d.stability)}</td>
-      <td>${fm(d.np)}</td>
-      <td>${f(d.fitness)}</td>
-      <td class="${stagCls(d.stag)}">${d.stag!==null&&d.stag!==undefined?d.stag:'—'}</td>
       <td>${badge}</td>
-      <td>${failsStr}</td>
-      <td><button class="del-btn" onclick="delS(${idx})" title="Eliminar">×</button></td>
+      <td style="text-align:center"><span class="expand-arrow" id="arrow-${idx}">▶</span></td>
     </tr>`;
   }).join('');
 }
@@ -1123,54 +1099,68 @@ window.addEventListener('beforeunload', e => {
   if (dirty) { e.preventDefault(); e.returnValue = ''; }
 });
 
-// ── FICHA DE BOT ──────────────────────────────────────────────────
-let fichaOpen = false;
-let fichaCurrentId = null;
+// ── EXPANDABLE ROWS ───────────────────────────────────────────────
+let expandedRow = null;
 
-function toggleFicha() {
-  fichaOpen = !fichaOpen;
-  document.getElementById('ficha-body').classList.toggle('open', fichaOpen);
-  document.getElementById('chev-ficha').classList.toggle('open', fichaOpen);
+function updateBotDropdown() {} // no-op: no hay dropdown separado
+
+function toggleRow(idx) {
+  if (expandedRow !== null && expandedRow !== idx) collapseRow(expandedRow);
+  if (document.getElementById('expanded-' + idx)) {
+    collapseRow(idx); expandedRow = null;
+  } else {
+    expandRow(idx); expandedRow = idx;
+  }
 }
 
-function updateBotDropdown() {
-  const sel = document.getElementById('ficha-bot-select');
-  if (!sel) return;
-  const current = sel.value;
-  sel.innerHTML = '<option value="">— Seleccioná un bot —</option>';
-  DB.forEach(b => {
-    const opt = document.createElement('option');
-    opt.value = b.id;
-    opt.textContent = b.name + (b.symbol ? ' — ' + b.symbol : '');
-    sel.appendChild(opt);
-  });
-  if (current && DB.find(b => b.id === current)) sel.value = current;
+function collapseRow(idx) {
+  const row = document.getElementById('expanded-' + idx);
+  if (row) row.remove();
+  const arrow = document.getElementById('arrow-' + idx);
+  if (arrow) arrow.classList.remove('open');
 }
 
-function selectBotFicha(id) {
-  fichaCurrentId = id;
-  if (!id) { document.getElementById('ficha-content').innerHTML = ''; return; }
+function expandRow(idx) {
+  const s = DB[idx];
+  if (!s) return;
+  const dataRow = document.getElementById('datarow-' + idx);
+  if (!dataRow) return;
+  const arrow = document.getElementById('arrow-' + idx);
+  if (arrow) arrow.classList.add('open');
+  const tr = document.createElement('tr');
+  tr.id = 'expanded-' + idx;
+  tr.className = 'expanded-row';
+  const td = document.createElement('td');
+  td.colSpan = 11;
+  td.style.cssText = 'padding:0;border-bottom:2px solid #6366f1';
+  td.innerHTML = buildFichaHTML(s, idx);
+  tr.appendChild(td);
+  dataRow.insertAdjacentElement('afterend', tr);
+  if (s.overviewData && s.overviewData.monthlyData && s.overviewData.monthlyData.length > 0) {
+    renderOverviewChart(s.overviewData.monthlyData, 'equity-' + idx);
+  }
+}
+
+function toggleFichaSection(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.toggle('collapsed');
+  const hdr = el.previousElementSibling;
+  if (hdr) hdr.textContent = hdr.textContent.includes('▾')
+    ? hdr.textContent.replace('▾','▸')
+    : hdr.textContent.replace('▸','▾');
+}
+
+function updateBotNotes(id, value) {
   const bot = DB.find(b => b.id === id);
-  if (bot) renderFicha(bot);
+  if (bot) { bot.notes = value; markDirty(); }
 }
 
-function fichErr(m) {
-  const e = document.getElementById('ficha-ov-err');
-  if (e) { e.textContent = m; e.style.display = 'block'; }
-}
-
-function saveFichaNotes(id) {
-  const bot = DB.find(b => b.id === id);
-  if (!bot) return;
-  const ta = document.getElementById('ficha-notes');
-  if (ta) { bot.notes = ta.value; markDirty(); alertOk('✓ Notas guardadas.'); }
-}
-
-function processOverviewInFicha(botId) {
-  const text = document.getElementById('ficha-ov-text')?.value?.trim();
-  if (!text) { fichErr('Pegá el texto del Overview.'); return; }
+function processOverviewInline(botId, idx) {
+  const text = document.getElementById('ov-inline-' + idx)?.value?.trim();
+  if (!text) return;
   const parsed = parseOverview(text);
-  if (!parsed) { fichErr('No se pudo parsear. Verificá que sea un Overview de SQX.'); return; }
+  if (!parsed) { alert('No se pudo parsear el Overview. Verificá que sea texto de SQX.'); return; }
   const bot = DB.find(b => b.id === botId);
   if (!bot) return;
   if (parsed.sqn  !== null) bot.sqn  = parsed.sqn;
@@ -1179,18 +1169,158 @@ function processOverviewInFicha(botId) {
   bot.overviewData = parsed;
   markDirty();
   render();
-  document.getElementById('ficha-bot-select').value = botId;
-  renderFicha(bot);
+  collapseRow(idx);
+  setTimeout(() => expandRow(idx), 50);
 }
 
 function metricColor(key, val) {
   if (val === null || val === undefined || isNaN(val)) return '';
-  if (key === 'pf')    return val >= 1.30 ? '#1a7f4b' : val >= 1.20 ? '#d97706' : '#b91c1c';
-  if (key === 'stag')  return val <= 500  ? '#1a7f4b' : val <= 1300  ? '#d97706' : '#b91c1c';
+  if (key === 'pf')   return val >= 1.30 ? '#1a7f4b' : val >= 1.20 ? '#d97706' : '#b91c1c';
+  if (key === 'stag') return val <= 500  ? '#1a7f4b' : val <= 1300 ? '#d97706' : '#b91c1c';
   const c = CRIT[key];
   if (!c) return '';
   return (c.dir === 1 ? val >= c.min : val <= c.max) ? '#1a7f4b' : '#b91c1c';
 }
+
+function buildOverviewMetrics(ov) {
+  const fv = (v, dec=2) => (v===null||v===undefined||isNaN(v)) ? '—' : Number(v).toFixed(dec);
+  const fm = v => (v===null||v===undefined||isNaN(v)) ? '—' : '$'+Number(v).toLocaleString('es-AR',{maximumFractionDigits:0});
+  const pfColor = ov.pf >= 1.30 ? '#1a7f4b' : ov.pf >= 1.20 ? '#d97706' : '#b91c1c';
+  const tradesColor = ov.trades >= 500 ? '#1a7f4b' : ov.trades >= 200 ? '#d97706' : '#b91c1c';
+  const sqnColor  = ov.sqn  >= 1.60 ? '#1a7f4b' : ov.sqn  >= 1.00 ? '#d97706' : '#b91c1c';
+  const stagColor = ov.stag <= 500  ? '#1a7f4b' : ov.stag <= 1300 ? '#d97706' : '#b91c1c';
+  const zpColor   = ov.zp   <= 88   ? '#1a7f4b' : ov.zp   <= 95   ? '#d97706' : '#b91c1c';
+  const kpi = (label, val, color, borderColor) => `
+    <div style="background:#fff;border:1px solid #e0e3e8;border-top:3px solid ${borderColor};border-radius:8px;padding:12px 14px">
+      <div style="font-size:10px;font-weight:700;color:#9098a8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">${label}</div>
+      <div style="font-size:22px;font-weight:700;color:${color}">${val}</div>
+    </div>`;
+  const sec = (label, val, color='#111318') => `
+    <div style="background:#f8f9fa;border:1px solid #e0e3e8;border-radius:6px;padding:8px 10px">
+      <div style="font-size:9px;font-weight:700;color:#9098a8;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:3px">${label}</div>
+      <div style="font-size:13px;font-weight:700;color:${color}">${val}</div>
+    </div>`;
+  return `
+    <div class="kpi-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px">
+      ${kpi('Profit Factor', fv(ov.pf), pfColor, '#1a7f4b')}
+      ${kpi('Drawdown $', fm(ov.dd), '#111318', '#b91c1c')}
+      ${kpi('# Trades', ov.trades!==null?ov.trades:'—', tradesColor, '#1d4ed8')}
+      ${kpi('Ret/DD Ratio', fv(ov.retdd), '#111318', '#d97706')}
+    </div>
+    <div class="sec-grid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px">
+      ${sec('SQN', fv(ov.sqn), ov.sqn!==null?sqnColor:'#9098a8')}
+      ${sec('Stagnation', ov.stag!==null?ov.stag+'d':'—', ov.stag!==null?stagColor:'#9098a8')}
+      ${sec('Z-Prob %', ov.zp!==null?fv(ov.zp)+'%':'—', ov.zp!==null?zpColor:'#9098a8')}
+      ${sec('AHPR', fv(ov.ahpr))}
+      ${sec('Z-Score', fv(ov.zScore))}
+      ${sec('STR Quality', fv(ov.strQuality))}
+      ${sec('Win %', ov.winPct!==null?fv(ov.winPct)+'%':'—')}
+      ${sec('R Expectancy', fv(ov.rExp))}
+    </div>`;
+}
+
+function buildFichaHTML(s, idx) {
+  const is   = s.source === 'csv' ? (s.is  || {}) : s;
+  const oos  = s.source === 'csv' ? (s.oos || {}) : {};
+  const ov   = s.overviewData || null;
+  const hasOOS = oos.pf !== null && oos.pf !== undefined && !isNaN(oos.pf) && oos.pf !== 0;
+  const avg = (a, b) => {
+    const aOk = a!==null&&a!==undefined&&!isNaN(a);
+    const bOk = b!==null&&b!==undefined&&!isNaN(b)&&b!==0;
+    if (aOk&&bOk) return (a+b)/2; return aOk?a:(bOk?b:null);
+  };
+  const full = hasOOS ? {
+    pf:avg(is.pf,oos.pf), cagr:avg(is.cagr,oos.cagr), wr:avg(is.wr,oos.wr),
+    trades:(is.trades||0)+(oos.trades||0), sharpe:avg(is.sharpe,oos.sharpe),
+    dd:Math.max(is.dd||0,oos.dd||0), np:(is.np||0)+(oos.np||0),
+    retdd:avg(is.retdd,oos.retdd), cagrdd:avg(is.cagrdd,oos.cagrdd),
+    stability:avg(is.stability,oos.stability), fitness:avg(is.fitness,oos.fitness),
+  } : {...is};
+  const fails = evalS(s);
+  const st = fails.length===0?'ok':fails.length<=2?'warn':'fail';
+  const badge = st==='ok'?'<span class="badge badge-ok">✓ OK</span>'
+    :st==='warn'?'<span class="badge badge-warn">~ Parcial</span>'
+    :'<span class="badge badge-fail">✗ Descartar</span>';
+  const fv = (v,dec=2) => (v===null||v===undefined||isNaN(v))?'—':Number(v).toFixed(dec);
+  const fm = v => (v===null||v===undefined||isNaN(v))?'—':'$'+Number(v).toLocaleString('es-AR',{maximumFractionDigits:0});
+  const cell = (key,val,fmt,isFull) => {
+    const color = key ? metricColor(key,val) : '';
+    const bg = isFull ? 'background:#f5f5ff;' : '';
+    return `<td style="padding:7px 12px;text-align:right;font-size:12px;${bg}${color?`color:${color};font-weight:600`:''}">${fmt(val)}</td>`;
+  };
+  const metricRows = [
+    {lbl:'Profit Factor', key:'pf',       isV:is.pf,        oosV:oos.pf,        fullV:full.pf,        fmt:v=>fv(v)},
+    {lbl:'Ann. Return %', key:'cagr',     isV:is.cagr,      oosV:oos.cagr,      fullV:full.cagr,      fmt:v=>(v===null||isNaN(v)?'—':fv(v)+'%')},
+    {lbl:'W/L Ratio',     key:'wr',       isV:is.wr,        oosV:oos.wr,        fullV:full.wr,        fmt:v=>fv(v)},
+    {lbl:'Trades',        key:'trades',   isV:is.trades,    oosV:oos.trades,    fullV:full.trades,    fmt:v=>(v===null||isNaN(v)?'—':Math.round(v))},
+    {lbl:'Sharpe',        key:'sharpe',   isV:is.sharpe,    oosV:oos.sharpe,    fullV:full.sharpe,    fmt:v=>fv(v)},
+    {lbl:'Drawdown $',    key:null,       isV:is.dd,        oosV:oos.dd,        fullV:full.dd,        fmt:v=>fm(v)},
+    {lbl:'Net Profit',    key:null,       isV:is.np,        oosV:oos.np,        fullV:full.np,        fmt:v=>fm(v)},
+    {lbl:'Ret/DD',        key:null,       isV:is.retdd,     oosV:oos.retdd,     fullV:full.retdd,     fmt:v=>fv(v)},
+    {lbl:'CAGR/DD%',      key:null,       isV:is.cagrdd,    oosV:oos.cagrdd,    fullV:full.cagrdd,    fmt:v=>fv(v)},
+    {lbl:'Stability',     key:null,       isV:is.stability, oosV:oos.stability, fullV:full.stability, fmt:v=>fv(v)},
+    {lbl:'Fitness',       key:null,       isV:is.fitness,   oosV:oos.fitness,   fullV:full.fitness,   fmt:v=>fv(v)},
+  ];
+  const tableRows = metricRows.map(r=>`
+    <tr style="border-bottom:1px solid #e0e3e8">
+      <td style="padding:7px 12px;font-weight:600;color:#4a5060;font-size:12px">${r.lbl}</td>
+      ${cell(r.key,r.isV,r.fmt,false)}
+      ${cell(r.key,r.oosV,r.fmt,false)}
+      ${cell(r.key,r.fullV,r.fmt,true)}
+    </tr>`).join('');
+  const hasMonthly = ov && ov.monthlyData && ov.monthlyData.length > 0;
+  return `
+    <div class="bot-ficha" style="padding:1.5rem;background:#f8f9fa;animation:slideDown 0.2s ease">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+        <div style="font-size:16px;font-weight:700;color:#111318">${s.name}</div>
+        ${s.symbol?`<span style="font-size:11px;background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:4px;font-weight:600">${s.symbol}</span>`:''}
+        ${s.tf?`<span style="font-size:11px;background:#f1f3f5;color:#4a5060;padding:2px 8px;border-radius:4px">${s.tf}</span>`:''}
+        ${badge}
+        <span style="font-size:11px;color:#9098a8;margin-left:auto">${s.added||''}</span>
+      </div>
+      ${fails.length?`<div style="font-size:11px;color:#b91c1c;font-weight:600;margin-bottom:12px">Criterios fallando: ${fails.join(', ')}</div>`:''}
+
+      <div class="ficha-sub-header" onclick="toggleFichaSection('metrics-${idx}')">📊 Métricas IS / OOS / Full ▾</div>
+      <div id="metrics-${idx}" class="ficha-subsection" style="margin-bottom:12px;overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr>
+            <th style="text-align:left;padding:7px 12px;background:#f1f3f5;font-size:10px;color:#4a5060;border-bottom:1px solid #e0e3e8">Métrica</th>
+            <th style="text-align:right;padding:7px 12px;background:#f1f3f5;font-size:10px;color:#4a5060;border-bottom:1px solid #e0e3e8">IS</th>
+            <th style="text-align:right;padding:7px 12px;background:#f1f3f5;font-size:10px;color:#4a5060;border-bottom:1px solid #e0e3e8">OOS</th>
+            <th style="text-align:right;padding:7px 12px;background:#f0f0ff;font-size:10px;color:#4f46e5;font-weight:700;border-bottom:1px solid #e0e3e8">Full</th>
+          </tr></thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>
+
+      ${ov ? `
+      <div class="ficha-sub-header" onclick="toggleFichaSection('overview-${idx}')">📋 Métricas Overview ▾</div>
+      <div id="overview-${idx}" class="ficha-subsection" style="margin-bottom:12px">
+        ${buildOverviewMetrics(ov)}
+      </div>
+      <div class="ficha-sub-header" onclick="toggleFichaSection('equity-${idx}')">📈 Equity Curve ▾</div>
+      <div id="equity-${idx}" class="ficha-subsection" style="margin-bottom:12px">
+        ${hasMonthly ? '' : '<p style="color:#9098a8;font-size:12px;padding:8px 0">Sin datos mensuales.</p>'}
+      </div>
+      ` : `
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:12px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:600;color:#92400e;margin-bottom:8px">📋 Sin datos de Overview cargados</div>
+        <textarea id="ov-inline-${idx}" rows="6"
+          style="width:100%;border:1px solid #e0e3e8;border-radius:6px;padding:8px;font-size:11px;
+                 font-family:monospace;background:#fff;color:#111318;resize:vertical;margin-bottom:8px"
+          placeholder="Pegá el texto del Overview de SQX acá..."></textarea>
+        <button onclick="event.stopPropagation();processOverviewInline('${s.id}',${idx})"
+          style="height:32px;padding:0 14px;border-radius:6px;background:#4f46e5;border:none;
+                 color:#fff;font-size:12px;font-weight:500;cursor:pointer">⚡ Parsear y cargar</button>
+      </div>
+      `}
+
+      <div style="font-size:11px;font-weight:700;color:#4a5060;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">📝 Notas</div>
+      <textarea rows="2" onclick="event.stopPropagation()"
+        style="width:100%;border:1px solid #e0e3e8;border-radius:6px;padding:8px;
+               font-size:12px;color:#111318;background:#fff;resize:vertical"
+        onchange="updateBotNotes('${s.id}',this.value)">${s.notes||''}</textarea>
+    </div>`;
 
 function renderFicha(bot) {
   const is   = bot.source === 'csv' ? (bot.is  || {}) : bot;
