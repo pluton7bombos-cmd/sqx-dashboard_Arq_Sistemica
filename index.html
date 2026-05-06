@@ -1156,7 +1156,7 @@ function updateBotNotes(id, value) {
   if (bot) { bot.notes = value; markDirty(); }
 }
 
-function processOverviewInline(botId, idx) {
+async function processOverviewInline(botId, idx) {
   const text = document.getElementById('ov-inline-' + idx)?.value?.trim();
   if (!text) return;
   const parsed = parseOverview(text);
@@ -1171,6 +1171,7 @@ function processOverviewInline(botId, idx) {
   render();
   collapseRow(idx);
   setTimeout(() => expandRow(idx), 50);
+  await saveToGitHub();
 }
 
 function metricColor(key, val) {
