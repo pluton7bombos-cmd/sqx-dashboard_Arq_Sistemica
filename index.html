@@ -1321,6 +1321,7 @@ function buildFichaHTML(s, idx) {
                font-size:12px;color:#111318;background:#fff;resize:vertical"
         onchange="updateBotNotes('${s.id}',this.value)">${s.notes||''}</textarea>
     </div>`;
+}
 
 function renderFicha(bot) {
   const is   = bot.source === 'csv' ? (bot.is  || {}) : bot;
