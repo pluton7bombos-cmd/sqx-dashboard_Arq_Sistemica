@@ -3237,11 +3237,18 @@ function buildFichaHTML(s, idx) {
               style="width:100%;border:1px solid #e0e3e8;border-radius:6px;padding:8px;
                      font-size:11px;font-family:monospace;background:#fff;color:#111318;resize:vertical"
               placeholder="Pegá acá el texto copiado de Myfxbook (los 3 bloques juntos)..."></textarea>
-            <button onclick="event.stopPropagation();processMyfxbook('${s.id}',${idx})"
-              style="margin-top:8px;height:32px;padding:0 16px;border-radius:6px;
-                     background:#4f46e5;border:none;color:#fff;font-size:12px;font-weight:500;cursor:pointer">
-              ⚡ Parsear y cargar
-            </button>
+            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+              <button onclick="event.stopPropagation();processMyfxbook('${s.id}',${idx})"
+                style="height:32px;padding:0 16px;border-radius:6px;background:#4f46e5;border:none;
+                       color:#fff;font-size:12px;font-weight:500;cursor:pointer">
+                ⚡ Parsear
+              </button>
+              <button onclick="event.stopPropagation();saveMyfxbook('${s.id}',${idx})"
+                style="height:32px;padding:0 16px;border-radius:6px;background:#1a7f4b;border:none;
+                       color:#fff;font-size:12px;font-weight:500;cursor:pointer">
+                💾 Guardar en GitHub
+              </button>
+            </div>
             <div id="mfx-err-${idx}" style="display:none;color:#b91c1c;font-size:12px;margin-top:6px"></div>
           </div>
         </details>
@@ -3632,6 +3639,14 @@ async function processMyfxbook(botId, idx) {
   markDirty();
   collapseRow(idx);
   setTimeout(() => expandRow(idx), 50);
+}
+
+async function saveMyfxbook(botId, idx) {
+  const bot = DB.find(b => b.id === botId);
+  if (!bot || !bot.myfxbookData) {
+    alert('Primero parsea los datos de Myfxbook con el botón ⚡ Parsear.');
+    return;
+  }
   await saveToGitHub();
 }
 
