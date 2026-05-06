@@ -2458,6 +2458,25 @@ try {
   }
 } catch(e) { DB = []; console.warn('DB parse error:', e); }
 
+// Merge con localStorage: aplica datos extra (myfxbookData, overviewData, notes)
+// que pueden estar más actualizados que el db-store (caché de GitHub Pages)
+try {
+  const cached = localStorage.getItem('sqx-db-cache');
+  if (cached) {
+    const cacheDB = JSON.parse(cached);
+    if (Array.isArray(cacheDB)) {
+      cacheDB.forEach(cBot => {
+        const dbBot = DB.find(b => b.id === cBot.id);
+        if (dbBot) {
+          if (cBot.myfxbookData && !dbBot.myfxbookData) dbBot.myfxbookData = cBot.myfxbookData;
+          if (cBot.overviewData  && !dbBot.overviewData)  dbBot.overviewData  = cBot.overviewData;
+          if (cBot.notes         && !dbBot.notes)          dbBot.notes         = cBot.notes;
+        }
+      });
+    }
+  }
+} catch(e) {}
+
 let dirty = false; // hay cambios sin guardar
 
 // ── CRITERIOS ──────────────────────────────────────────────────
@@ -2589,6 +2608,7 @@ function markDirty() {
   dirty = true;
   document.getElementById('save-notice').style.display = 'block';
   updateDbCount();
+  try { localStorage.setItem('sqx-db-cache', JSON.stringify(DB)); } catch(e) {}
 }
 
 function updateDbCount() {
