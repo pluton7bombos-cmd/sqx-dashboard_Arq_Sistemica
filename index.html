@@ -1184,28 +1184,29 @@ function metricColor(key, val) {
 
 function buildOverviewMetrics(ov) {
   const fv = (v, dec=2) => (v===null||v===undefined||isNaN(v)) ? '—' : Number(v).toFixed(dec);
-  const fm = v => (v===null||v===undefined||isNaN(v)) ? '—' : '$'+Number(v).toLocaleString('es-AR',{maximumFractionDigits:0});
-  const pfColor = ov.pf >= 1.30 ? '#1a7f4b' : ov.pf >= 1.20 ? '#d97706' : '#b91c1c';
-  const tradesColor = ov.trades >= 500 ? '#1a7f4b' : ov.trades >= 200 ? '#d97706' : '#b91c1c';
-  const sqnColor  = ov.sqn  >= 1.60 ? '#1a7f4b' : ov.sqn  >= 1.00 ? '#d97706' : '#b91c1c';
-  const stagColor = ov.stag <= 500  ? '#1a7f4b' : ov.stag <= 1300 ? '#d97706' : '#b91c1c';
-  const zpColor   = ov.zp   <= 88   ? '#1a7f4b' : ov.zp   <= 95   ? '#d97706' : '#b91c1c';
+  const pfColor     = ov.pf     >= 1.30 ? '#1a7f4b' : ov.pf     >= 1.20 ? '#d97706' : '#b91c1c';
+  const tradesColor = ov.trades >= 500  ? '#1a7f4b' : ov.trades  >= 200  ? '#d97706' : '#b91c1c';
+  const winColor    = ov.winPct >= 55   ? '#1a7f4b' : ov.winPct  >= 50   ? '#d97706' : '#b91c1c';
+  const ddPctColor  = ov.ddPct  <= 15   ? '#1a7f4b' : ov.ddPct   <= 25   ? '#d97706' : '#b91c1c';
+  const sqnColor    = ov.sqn    >= 1.60 ? '#1a7f4b' : ov.sqn     >= 1.00 ? '#d97706' : '#b91c1c';
+  const stagColor   = ov.stag   <= 500  ? '#1a7f4b' : ov.stag    <= 1300 ? '#d97706' : '#b91c1c';
+  const zpColor     = ov.zp     <= 88   ? '#1a7f4b' : ov.zp      <= 95   ? '#d97706' : '#b91c1c';
   const kpi = (label, val, color, borderColor) => `
-    <div style="background:#fff;border:1px solid #e0e3e8;border-top:3px solid ${borderColor};border-radius:8px;padding:12px 14px">
-      <div style="font-size:10px;font-weight:700;color:#9098a8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">${label}</div>
-      <div style="font-size:22px;font-weight:700;color:${color}">${val}</div>
+    <div style="background:#fff;border:1px solid #e0e3e8;border-top:3px solid ${borderColor};border-radius:8px;padding:10px 14px">
+      <div style="font-size:10px;font-weight:700;color:#9098a8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px">${label}</div>
+      <div style="font-size:17px;font-weight:700;color:${color}">${val}</div>
     </div>`;
   const sec = (label, val, color='#111318') => `
     <div style="background:#f8f9fa;border:1px solid #e0e3e8;border-radius:6px;padding:8px 10px">
       <div style="font-size:9px;font-weight:700;color:#9098a8;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:3px">${label}</div>
-      <div style="font-size:13px;font-weight:700;color:${color}">${val}</div>
+      <div style="font-size:14px;font-weight:700;color:${color}">${val}</div>
     </div>`;
   return `
-    <div class="kpi-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px">
+    <div class="kpi-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px">
       ${kpi('Profit Factor', fv(ov.pf), pfColor, '#1a7f4b')}
-      ${kpi('Drawdown $', fm(ov.dd), '#111318', '#b91c1c')}
-      ${kpi('# Trades', ov.trades!==null?ov.trades:'—', tradesColor, '#1d4ed8')}
-      ${kpi('Ret/DD Ratio', fv(ov.retdd), '#111318', '#d97706')}
+      ${kpi('DD %', ov.ddPct!==null&&ov.ddPct!==undefined?fv(ov.ddPct)+'%':'—', ov.ddPct!==null?ddPctColor:'#9098a8', '#b91c1c')}
+      ${kpi('Win %', ov.winPct!==null&&ov.winPct!==undefined?fv(ov.winPct)+'%':'—', ov.winPct!==null?winColor:'#9098a8', '#6366f1')}
+      ${kpi('# Trades', ov.trades!==null&&ov.trades!==undefined?ov.trades:'—', ov.trades!==null?tradesColor:'#9098a8', '#1d4ed8')}
     </div>
     <div class="sec-grid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px">
       ${sec('SQN', fv(ov.sqn), ov.sqn!==null?sqnColor:'#9098a8')}
@@ -1214,7 +1215,7 @@ function buildOverviewMetrics(ov) {
       ${sec('AHPR', fv(ov.ahpr))}
       ${sec('Z-Score', fv(ov.zScore))}
       ${sec('STR Quality', fv(ov.strQuality))}
-      ${sec('Win %', ov.winPct!==null?fv(ov.winPct)+'%':'—')}
+      ${sec('Ret/DD', fv(ov.retdd))}
       ${sec('R Expectancy', fv(ov.rExp))}
     </div>`;
 }
