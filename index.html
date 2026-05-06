@@ -3044,7 +3044,7 @@ function expandRow(idx) {
   tr.appendChild(td);
   dataRow.insertAdjacentElement('afterend', tr);
   if (s.overviewData && s.overviewData.monthlyData && s.overviewData.monthlyData.length > 0) {
-    renderOverviewChart(s.overviewData.monthlyData, 'equity-' + idx);
+    renderOverviewChart(s.overviewData.monthlyData, 'equity-' + idx, s.myfxbookData || null);
   }
 }
 
@@ -3132,6 +3132,7 @@ function buildFichaHTML(s, idx) {
   const is   = s.source === 'csv' ? (s.is  || {}) : s;
   const oos  = s.source === 'csv' ? (s.oos || {}) : {};
   const ov   = s.overviewData || null;
+  const mfx  = s.myfxbookData || null;
   const hasOOS = oos.pf !== null && oos.pf !== undefined && !isNaN(oos.pf) && oos.pf !== 0;
   const avg = (a, b) => {
     const aOk = a!==null&&a!==undefined&&!isNaN(a);
@@ -3223,6 +3224,28 @@ function buildFichaHTML(s, idx) {
                  color:#fff;font-size:12px;font-weight:500;cursor:pointer">⚡ Parsear y cargar</button>
       </div>
       `}
+
+      <div class="ficha-sub-header" onclick="toggleFichaSection('myfxbook-${idx}')">📊 Myfxbook — Live &nbsp;${getLiveBadge(mfx)} ▾</div>
+      <div id="myfxbook-${idx}" class="ficha-subsection" style="margin-bottom:12px">
+        ${buildMyfxbookBlock(mfx, idx)}
+        <details style="margin-top:8px" onclick="event.stopPropagation()">
+          <summary style="font-size:12px;color:#4a5060;cursor:pointer;padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px">
+            ⬆ ${mfx ? 'Actualizar datos' : 'Cargar datos de Myfxbook'}
+          </summary>
+          <div style="margin-top:8px">
+            <textarea id="mfx-${idx}" rows="8" onclick="event.stopPropagation()"
+              style="width:100%;border:1px solid #e0e3e8;border-radius:6px;padding:8px;
+                     font-size:11px;font-family:monospace;background:#fff;color:#111318;resize:vertical"
+              placeholder="Pegá acá el texto copiado de Myfxbook (los 3 bloques juntos)..."></textarea>
+            <button onclick="event.stopPropagation();processMyfxbook('${s.id}',${idx})"
+              style="margin-top:8px;height:32px;padding:0 16px;border-radius:6px;
+                     background:#4f46e5;border:none;color:#fff;font-size:12px;font-weight:500;cursor:pointer">
+              ⚡ Parsear y cargar
+            </button>
+            <div id="mfx-err-${idx}" style="display:none;color:#b91c1c;font-size:12px;margin-top:6px"></div>
+          </div>
+        </details>
+      </div>
 
       <div style="font-size:11px;font-weight:700;color:#4a5060;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">📝 Notas</div>
       <textarea rows="2" onclick="event.stopPropagation()"
@@ -3439,119 +3462,322 @@ function parseOverview(text) {
            totalProfit, sharpe, pf, trades, winPct, dd, ddPct, retdd, rExp, monthlyData };
 }
 
-function renderOverviewChart(monthlyData, containerId = 'ficha-equity-chart') {
-  const container = document.getElementById(containerId);
-  if (!container || !monthlyData || monthlyData.length === 0) return;
+// ── MYFXBOOK ─────────────────────────────────────────────────────────
+function parseMyfxbook(text) {
+  if (!text || !text.trim()) return null;
+  const result = {
+    gain:null, absGain:null, daily:null, monthly:null, ddPct:null, balance:null,
+    trades:null, pips:null, pf:null, sharpe:null, zScore:null, zProb:null,
+    expectancyPips:null, expectancyUsd:null, ahpr:null, ghpr:null,
+    avgWinPips:null, avgWinUsd:null, avgLossPips:null, avgLossUsd:null,
+    lots:null, commissions:null, longsWon:null, shortsWon:null,
+    bestTradeUsd:null, worstTradeUsd:null, bestTradePips:null, worstTradePips:null,
+    avgTradeLength:null, tradeList:[], winRate:null, netProfit:null,
+    startDate:null, endDate:null,
+  };
+  const getVal = p => { const m = text.match(p); return m ? m[1].trim() : null; };
+  const getNum = p => { const v = getVal(p); if (!v) return null; const n = parseFloat(v.replace(/[$,%+]/g,'')); return isNaN(n)?null:n; };
 
-  const series = [];
-  let cumulative = 0;
-  const monthNames = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  result.gain    = getNum(/Gain\s*:\s*([+-]?[\d.]+%?)/i);
+  result.absGain = getNum(/Abs\.\s*Gain\s*:\s*([+-]?[\d.]+)/i);
+  result.daily   = getNum(/Daily\s*:?\s*([+-]?[\d.]+)/i);
+  result.monthly = getNum(/Monthly\s*:\s*([+-]?[\d.]+)/i);
+  result.ddPct   = getNum(/Drawdown\s*:\s*([\d.]+)/i);
+  result.balance = getNum(/Balance\s*:\s*\$?([\d,]+\.?\d*)/i);
+  result.trades  = getNum(/Trades\s*:\s*(\d+)/i);
+  result.pips    = getNum(/Pips\s*:\s*([\d.]+)/i);
+  result.pf      = getNum(/Profit\s*Factor\s*:\s*([\d.]+)/i);
+  result.sharpe  = getNum(/Sharpe\s*Ratio\s*:?\s*([\d.]+)/i);
+  const zM = text.match(/Z-Score[^:]*:\s*([-\d.]+)\s*\(([\d.]+)%?\)/i);
+  if (zM) { result.zScore = parseFloat(zM[1]); result.zProb = parseFloat(zM[2]); }
+  const expM = text.match(/Expectancy\s*:?\s*([\d.]+)\s*Pips\s*\/\s*\$([\d.]+)/i);
+  if (expM) { result.expectancyPips = parseFloat(expM[1]); result.expectancyUsd = parseFloat(expM[2]); }
+  result.ahpr = getNum(/AHPR\s*:\s*([+-]?[\d.]+)/i);
+  result.ghpr = getNum(/GHPR\s*:\s*([+-]?[\d.]+)/i);
+  const awM = text.match(/Average\s*Win\s*:\s*([\d.]+)\s*pips\s*\/\s*\$([\d.]+)/i);
+  if (awM) { result.avgWinPips = parseFloat(awM[1]); result.avgWinUsd = parseFloat(awM[2]); }
+  const alM = text.match(/Average\s*Loss\s*:\s*(-[\d.]+)\s*pips\s*\/\s*-?\$([\d.]+)/i);
+  if (alM) { result.avgLossPips = parseFloat(alM[1]); result.avgLossUsd = -parseFloat(alM[2]); }
+  result.lots = getNum(/Lots\s*:\s*([\d.]+)/i);
+  result.commissions = getNum(/Commissions\s*:\s*-?\$?([\d.]+)/i);
+  const swM = text.match(/Shorts\s*Won\s*:\s*\((\d+)\/(\d+)\)\s*([\d.]+)%/i);
+  if (swM) result.shortsWon = { won:parseInt(swM[1]), total:parseInt(swM[2]), pct:parseFloat(swM[3]) };
+  const lwM = text.match(/Longs\s*Won\s*:\s*\((\d+)\/(\d+)\)\s*([\d.]+)%/i);
+  if (lwM) result.longsWon = { won:parseInt(lwM[1]), total:parseInt(lwM[2]), pct:parseFloat(lwM[3]) };
+  result.bestTradeUsd   = getNum(/Best\s*Trade\s*\(\$\)\s*:[^-\d]*([-\d.]+)/i);
+  result.worstTradeUsd  = getNum(/Worst\s*Trade\s*\(\$\)\s*:[^-\d]*([-\d.]+)/i);
+  result.bestTradePips  = getNum(/Best\s*Trade\s*\(Pips\)\s*:[^-\d]*([\d.]+)/i);
+  result.worstTradePips = getNum(/Worst\s*Trade\s*\(Pips\)\s*:[^-\d]*([-\d.]+)/i);
+  result.avgTradeLength = getVal(/Avg\.\s*Trade\s*Length\s*:\s*(.+?)(?:\n|$)/i);
 
-  monthlyData.forEach(row => {
-    row.months.forEach((val, i) => {
-      if (val === null || isNaN(val)) return;
-      cumulative += val;
-      series.push({
-        year: row.year, month: i + 1, monthName: monthNames[i], value: val,
-        cumulative: Math.round(cumulative * 100) / 100,
-        label: `${monthNames[i]} ${row.year}`
-      });
+  const tradesSection = text.match(/Magic\s+Open Date[\s\S]*/i);
+  if (tradesSection) {
+    const lines = tradesSection[0].split('\n').slice(1);
+    let cum = 0;
+    lines.forEach(line => {
+      const cols = line.trim().split('\t').map(c => c.trim());
+      if (cols.length < 6) return;
+      const magic = cols[0], openDate = cols[1], closeDate = cols[2];
+      const symbol = cols[3], action = cols[4];
+      if (!openDate || !magic || !action) return;
+      const lots       = parseFloat(cols[5]) || null;
+      const openPrice  = parseFloat(cols[8]) || null;
+      const closePrice = parseFloat(cols[9]) || null;
+      const pips       = parseFloat(cols[10]) || null;
+      const netProfit  = parseFloat(cols[11]) || null;
+      const duration   = cols[12] || null;
+      const gainPct    = cols[13] ? parseFloat(cols[13].replace('%','')) : null;
+      if (netProfit !== null) cum += netProfit;
+      result.tradeList.push({ magic, openDate, closeDate, symbol, action,
+        lots, openPrice, closePrice, pips, netProfit, duration, gainPct,
+        cumProfit: Math.round(cum * 100) / 100 });
     });
-  });
+    const closed = result.tradeList.filter(t => t.netProfit !== null);
+    const wins   = closed.filter(t => t.netProfit > 0);
+    result.winRate   = closed.length > 0 ? Math.round(wins.length / closed.length * 1000) / 10 : null;
+    result.netProfit = Math.round(cum * 100) / 100;
+    if (result.tradeList.length > 0) {
+      result.startDate = result.tradeList[result.tradeList.length - 1].openDate;
+      result.endDate   = result.tradeList[0].closeDate || result.tradeList[0].openDate;
+    }
+  }
+  return result;
+}
 
-  if (series.length === 0) return;
+function getLiveBadge(mfx) {
+  if (!mfx || !mfx.trades) return '';
+  if (mfx.trades < 30)
+    return '<span style="font-size:10px;background:#fffbeb;color:#92400e;border:1px solid #fde68a;padding:2px 8px;border-radius:10px;font-weight:600">🟡 En incubación</span>';
+  if (mfx.pf >= 1.10 && mfx.winRate >= 45)
+    return '<span style="font-size:10px;background:#eaf7f0;color:#1a7f4b;border:1px solid #b2dfc8;padding:2px 8px;border-radius:10px;font-weight:600">🟢 Validado</span>';
+  return '<span style="font-size:10px;background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;padding:2px 8px;border-radius:10px;font-weight:600">🟠 Degradado</span>';
+}
 
+function buildMyfxbookBlock(mfx, idx) {
+  if (!mfx) return '<div style="color:#9098a8;font-size:12px;padding:8px 0">Sin datos live cargados.</div>';
+  const statusColor = mfx.pf >= 1.30 ? '#1a7f4b' : mfx.pf >= 1.10 ? '#d97706' : '#b91c1c';
+  const winRate = mfx.winRate !== null ? mfx.winRate + '%' : '—';
+  const kpi = (lbl, val, color, borderColor) => `
+    <div style="background:#fff;border:1px solid #e0e3e8;border-top:3px solid ${borderColor};border-radius:8px;padding:10px 12px">
+      <div style="font-size:9px;font-weight:700;color:#9098a8;text-transform:uppercase;margin-bottom:4px">${lbl}</div>
+      <div style="font-size:17px;font-weight:700;color:${color}">${val}</div>
+    </div>`;
+  const sec = (lbl, val) => `
+    <div style="background:#f8f9fa;border:1px solid #e0e3e8;border-radius:6px;padding:7px 9px">
+      <div style="font-size:9px;font-weight:700;color:#9098a8;text-transform:uppercase;margin-bottom:3px">${lbl}</div>
+      <div style="font-size:13px;font-weight:700;color:#111318">${val}</div>
+    </div>`;
+  const kpis = `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px">
+      ${kpi('Profit Factor', mfx.pf ? mfx.pf.toFixed(2) : '—', statusColor, statusColor)}
+      ${kpi('Drawdown %', mfx.ddPct ? mfx.ddPct.toFixed(2) + '%' : '—', '#111318', '#b91c1c')}
+      ${kpi('# Trades', mfx.trades || '—', '#111318', '#1d4ed8')}
+      ${kpi('Win Rate', winRate, '#111318', '#d97706')}
+    </div>`;
+  const stats = `
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px">
+      ${sec('Gain', mfx.gain !== null ? (mfx.gain >= 0 ? '+' : '') + mfx.gain.toFixed(2) + '%' : '—')}
+      ${sec('Balance', mfx.balance ? '$' + mfx.balance.toLocaleString('es-AR',{maximumFractionDigits:0}) : '—')}
+      ${sec('Sharpe', mfx.sharpe ? mfx.sharpe.toFixed(2) : '—')}
+      ${sec('Z-Prob', mfx.zProb ? mfx.zProb.toFixed(2) + '%' : '—')}
+      ${sec('Avg Win $', mfx.avgWinUsd ? '$' + mfx.avgWinUsd.toFixed(2) : '—')}
+      ${sec('Avg Loss $', mfx.avgLossUsd ? '-$' + Math.abs(mfx.avgLossUsd).toFixed(2) : '—')}
+    </div>`;
+  const tradesTable = mfx.tradeList.length > 0 ? `
+    <div style="font-size:11px;font-weight:700;color:#4a5060;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">
+      Trades (${mfx.tradeList.length})
+    </div>
+    <div style="overflow-x:auto;max-height:250px;overflow-y:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:700px">
+        <thead style="position:sticky;top:0;background:#f1f3f5">
+          <tr>${['Apertura','Cierre','Símbolo','Dir.','Lots','Open','Close','Pips','P&L','Gain%','Acumulado']
+            .map((h,i) => `<th style="padding:6px 8px;font-size:9px;font-weight:700;color:#4a5060;border-bottom:1px solid #e0e3e8;white-space:nowrap;text-align:${i<=3?'left':'right'}">${h}</th>`).join('')}</tr>
+        </thead>
+        <tbody>
+          ${mfx.tradeList.map(t => {
+            const pc = t.netProfit > 0 ? '#1a7f4b' : t.netProfit < 0 ? '#b91c1c' : '#9098a8';
+            const pip = t.pips > 0 ? '#1a7f4b' : t.pips < 0 ? '#b91c1c' : '#9098a8';
+            return `<tr style="border-bottom:1px solid #f1f3f5">
+              <td style="padding:5px 8px;color:#4a5060;white-space:nowrap">${t.openDate||'—'}</td>
+              <td style="padding:5px 8px;color:#9098a8;white-space:nowrap">${t.closeDate||'—'}</td>
+              <td style="padding:5px 8px;font-weight:600;color:#111318">${t.symbol||'—'}</td>
+              <td style="padding:5px 8px;font-weight:600;color:${t.action==='Buy'?'#1a7f4b':'#b91c1c'}">${t.action||'—'}</td>
+              <td style="padding:5px 8px;text-align:right;color:#4a5060">${t.lots||'—'}</td>
+              <td style="padding:5px 8px;text-align:right;color:#4a5060">${t.openPrice||'—'}</td>
+              <td style="padding:5px 8px;text-align:right;color:#4a5060">${t.closePrice||'—'}</td>
+              <td style="padding:5px 8px;text-align:right;font-weight:600;color:${pip}">${t.pips!==null?t.pips:'—'}</td>
+              <td style="padding:5px 8px;text-align:right;font-weight:600;color:${pc}">${t.netProfit!==null?(t.netProfit>=0?'+$':'-$')+Math.abs(t.netProfit).toFixed(2):'—'}</td>
+              <td style="padding:5px 8px;text-align:right;color:${pc}">${t.gainPct!==null?(t.gainPct>=0?'+':'')+t.gainPct.toFixed(2)+'%':'—'}</td>
+              <td style="padding:5px 8px;text-align:right;font-weight:600;color:${t.cumProfit>=0?'#1a7f4b':'#b91c1c'}">${t.cumProfit!==null?(t.cumProfit>=0?'+$':'-$')+Math.abs(t.cumProfit).toFixed(2):'—'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>` : '<div style="color:#9098a8;font-size:12px">Sin trades registrados.</div>';
+  return kpis + stats + tradesTable;
+}
+
+async function processMyfxbook(botId, idx) {
+  const text  = document.getElementById('mfx-' + idx)?.value?.trim();
+  const errEl = document.getElementById('mfx-err-' + idx);
+  if (!text) { if (errEl) { errEl.textContent='Pegá el texto de Myfxbook.'; errEl.style.display='block'; } return; }
+  const bot = DB.find(b => b.id === botId);
+  if (!bot) return;
+  const parsed = parseMyfxbook(text);
+  if (!parsed || parsed.trades === null) {
+    if (errEl) { errEl.textContent='No se pudo parsear. Verificá que sea texto de Myfxbook.'; errEl.style.display='block'; }
+    return;
+  }
+  bot.myfxbookData = parsed;
+  markDirty();
+  collapseRow(idx);
+  setTimeout(() => expandRow(idx), 50);
+  await saveToGitHub();
+}
+
+function buildEquitySVG(series, lineColor, labelFn, tooltipFn) {
   const W = 600, H = 280;
   const pad = { top: 20, right: 20, bottom: 40, left: 70 };
   const cw = W - pad.left - pad.right, ch = H - pad.top - pad.bottom;
-
   const minVal = Math.min(0, ...series.map(d => d.cumulative));
   const maxVal = Math.max(...series.map(d => d.cumulative));
   const range  = maxVal - minVal || 1;
-
-  const xScale = i => (i / (series.length - 1)) * cw;
+  const xScale = i => series.length < 2 ? cw / 2 : (i / (series.length - 1)) * cw;
   const yScale = v => ch - ((v - minVal) / range) * ch;
-
   const pts = series.map((d, i) => `${pad.left + xScale(i)},${pad.top + yScale(d.cumulative)}`).join(' ');
   const areaPath = [
     `M ${pad.left + xScale(0)},${pad.top + yScale(0)}`,
     ...series.map((d, i) => `L ${pad.left + xScale(i)},${pad.top + yScale(d.cumulative)}`),
     `L ${pad.left + xScale(series.length - 1)},${pad.top + yScale(0)}`, 'Z'
   ].join(' ');
-
   const y0 = pad.top + yScale(0);
   const yTicks = 5;
   const yLabels = Array.from({ length: yTicks + 1 }, (_, i) => {
     const v = minVal + (range * i) / yTicks;
-    return {
-      v, y: pad.top + yScale(v),
-      label: v >= 1000 ? `$${(v/1000).toFixed(1)}k` : v <= -1000 ? `-$${(Math.abs(v)/1000).toFixed(1)}k` : `$${Math.round(v)}`
-    };
+    return { v, y: pad.top + yScale(v),
+      label: Math.abs(v) >= 1000 ? `${v<0?'-':''}$${(Math.abs(v)/1000).toFixed(1)}k` : `$${Math.round(v)}` };
   });
-
-  const years = [...new Set(series.map(d => d.year))];
-  const xLabels = years.map(yr => {
-    const idx = series.findIndex(d => d.year === yr && d.month === 1) !== -1
-      ? series.findIndex(d => d.year === yr && d.month === 1)
-      : series.findIndex(d => d.year === yr);
-    return { yr, x: pad.left + xScale(idx) };
-  }).filter((_, i) => i % 2 === 0);
-
-  const tooltipPoints = series.map((d, i) => `
-    <circle cx="${pad.left + xScale(i)}" cy="${pad.top + yScale(d.cumulative)}" r="6"
-      fill="transparent" stroke="none" class="eq-point"
-      data-label="${d.label}"
-      data-val="${d.cumulative >= 0 ? '+' : ''}$${d.cumulative.toLocaleString('es-AR', {maximumFractionDigits:0})}"
-      data-monthly="${d.value >= 0 ? '+' : ''}$${d.value.toLocaleString('es-AR', {maximumFractionDigits:0})}"
-      onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"/>
-  `).join('');
-
   const gridLines = yLabels.map(t =>
-    `<line x1="${pad.left}" y1="${t.y}" x2="${pad.left + cw}" y2="${t.y}" stroke="#e0e3e8" stroke-width="0.5" stroke-dasharray="3,3"/>`
+    `<line x1="${pad.left}" y1="${t.y}" x2="${pad.left+cw}" y2="${t.y}" stroke="#e0e3e8" stroke-width="0.5" stroke-dasharray="3,3"/>`
   ).join('');
+  const xLabels = labelFn(series, pad, cw, ch, xScale);
+  const tooltipPts = tooltipFn(series, pad, xScale, yScale);
+  const gradId = 'grad-' + Math.random().toString(36).slice(2,7);
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">
+    <defs><linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${lineColor}" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="${lineColor}" stop-opacity="0.01"/>
+    </linearGradient></defs>
+    ${gridLines}
+    <line x1="${pad.left}" y1="${y0}" x2="${pad.left+cw}" y2="${y0}" stroke="#9098a8" stroke-width="0.8"/>
+    <path d="${areaPath}" fill="url(#${gradId})" stroke="none"/>
+    <polyline points="${pts}" fill="none" stroke="${lineColor}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+    ${yLabels.map(t => `<text x="${pad.left-6}" y="${t.y+4}" text-anchor="end" font-size="9" fill="#9098a8">${t.label}</text>`).join('')}
+    ${xLabels}
+    ${tooltipPts}
+  </svg>`;
+}
+
+function renderOverviewChart(monthlyData, containerId = 'ficha-equity-chart', myfxData = null) {
+  const container = document.getElementById(containerId);
+  if (!container || !monthlyData || monthlyData.length === 0) return;
+
+  const monthNames = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const series = [];
+  let cumulative = 0;
+  monthlyData.forEach(row => {
+    row.months.forEach((val, i) => {
+      if (val === null || isNaN(val)) return;
+      cumulative += val;
+      series.push({ year: row.year, month: i+1, monthName: monthNames[i], value: val,
+        cumulative: Math.round(cumulative * 100) / 100, label: `${monthNames[i]} ${row.year}` });
+    });
+  });
+  if (series.length === 0) return;
 
   const finalVal = series[series.length - 1]?.cumulative || 0;
-  const areaColor = finalVal >= 0 ? '#1a7f4b' : '#b91c1c';
   const lineColor = finalVal >= 0 ? '#1a7f4b' : '#b91c1c';
 
-  container.innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
+  const backtestSVG = buildEquitySVG(series, lineColor,
+    (s, pad, cw, ch, xScale) => {
+      const years = [...new Set(s.map(d => d.year))];
+      return years.map(yr => {
+        const i = s.findIndex(d => d.year === yr && d.month === 1) !== -1
+          ? s.findIndex(d => d.year === yr && d.month === 1)
+          : s.findIndex(d => d.year === yr);
+        const x = pad.left + xScale(i);
+        return `<text x="${x}" y="${pad.top+ch+14}" text-anchor="middle" font-size="9" fill="#9098a8">${yr}</text>
+                <line x1="${x}" y1="${pad.top+ch}" x2="${x}" y2="${pad.top+ch+4}" stroke="#9098a8" stroke-width="0.8"/>`;
+      }).filter((_,i) => i%2===0).join('');
+    },
+    (s, pad, xScale, yScale) => s.map((d, i) => `
+      <circle cx="${pad.left+xScale(i)}" cy="${pad.top+yScale(d.cumulative)}" r="6"
+        fill="transparent" stroke="none" class="eq-point"
+        data-label="${d.label}"
+        data-val="${d.cumulative>=0?'+':''}$${d.cumulative.toLocaleString('es-AR',{maximumFractionDigits:0})}"
+        data-monthly="${d.value>=0?'+':''}$${d.value.toLocaleString('es-AR',{maximumFractionDigits:0})}"
+        onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"/>`).join('')
+  );
+
+  // ── LADO DERECHO: live de Myfxbook ──────────────────────────
+  let rightPanel;
+  if (myfxData && myfxData.tradeList && myfxData.tradeList.length > 0) {
+    const liveSeries = myfxData.tradeList
+      .filter(t => t.netProfit !== null)
+      .map(t => ({ cumulative: t.cumProfit, label: t.openDate, value: t.netProfit }));
+    const liveColor = '#6366f1';
+    const liveSVG = buildEquitySVG(liveSeries, liveColor,
+      (s, pad, cw, ch, xScale) => {
+        const step = Math.max(1, Math.floor(s.length / 6));
+        return s.filter((_,i) => i % step === 0).map((d, i, arr) => {
+          const origIdx = s.indexOf(d);
+          const x = pad.left + xScale(origIdx);
+          const lbl = d.label ? d.label.slice(0,7) : '';
+          return `<text x="${x}" y="${pad.top+ch+14}" text-anchor="middle" font-size="8" fill="#9098a8">${lbl}</text>`;
+        }).join('');
+      },
+      (s, pad, xScale, yScale) => s.map((d, i) => `
+        <circle cx="${pad.left+xScale(i)}" cy="${pad.top+yScale(d.cumulative)}" r="6"
+          fill="transparent" stroke="none" class="eq-point"
+          data-label="${d.label||''}"
+          data-val="${d.cumulative>=0?'+':''}$${d.cumulative.toLocaleString('es-AR',{maximumFractionDigits:0})}"
+          data-monthly="${d.value>=0?'+':''}$${d.value.toLocaleString('es-AR',{maximumFractionDigits:0})}"
+          onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"/>`).join('')
+    );
+    rightPanel = `
       <div style="border:1px solid #e0e3e8;border-radius:8px;padding:12px;background:#fff">
         <div style="font-size:11px;font-weight:700;color:#4a5060;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px">
-          <span style="width:8px;height:8px;border-radius:50%;background:#1a7f4b;display:inline-block"></span>
-          Backtest SQX
+          <span style="width:8px;height:8px;border-radius:50%;background:#6366f1;display:inline-block"></span>
+          Incubación Live
+          <span style="font-size:10px;background:#eff0ff;color:#4f46e5;padding:2px 8px;border-radius:10px;margin-left:4px">${myfxData.tradeList.length} trades</span>
         </div>
-        <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">
-          <defs>
-            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="${areaColor}" stop-opacity="0.15"/>
-              <stop offset="100%" stop-color="${areaColor}" stop-opacity="0.01"/>
-            </linearGradient>
-          </defs>
-          ${gridLines}
-          <line x1="${pad.left}" y1="${y0}" x2="${pad.left + cw}" y2="${y0}" stroke="#9098a8" stroke-width="0.8"/>
-          <path d="${areaPath}" fill="url(#areaGrad)" stroke="none"/>
-          <polyline points="${pts}" fill="none" stroke="${lineColor}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
-          ${yLabels.map(t => `<text x="${pad.left - 6}" y="${t.y + 4}" text-anchor="end" font-size="9" fill="#9098a8">${t.label}</text>`).join('')}
-          ${xLabels.map(t => `
-            <text x="${t.x}" y="${pad.top + ch + 14}" text-anchor="middle" font-size="9" fill="#9098a8">${t.yr}</text>
-            <line x1="${t.x}" y1="${pad.top + ch}" x2="${t.x}" y2="${pad.top + ch + 4}" stroke="#9098a8" stroke-width="0.8"/>
-          `).join('')}
-          ${tooltipPoints}
-        </svg>
-      </div>
+        ${liveSVG}
+      </div>`;
+  } else {
+    rightPanel = `
       <div style="border:1px solid #e0e3e8;border-radius:8px;padding:12px;background:#f8f9fa">
         <div style="font-size:11px;font-weight:700;color:#4a5060;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px">
           <span style="width:8px;height:8px;border-radius:50%;background:#6366f1;display:inline-block"></span>
           Incubación Live
         </div>
-        <div style="height:${H}px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#9098a8;font-size:12px;text-align:center;gap:8px">
+        <div style="height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#9098a8;font-size:12px;text-align:center;gap:8px">
           <div style="font-size:28px">📊</div>
           <div>Sin datos live cargados</div>
-          <div style="font-size:11px">Cargalos desde la pestaña<br><strong>Myfxbook — Incubación</strong></div>
+          <div style="font-size:11px">Cargalos en la sección<br><strong>Myfxbook — Live</strong></div>
         </div>
+      </div>`;
+  }
+
+  container.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
+    <div style="border:1px solid #e0e3e8;border-radius:8px;padding:12px;background:#fff">
+      <div style="font-size:11px;font-weight:700;color:#4a5060;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:${lineColor};display:inline-block"></span>
+        Backtest SQX
       </div>
-    </div>`;
+      ${backtestSVG}
+    </div>
+    ${rightPanel}
+  </div>`;
 }
 
 function showEqTooltip(event, el) {
