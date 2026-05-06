@@ -3737,9 +3737,12 @@ function renderOverviewChart(monthlyData, containerId = 'ficha-equity-chart', my
   // ── LADO DERECHO: live de Myfxbook ──────────────────────────
   let rightPanel;
   if (myfxData && myfxData.tradeList && myfxData.tradeList.length > 0) {
-    const liveSeries = myfxData.tradeList
-      .filter(t => t.netProfit !== null)
-      .map(t => ({ cumulative: t.cumProfit, label: t.openDate, value: t.netProfit }));
+    const liveTrades = myfxData.tradeList.filter(t => t.netProfit !== null).slice().reverse();
+    let liveCum = 0;
+    const liveSeries = liveTrades.map(t => {
+      liveCum += t.netProfit;
+      return { cumulative: Math.round(liveCum * 100) / 100, label: t.openDate, value: t.netProfit };
+    });
     const liveColor = '#6366f1';
     const liveSVG = buildEquitySVG(liveSeries, liveColor,
       (s, pad, cw, ch, xScale) => {
