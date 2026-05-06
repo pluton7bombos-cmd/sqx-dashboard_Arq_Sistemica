@@ -265,37 +265,21 @@
     </div>
   </div>
 
-  <!-- OVERVIEW SECTION -->
-  <div class="section-card" id="overview-section">
-    <div class="section-head" onclick="toggleOverview()">
-      <span class="section-title">📋 Cargar Overview (SQX)</span>
-      <span class="chevron" id="chev-overview">▼</span>
+  <!-- FICHA DE BOT -->
+  <div class="section-card" id="ficha-section">
+    <div class="section-head" onclick="toggleFicha()">
+      <span class="section-title">🤖 Ficha de Bot</span>
+      <span class="chevron" id="chev-ficha">▼</span>
     </div>
-    <div class="collapse-body" id="overview-body">
+    <div class="collapse-body" id="ficha-body">
       <div class="form-inner">
-        <div class="field" style="margin-bottom:12px">
-          <label>Bot al que pertenece este Overview</label>
-          <select id="ov-bot-select"><option value="">— Seleccioná un bot —</option></select>
+        <div class="field" style="margin-bottom:16px">
+          <label>Seleccioná un bot para ver su ficha completa</label>
+          <select id="ficha-bot-select" onchange="selectBotFicha(this.value)">
+            <option value="">— Seleccioná un bot —</option>
+          </select>
         </div>
-        <div class="field" style="margin-bottom:12px">
-          <label>Pegá el texto completo del Overview de SQX</label>
-          <textarea id="ov-text" rows="10"
-            style="width:100%;border:1px solid var(--border2);border-radius:var(--radius);
-                   padding:10px;font-size:12px;font-family:monospace;background:var(--bg);
-                   color:var(--text);resize:vertical"
-            placeholder="Copiá todo el texto del Overview de SQX y pegalo acá..."></textarea>
-        </div>
-        <div class="btn-row" style="margin-bottom:1.5rem">
-          <button class="btn-primary" onclick="processOverview()">⚡ Parsear y cargar</button>
-          <button onclick="document.getElementById('ov-text').value=''">Limpiar</button>
-        </div>
-        <div id="ov-preview" style="display:none">
-          <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px">Métricas detectadas</div>
-          <div id="ov-metrics-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:1.5rem"></div>
-          <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px">Equity Curve Mensual</div>
-          <div id="ov-equity-chart" style="width:100%;overflow-x:auto"></div>
-        </div>
-        <div id="ov-err" style="display:none;color:var(--red);font-size:12px;margin-top:8px"></div>
+        <div id="ficha-content"></div>
       </div>
     </div>
   </div>
@@ -1139,22 +1123,18 @@ window.addEventListener('beforeunload', e => {
   if (dirty) { e.preventDefault(); e.returnValue = ''; }
 });
 
-// ── OVERVIEW ──────────────────────────────────────────────────────
-let overviewOpen = false;
-function toggleOverview() {
-  overviewOpen = !overviewOpen;
-  document.getElementById('overview-body').classList.toggle('open', overviewOpen);
-  document.getElementById('chev-overview').classList.toggle('open', overviewOpen);
-}
+// ── FICHA DE BOT ──────────────────────────────────────────────────
+let fichaOpen = false;
+let fichaCurrentId = null;
 
-function ovErr(m) {
-  const e = document.getElementById('ov-err');
-  e.textContent = m;
-  e.style.display = 'block';
+function toggleFicha() {
+  fichaOpen = !fichaOpen;
+  document.getElementById('ficha-body').classList.toggle('open', fichaOpen);
+  document.getElementById('chev-ficha').classList.toggle('open', fichaOpen);
 }
 
 function updateBotDropdown() {
-  const sel = document.getElementById('ov-bot-select');
+  const sel = document.getElementById('ficha-bot-select');
   if (!sel) return;
   const current = sel.value;
   sel.innerHTML = '<option value="">— Seleccioná un bot —</option>';
@@ -1164,7 +1144,199 @@ function updateBotDropdown() {
     opt.textContent = b.name + (b.symbol ? ' — ' + b.symbol : '');
     sel.appendChild(opt);
   });
-  if (current) sel.value = current;
+  if (current && DB.find(b => b.id === current)) sel.value = current;
+}
+
+function selectBotFicha(id) {
+  fichaCurrentId = id;
+  if (!id) { document.getElementById('ficha-content').innerHTML = ''; return; }
+  const bot = DB.find(b => b.id === id);
+  if (bot) renderFicha(bot);
+}
+
+function fichErr(m) {
+  const e = document.getElementById('ficha-ov-err');
+  if (e) { e.textContent = m; e.style.display = 'block'; }
+}
+
+function saveFichaNotes(id) {
+  const bot = DB.find(b => b.id === id);
+  if (!bot) return;
+  const ta = document.getElementById('ficha-notes');
+  if (ta) { bot.notes = ta.value; markDirty(); alertOk('✓ Notas guardadas.'); }
+}
+
+function processOverviewInFicha(botId) {
+  const text = document.getElementById('ficha-ov-text')?.value?.trim();
+  if (!text) { fichErr('Pegá el texto del Overview.'); return; }
+  const parsed = parseOverview(text);
+  if (!parsed) { fichErr('No se pudo parsear. Verificá que sea un Overview de SQX.'); return; }
+  const bot = DB.find(b => b.id === botId);
+  if (!bot) return;
+  if (parsed.sqn  !== null) bot.sqn  = parsed.sqn;
+  if (parsed.stag !== null) bot.stag = parsed.stag;
+  if (parsed.zp   !== null) bot.zp   = parsed.zp;
+  bot.overviewData = parsed;
+  markDirty();
+  render();
+  document.getElementById('ficha-bot-select').value = botId;
+  renderFicha(bot);
+}
+
+function metricColor(key, val) {
+  if (val === null || val === undefined || isNaN(val)) return '';
+  if (key === 'pf')    return val >= 1.30 ? '#1a7f4b' : val >= 1.20 ? '#d97706' : '#b91c1c';
+  if (key === 'stag')  return val <= 500  ? '#1a7f4b' : val <= 1300  ? '#d97706' : '#b91c1c';
+  const c = CRIT[key];
+  if (!c) return '';
+  return (c.dir === 1 ? val >= c.min : val <= c.max) ? '#1a7f4b' : '#b91c1c';
+}
+
+function renderFicha(bot) {
+  const is   = bot.source === 'csv' ? (bot.is  || {}) : bot;
+  const oos  = bot.source === 'csv' ? (bot.oos || {}) : {};
+  const ov   = bot.overviewData || null;
+
+  const hasOOS = oos.pf !== null && oos.pf !== undefined && !isNaN(oos.pf) && oos.pf !== 0;
+  const avg = (a, b) => {
+    const aOk = a !== null && a !== undefined && !isNaN(a);
+    const bOk = b !== null && b !== undefined && !isNaN(b) && b !== 0;
+    if (aOk && bOk) return (a + b) / 2;
+    return aOk ? a : (bOk ? b : null);
+  };
+  const full = hasOOS ? {
+    pf: avg(is.pf, oos.pf), cagr: avg(is.cagr, oos.cagr), wr: avg(is.wr, oos.wr),
+    trades: (is.trades||0)+(oos.trades||0), sharpe: avg(is.sharpe, oos.sharpe),
+    dd: Math.max(is.dd||0, oos.dd||0), np: (is.np||0)+(oos.np||0),
+    retdd: avg(is.retdd, oos.retdd), cagrdd: avg(is.cagrdd, oos.cagrdd),
+    stability: avg(is.stability, oos.stability), fitness: avg(is.fitness, oos.fitness),
+  } : { ...is };
+
+  const fails = evalS(bot);
+  const st = fails.length === 0 ? 'ok' : fails.length <= 2 ? 'warn' : 'fail';
+  const badge = st === 'ok'   ? '<span class="badge badge-ok">✓ OK</span>'
+    : st === 'warn' ? '<span class="badge badge-warn">~ Parcial</span>'
+    : '<span class="badge badge-fail">✗ Descartar</span>';
+
+  const fv = (v, dec=2) => (v===null||v===undefined||isNaN(v)) ? '—' : Number(v).toFixed(dec);
+  const fm = v => (v===null||v===undefined||isNaN(v)) ? '—' : '$'+Number(v).toLocaleString('es-AR',{maximumFractionDigits:0});
+
+  const rows = [
+    { lbl:'Profit Factor',  key:'pf',       isV:is.pf,        oosV:oos.pf,        fullV:full.pf,        fmt:v=>fv(v) },
+    { lbl:'Ann. Return %',  key:'cagr',     isV:is.cagr,      oosV:oos.cagr,      fullV:full.cagr,      fmt:v=>(v===null||isNaN(v)?'—':fv(v)+'%') },
+    { lbl:'W/L Ratio',      key:'wr',       isV:is.wr,        oosV:oos.wr,        fullV:full.wr,        fmt:v=>fv(v) },
+    { lbl:'Trades',         key:'trades',   isV:is.trades,    oosV:oos.trades,    fullV:full.trades,    fmt:v=>(v===null||isNaN(v)?'—':Math.round(v)) },
+    { lbl:'Sharpe',         key:'sharpe',   isV:is.sharpe,    oosV:oos.sharpe,    fullV:full.sharpe,    fmt:v=>fv(v) },
+    { lbl:'Drawdown $',     key:null,       isV:is.dd,        oosV:oos.dd,        fullV:full.dd,        fmt:v=>fm(v) },
+    { lbl:'Net Profit',     key:null,       isV:is.np,        oosV:oos.np,        fullV:full.np,        fmt:v=>fm(v) },
+    { lbl:'Ret/DD',         key:null,       isV:is.retdd,     oosV:oos.retdd,     fullV:full.retdd,     fmt:v=>fv(v) },
+    { lbl:'CAGR/DD%',       key:null,       isV:is.cagrdd,    oosV:oos.cagrdd,    fullV:full.cagrdd,    fmt:v=>fv(v) },
+    { lbl:'Stability',      key:null,       isV:is.stability, oosV:oos.stability, fullV:full.stability, fmt:v=>fv(v) },
+    { lbl:'Fitness',        key:null,       isV:is.fitness,   oosV:oos.fitness,   fullV:full.fitness,   fmt:v=>fv(v) },
+  ];
+
+  const cell = (key, val, fmt, isFull) => {
+    const color = key ? metricColor(key, val) : '';
+    const bg    = isFull ? 'background:#f5f5ff;' : '';
+    return `<td style="padding:8px 12px;text-align:right;font-size:12px;${bg}${color?`color:${color};font-weight:600`:''}">${fmt(val)}</td>`;
+  };
+
+  const tableRows = rows.map(r => `
+    <tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:8px 12px;font-weight:600;color:var(--text2);font-size:12px">${r.lbl}</td>
+      ${cell(r.key, r.isV, r.fmt, false)}
+      ${cell(r.key, r.oosV, r.fmt, false)}
+      ${cell(r.key, r.fullV, r.fmt, true)}
+    </tr>`).join('');
+
+  const ovCards = ov ? [
+    { lbl:'SQN',          val:ov.sqn,         fmt:v=>fv(v),     color:v=>v>=2?'#1a7f4b':v>=1.6?'#d97706':'#b91c1c' },
+    { lbl:'Stagnation',   val:ov.stag,        fmt:v=>v+'d',     color:v=>v<=500?'#1a7f4b':v<=1300?'#d97706':'#b91c1c' },
+    { lbl:'Z-Prob %',     val:ov.zp,          fmt:v=>fv(v)+'%', color:v=>v<=88?'#1a7f4b':'#b91c1c' },
+    { lbl:'AHPR',         val:ov.ahpr,        fmt:v=>fv(v),     color:null },
+    { lbl:'Z-Score',      val:ov.zScore,      fmt:v=>fv(v),     color:null },
+    { lbl:'STR Quality',  val:ov.strQuality,  fmt:v=>fv(v),     color:null },
+    { lbl:'Win %',        val:ov.winPct,      fmt:v=>fv(v)+'%', color:null },
+    { lbl:'R Expectancy', val:ov.rExp,        fmt:v=>fv(v),     color:null },
+  ] : [];
+
+  let html = `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px">${bot.name}</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          ${bot.symbol?`<span style="font-size:13px;font-weight:600;color:var(--text2)">${bot.symbol}</span>`:''}
+          ${bot.tf?`<span style="font-size:12px;color:var(--text3);background:var(--bg3);padding:2px 8px;border-radius:4px">${bot.tf}</span>`:''}
+          ${badge}
+          <span class="src-tag">${bot.source==='csv'?'CSV':'Manual'}</span>
+          ${bot.added?`<span style="font-size:11px;color:var(--text3)">${bot.added}</span>`:''}
+        </div>
+        ${fails.length?`<div style="font-size:11px;color:#b91c1c;margin-top:8px;font-weight:600">Criterios fallando: ${fails.join(', ')}</div>`:''}
+      </div>
+    </div>
+
+    <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">Métricas IS / OOS / Full</div>
+    <div style="overflow-x:auto;margin-bottom:24px;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr>
+          <th style="text-align:left;padding:9px 12px;background:var(--bg2);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border)">Métrica</th>
+          <th style="text-align:right;padding:9px 12px;background:var(--bg2);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border)">IS</th>
+          <th style="text-align:right;padding:9px 12px;background:var(--bg2);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border)">OOS</th>
+          <th style="text-align:right;padding:9px 12px;background:#f0f0ff;font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;border-bottom:1px solid var(--border)">Full</th>
+        </tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </div>`;
+
+  if (ovCards.length) {
+    html += `
+      <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">Métricas Overview</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:24px">
+        ${ovCards.map(({lbl,val,fmt,color})=>{
+          const c=(val!==null&&val!==undefined&&color)?color(val):'var(--text)';
+          const d=(val===null||val===undefined)?'—':fmt(val);
+          return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px">
+            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-bottom:4px">${lbl}</div>
+            <div style="font-size:20px;font-weight:700;color:${c}">${d}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      ${ov.monthlyData&&ov.monthlyData.length?`
+        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">Equity Curve</div>
+        <div id="ficha-equity-chart" style="width:100%;overflow-x:auto;margin-bottom:24px"></div>
+      `:''}`;
+  } else {
+    html += `
+      <div style="background:var(--bg2);border:1px dashed var(--border2);border-radius:var(--radius-lg);padding:16px;margin-bottom:24px">
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px">📋 Overview SQX — sin datos</div>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Pegá el texto del Overview para cargar SQN, Stagnation, Z-Prob y la equity curve.</p>
+        <textarea id="ficha-ov-text" rows="7"
+          style="width:100%;border:1px solid var(--border2);border-radius:var(--radius);padding:10px;
+                 font-size:12px;font-family:monospace;background:var(--bg);color:var(--text);resize:vertical;margin-bottom:10px"
+          placeholder="Copiá todo el texto del Overview de SQX y pegalo acá..."></textarea>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="processOverviewInFicha('${bot.id}')">⚡ Cargar Overview</button>
+          <button onclick="document.getElementById('ficha-ov-text').value=''">Limpiar</button>
+        </div>
+        <div id="ficha-ov-err" style="display:none;color:var(--red);font-size:12px;margin-top:8px"></div>
+      </div>`;
+  }
+
+  html += `
+    <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px">Notas</div>
+    <div style="display:flex;gap:8px;align-items:flex-start">
+      <textarea id="ficha-notes" rows="3"
+        style="flex:1;border:1px solid var(--border2);border-radius:var(--radius);padding:10px;
+               font-size:13px;background:var(--bg);color:var(--text);resize:vertical"
+        placeholder="Observaciones...">${bot.notes||''}</textarea>
+      <button onclick="saveFichaNotes('${bot.id}')" class="btn-primary" style="height:34px;white-space:nowrap">Guardar</button>
+    </div>`;
+
+  document.getElementById('ficha-content').innerHTML = html;
+
+  if (ov && ov.monthlyData && ov.monthlyData.length > 0) {
+    renderOverviewChart(ov.monthlyData, 'ficha-equity-chart');
+  }
 }
 
 function parseMonthlyTable(text) {
@@ -1227,64 +1399,8 @@ function parseOverview(text) {
            totalProfit, sharpe, pf, trades, winPct, dd, ddPct, retdd, rExp, monthlyData };
 }
 
-function processOverview() {
-  const text  = document.getElementById('ov-text').value.trim();
-  const botId = document.getElementById('ov-bot-select').value;
-  if (!text)  { ovErr('Pegá el texto del Overview.'); return; }
-  if (!botId) { ovErr('Seleccioná el bot al que pertenece.'); return; }
-  const parsed = parseOverview(text);
-  if (!parsed){ ovErr('No se pudo parsear. Verificá que sea un Overview de SQX.'); return; }
-  const bot = DB.find(b => b.id === botId);
-  if (!bot)   { ovErr('Bot no encontrado.'); return; }
-  if (parsed.sqn  !== null) bot.sqn  = parsed.sqn;
-  if (parsed.stag !== null) bot.stag = parsed.stag;
-  if (parsed.zp   !== null) bot.zp   = parsed.zp;
-  bot.overviewData = parsed;
-  markDirty();
-  render();
-  renderOverviewPreview(parsed);
-  document.getElementById('ov-preview').style.display = 'block';
-  document.getElementById('ov-err').style.display = 'none';
-}
-
-function renderOverviewPreview(parsed) {
-  const fields = [
-    ['SQN Score',    parsed.sqn,         2],
-    ['STR Quality',  parsed.strQuality,  2],
-    ['Profit Factor',parsed.pf,          2],
-    ['Sharpe Ratio', parsed.sharpe,      2],
-    ['CAGR %',       parsed.cagr  !== null ? parsed.cagr + '%'  : null, null],
-    ['Drawdown $',   parsed.dd    !== null ? '$' + Math.abs(parsed.dd).toFixed(0) : null, null],
-    ['DD %',         parsed.ddPct !== null ? parsed.ddPct + '%' : null, null],
-    ['Trades',       parsed.trades,      0],
-    ['Win %',        parsed.winPct !== null ? parsed.winPct + '%' : null, null],
-    ['Ret/DD',       parsed.retdd,       2],
-    ['R Exp.',       parsed.rExp,        2],
-    ['Stagnation d', parsed.stag,        0],
-    ['Stag %',       parsed.stagPct !== null ? parsed.stagPct + '%' : null, null],
-    ['Z-Prob %',     parsed.zp     !== null ? parsed.zp + '%'     : null, null],
-    ['Z-Score',      parsed.zScore,      2],
-    ['AHPR',         parsed.ahpr,        2],
-    ['Net Profit',   parsed.totalProfit !== null ? '$' + parsed.totalProfit.toFixed(0) : null, null],
-  ];
-  document.getElementById('ov-metrics-grid').innerHTML = fields.map(([lbl, val, dec]) => {
-    const display = (val === null || val === undefined) ? '—' :
-      (typeof val === 'string' ? val : (dec !== null ? Number(val).toFixed(dec) : val));
-    return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px">
-      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-bottom:4px">${lbl}</div>
-      <div style="font-size:18px;font-weight:700;color:var(--text)">${display}</div>
-    </div>`;
-  }).join('');
-  if (parsed.monthlyData && parsed.monthlyData.length > 0) {
-    renderOverviewChart(parsed.monthlyData);
-  } else {
-    document.getElementById('ov-equity-chart').innerHTML =
-      '<p style="color:var(--text3);font-size:12px;padding:1rem 0">No se encontraron datos mensuales en el Overview.</p>';
-  }
-}
-
-function renderOverviewChart(monthlyData) {
-  const container = document.getElementById('ov-equity-chart');
+function renderOverviewChart(monthlyData, containerId = 'ficha-equity-chart') {
+  const container = document.getElementById(containerId);
   if (!container || !monthlyData || monthlyData.length === 0) return;
 
   const series = [];
