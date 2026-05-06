@@ -3245,7 +3245,12 @@ function buildFichaHTML(s, idx) {
       </div>
       `}
 
-      <div class="ficha-sub-header" onclick="toggleFichaSection('myfxbook-${idx}')">📊 Myfxbook — Live &nbsp;${getLiveBadge(mfx)} ▾</div>
+      <div class="ficha-sub-header" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="toggleFichaSection('myfxbook-${idx}')">
+        <span>📊 Myfxbook — Live &nbsp;${getLiveBadge(mfx)} ▾</span>
+        ${mfx ? `<button onclick="event.stopPropagation();saveMyfxbook('${s.id}',${idx})"
+          style="height:26px;padding:0 12px;border-radius:6px;background:#1a7f4b;border:none;
+                 color:#fff;font-size:11px;font-weight:600;cursor:pointer">💾 Guardar</button>` : ''}
+      </div>
       <div id="myfxbook-${idx}" class="ficha-subsection" style="margin-bottom:12px">
         ${buildMyfxbookBlock(mfx, idx)}
         <details style="margin-top:8px" onclick="event.stopPropagation()">
@@ -3262,11 +3267,6 @@ function buildFichaHTML(s, idx) {
                 style="height:32px;padding:0 16px;border-radius:6px;background:#4f46e5;border:none;
                        color:#fff;font-size:12px;font-weight:500;cursor:pointer">
                 ⚡ Parsear
-              </button>
-              <button onclick="event.stopPropagation();saveMyfxbook('${s.id}',${idx})"
-                style="height:32px;padding:0 16px;border-radius:6px;background:#1a7f4b;border:none;
-                       color:#fff;font-size:12px;font-weight:500;cursor:pointer">
-                💾 Guardar en GitHub
               </button>
             </div>
             <div id="mfx-err-${idx}" style="display:none;color:#b91c1c;font-size:12px;margin-top:6px"></div>
