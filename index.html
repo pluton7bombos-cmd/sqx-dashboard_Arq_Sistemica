@@ -1,6 +1,4 @@
-﻿<!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SQX Dashboard — Arq. Sistémica</title>
@@ -143,9 +141,9 @@
     <span class="module-tag">Arq. Sistémica</span>
   </div>
   <div class="topbar-right">
-    <span id="db-count" style="font-size:11px;color:var(--text3);margin-right:4px"></span>
-    <span id="sync-status" style="font-size:11px;margin-right:4px"></span>
-    <button onclick="saveToGitHub()" id="btn-save">☁ Guardar en GitHub</button>
+    <span id="db-count" style="font-size:11px;color:var(--text3);margin-right:4px">17 bots guardados</span>
+    <span id="sync-status" style="font-size: 11px; margin-right: 4px; color: rgb(217, 119, 6);">⏳ Guardando...</span>
+    <button onclick="saveToGitHub()" id="btn-save" disabled="">☁ Guardar en GitHub</button>
     <button onclick="exportCSV()">⬇ CSV</button>
     <button onclick="showConfig()">⚙ Config</button>
     <button class="btn-danger" onclick="clearAll()">Borrar todo</button>
@@ -171,7 +169,7 @@
     </div>
   </div>
 
-  <div class="save-notice" id="save-notice">⚠ Hay cambios sin guardar. Hacé clic en <strong>☁ Guardar en GitHub</strong> para sincronizar.</div>
+  <div class="save-notice" id="save-notice" style="display: block;">⚠ Hay cambios sin guardar. Hacé clic en <strong>☁ Guardar en GitHub</strong> para sincronizar.</div>
 
   <!-- DROP ZONE -->
   <div class="drop-zone" id="dropzone">
@@ -184,8 +182,8 @@
       <span class="fmt fmt-on">✓ Myfxbook Live</span>
     </div>
   </div>
-  <div class="alert alert-ok" id="alert-ok"></div>
-  <div class="alert alert-err" id="alert-err"></div>
+  <div class="alert alert-ok" id="alert-ok" style="display: block;">✓ 8 bots importados.</div>
+  <div class="alert alert-err" id="alert-err" style="display: none;"></div>
 
   <!-- CRITERIOS -->
   <div class="criteria-bar">
@@ -195,7 +193,7 @@
     <div class="crit"><span class="crit-lbl">W/L Ratio</span><span class="crit-val">≥ 1.00</span></div>
     <div class="crit"><span class="crit-lbl">Trades mín</span><span class="crit-val">≥ 500</span></div>
     <div class="crit"><span class="crit-lbl">Sharpe mín</span><span class="crit-val">≥ 0.50</span></div>
-    <div class="crit"><span class="crit-lbl">Stagnation</span><span class="crit-val" style="font-size:11px"><span style="color:var(--green)">≤500</span> <span style="color:#d97706">≤1300</span> <span style="color:var(--red)">>1300</span></span></div>
+    <div class="crit"><span class="crit-lbl">Stagnation</span><span class="crit-val" style="font-size:11px"><span style="color:var(--green)">≤500</span> <span style="color:#d97706">≤1300</span> <span style="color:var(--red)">&gt;1300</span></span></div>
     <div class="crit"><span class="crit-lbl">Z-Prob máx</span><span class="crit-val">≤ 88%</span></div>
     <div class="crit"><span class="crit-lbl">Historia</span><span class="crit-val">≥ 10 años</span></div>
   </div>
@@ -211,8 +209,8 @@
         <div class="form-grid">
           <div class="field"><label>Nombre / Magic ID</label><input id="f-name" placeholder="ej. 2623 AUDUSD H1"></div>
           <div class="field"><label>Símbolo</label><input id="f-symbol" placeholder="AUDUSD"></div>
-          <div class="field"><label>Timeframe</label><select id="f-tf"><option>M1</option><option>M5</option><option>M15</option><option>M30</option><option selected>H1</option><option>H4</option><option>D1</option></select></div>
-          <div class="field"><label>Fase</label><select id="f-phase"><option>IS</option><option>OOS</option><option selected>IS+OOS</option><option>WFM</option><option>Demo Live</option></select></div>
+          <div class="field"><label>Timeframe</label><select id="f-tf"><option>M1</option><option>M5</option><option>M15</option><option>M30</option><option selected="">H1</option><option>H4</option><option>D1</option></select></div>
+          <div class="field"><label>Fase</label><select id="f-phase"><option>IS</option><option>OOS</option><option selected="">IS+OOS</option><option>WFM</option><option>Demo Live</option></select></div>
           <div class="field"><label>Profit Factor</label><input id="f-pf" type="number" step="0.01" placeholder="1.45"></div>
           <div class="field"><label>SQN ★</label><input id="f-sqn" type="number" step="0.01" placeholder="2.10"></div>
           <div class="field"><label>DD $ (absoluto)</label><input id="f-dd" type="number" placeholder="1350"></div>
@@ -249,7 +247,7 @@
       <div class="form-inner">
         <div class="field" style="margin-bottom:12px">
           <label>Bot al que pertenece este Overview</label>
-          <select id="ov-bot-select"><option value="">— Seleccioná un bot —</option></select>
+          <select id="ov-bot-select"><option value="">— Seleccioná un bot —</option><option value="mot87jsnxcixhg4pfr">Strategy 2.7.19(1) - Improved 1.1.7 — AUDUSD</option><option value="mot87jsn7ayp189u9qe">Strategy 4.9.14 - Improved 1.1.5 — AUDUSD</option><option value="mot87jsozw09pgmjwwc">Strategy 2.6.23 - Improved 2.1.4 — AUDUSD</option><option value="mouryfc0aht88q4e805">Strategy 2.6.20 - Improved 2.1.5(1) — XAUUSD</option><option value="mouryfc1nb5jsxr98f">Strategy 3.1.15(2) - Improved 2.1.6 — XAUUSD</option><option value="mouryfc1yr0lro6p9sc">Strategy 3.1.15(3) - Improved 4.1.5(1) — XAUUSD</option><option value="mouryfc1mcw1gxbo67f">Strategy 1.2.22 - Improved 4.1.5 — XAUUSD</option><option value="mouryfc26nrm62e7ehx">Strategy 2.3.25 - Improved 2.1.4(1) — XAUUSD</option><option value="mouryfc2ie40evly0ok">Strategy 3.1.18(6) - Improved 1.1.5 — XAUUSD</option><option value="mouxa61bs9pa3vqu4xh">Strategy 1.3.19(1) - Improved 1.1.6 — GBPJPY</option><option value="mouxa61c8wn8ixule2b">Strategy 1.4.16 - Improved 2.1.4 — GBPJPY</option><option value="mouxa61criarl4hdkdj">Strategy 1.4.20 - Improved 3.1.4 — GBPJPY</option><option value="mouxa61dpb28l6b7ll">Strategy 3.1.18(1) - Improved 5.1.4 — GBPJPY</option><option value="mouxa61dln4jrpsm5em">Strategy 3.1.18(1) - Improved 5.1.6 — GBPJPY</option><option value="mouxa61dr0g4um2jbbo">Strategy 3.2.20(1) - Improved 4.1.4 — GBPJPY</option><option value="mouxa61d7hm6oz6e40c">Strategy 3.2.20(1) - Improved 4.1.7 — GBPJPY</option><option value="mouxa61d84qg938o4gm">Strategy 5.6.16 - Improved 3.1.5 — GBPJPY</option></select>
         </div>
         <div class="field" style="margin-bottom:12px">
           <label>Pegá el texto completo del Overview de SQX</label>
@@ -271,12 +269,12 @@
   </div>
 
   <!-- SUMMARY -->
-  <div class="summary-grid" id="sum-grid" style="display:none">
-    <div class="stat"><div class="stat-lbl">Total bots</div><div class="stat-val" id="s-tot">0</div></div>
+  <div class="summary-grid" id="sum-grid" style="display: grid;">
+    <div class="stat"><div class="stat-lbl">Total bots</div><div class="stat-val" id="s-tot">17</div></div>
     <div class="stat"><div class="stat-lbl">Aprobados</div><div class="stat-val green" id="s-ok">0</div></div>
-    <div class="stat"><div class="stat-lbl">Parciales (1-2 fallos)</div><div class="stat-val amber" id="s-warn">0</div></div>
-    <div class="stat"><div class="stat-lbl">Descartados</div><div class="stat-val red" id="s-fail">0</div></div>
-    <div class="stat"><div class="stat-lbl">Desde CSV</div><div class="stat-val blue" id="s-csv">0</div></div>
+    <div class="stat"><div class="stat-lbl">Parciales (1-2 fallos)</div><div class="stat-val amber" id="s-warn">8</div></div>
+    <div class="stat"><div class="stat-lbl">Descartados</div><div class="stat-val red" id="s-fail">9</div></div>
+    <div class="stat"><div class="stat-lbl">Desde CSV</div><div class="stat-val blue" id="s-csv">17</div></div>
   </div>
 
   <!-- TABLE -->
@@ -284,7 +282,7 @@
     <div class="table-topbar">
       <div>
         <div class="t-title">Base de datos de estrategias</div>
-        <div class="t-sub" id="t-sub">Sin datos cargados</div>
+        <div class="t-sub" id="t-sub">Mostrando 17 de 17 — Vista IS</div>
       </div>
       <div class="view-tabs">
         <button class="vtab active" onclick="setView('IS',this)">IS</button>
@@ -321,7 +319,262 @@
             <th style="width:30px"></th>
           </tr>
         </thead>
-        <tbody id="tbody"></tbody>
+        <tbody id="tbody"><tr id="datarow-0" class="data-row" onclick="toggleRow(0)">
+      <td class="left name-cell" title="Strategy 2.7.19(1) - Improved 1.1.7">Strategy 2.7.19(1) - Improve…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">AUDUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="fail">1.18</td>
+      <td class="fail">2.41%</td>
+      <td class="pass">1.06</td>
+      <td class="pass">901</td>
+      <td class="fail">0.43</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(0)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-0" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-1" class="data-row" onclick="toggleRow(1)">
+      <td class="left name-cell" title="Strategy 4.9.14 - Improved 1.1.5">Strategy 4.9.14 - Improved 1…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">AUDUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="fail">1.18</td>
+      <td class="fail">2.65%</td>
+      <td class="pass">1.16</td>
+      <td class="pass">1168</td>
+      <td class="pass">0.51</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(1)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-1" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-2" class="data-row" onclick="toggleRow(2)">
+      <td class="left name-cell" title="Strategy 2.6.23 - Improved 2.1.4">Strategy 2.6.23 - Improved 2…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">AUDUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="warn-cell">1.20</td>
+      <td class="fail">3.22%</td>
+      <td class="pass">1.05</td>
+      <td class="pass">1027</td>
+      <td class="fail">0.49</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(2)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-2" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-3" class="data-row" onclick="toggleRow(3)">
+      <td class="left name-cell" title="Strategy 2.6.20 - Improved 2.1.5(1)">Strategy 2.6.20 - Improved 2…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">XAUUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.47</td>
+      <td class="fail">5.07%</td>
+      <td class="pass">1.22</td>
+      <td class="pass">1335</td>
+      <td class="pass">1.02</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(3)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-3" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-4" class="data-row" onclick="toggleRow(4)">
+      <td class="left name-cell" title="Strategy 3.1.15(2) - Improved 2.1.6">Strategy 3.1.15(2) - Improve…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">XAUUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.47</td>
+      <td class="fail">5.01%</td>
+      <td class="pass">1.09</td>
+      <td class="pass">1312</td>
+      <td class="pass">1.08</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(4)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-4" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-5" class="data-row" onclick="toggleRow(5)">
+      <td class="left name-cell" title="Strategy 3.1.15(3) - Improved 4.1.5(1)">Strategy 3.1.15(3) - Improve…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">XAUUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.35</td>
+      <td class="fail">7.51%</td>
+      <td class="pass">1.01</td>
+      <td class="pass">1408</td>
+      <td class="pass">0.92</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(5)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-5" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-6" class="data-row" onclick="toggleRow(6)">
+      <td class="left name-cell" title="Strategy 1.2.22 - Improved 4.1.5">Strategy 1.2.22 - Improved 4…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">XAUUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.41</td>
+      <td class="fail">7.52%</td>
+      <td class="pass">1.09</td>
+      <td class="pass">1706</td>
+      <td class="pass">1.09</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(6)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-6" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-7" class="data-row" onclick="toggleRow(7)">
+      <td class="left name-cell" title="Strategy 2.3.25 - Improved 2.1.4(1)">Strategy 2.3.25 - Improved 2…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">XAUUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.35</td>
+      <td class="fail">5.57%</td>
+      <td class="pass">1.04</td>
+      <td class="pass">1510</td>
+      <td class="pass">0.91</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(7)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-7" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-8" class="data-row" onclick="toggleRow(8)">
+      <td class="left name-cell" title="Strategy 3.1.18(6) - Improved 1.1.5">Strategy 3.1.18(6) - Improve…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">XAUUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.34</td>
+      <td class="pass">10.15%</td>
+      <td class="pass">1.02</td>
+      <td class="pass">2475</td>
+      <td class="pass">1.16</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(8)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-8" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-9" class="data-row" onclick="toggleRow(9)">
+      <td class="left name-cell" title="Strategy 1.3.19(1) - Improved 1.1.6">Strategy 1.3.19(1) - Improve…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.41</td>
+      <td class="fail">2.77%</td>
+      <td class="pass">1.03</td>
+      <td class="pass">557</td>
+      <td class="pass">0.65</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(9)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-9" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-10" class="data-row" onclick="toggleRow(10)">
+      <td class="left name-cell" title="Strategy 1.4.16 - Improved 2.1.4">Strategy 1.4.16 - Improved 2…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.35</td>
+      <td class="fail">3.72%</td>
+      <td class="pass">1.10</td>
+      <td class="pass">579</td>
+      <td class="pass">0.67</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(10)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-10" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-11" class="data-row" onclick="toggleRow(11)">
+      <td class="left name-cell" title="Strategy 1.4.20 - Improved 3.1.4">Strategy 1.4.20 - Improved 3…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.42</td>
+      <td class="fail">3.51%</td>
+      <td class="pass">1.06</td>
+      <td class="pass">550</td>
+      <td class="pass">0.66</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(11)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-11" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-12" class="data-row" onclick="toggleRow(12)">
+      <td class="left name-cell" title="Strategy 3.1.18(1) - Improved 5.1.4">Strategy 3.1.18(1) - Improve…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.41</td>
+      <td class="fail">2.61%</td>
+      <td class="pass">1.11</td>
+      <td class="pass">581</td>
+      <td class="pass">0.64</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(12)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-12" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-13" class="data-row" onclick="toggleRow(13)">
+      <td class="left name-cell" title="Strategy 3.1.18(1) - Improved 5.1.6">Strategy 3.1.18(1) - Improve…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.43</td>
+      <td class="fail">2.83%</td>
+      <td class="pass">1.11</td>
+      <td class="pass">581</td>
+      <td class="pass">0.66</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(13)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-13" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-14" class="data-row" onclick="toggleRow(14)">
+      <td class="left name-cell" title="Strategy 3.2.20(1) - Improved 4.1.4">Strategy 3.2.20(1) - Improve…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.43</td>
+      <td class="fail">3.10%</td>
+      <td class="pass">1.08</td>
+      <td class="pass">562</td>
+      <td class="pass">0.66</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(14)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-14" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-15" class="data-row" onclick="toggleRow(15)">
+      <td class="left name-cell" title="Strategy 3.2.20(1) - Improved 4.1.7">Strategy 3.2.20(1) - Improve…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.45</td>
+      <td class="fail">2.67%</td>
+      <td class="pass">1.12</td>
+      <td class="pass">560</td>
+      <td class="pass">0.67</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(15)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-15" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-16" class="data-row" onclick="toggleRow(16)">
+      <td class="left name-cell" title="Strategy 5.6.16 - Improved 3.1.5">Strategy 5.6.16 - Improved 3…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="warn-cell">1.23</td>
+      <td class="fail">1.82%</td>
+      <td class="pass">1.09</td>
+      <td class="pass">608</td>
+      <td class="fail">0.42</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(16)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-16" style="margin-left:6px">▶</span>
+      </td>
+    </tr></tbody>
       </table>
     </div>
   </div>
@@ -329,11 +582,10 @@
 </div>
 
 <!-- GLOBAL TOOLTIP -->
-<div id="eq-tooltip" style="position:fixed;display:none;background:#111318;color:#fff;font-size:11px;padding:6px 10px;border-radius:6px;pointer-events:none;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,0.2);white-space:nowrap"></div>
+<div id="eq-tooltip" style="position: fixed; display: none; background: rgb(17, 19, 24); color: rgb(255, 255, 255); font-size: 11px; padding: 6px 10px; border-radius: 6px; pointer-events: none; z-index: 9999; box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 8px; white-space: nowrap; left: 1331px; top: 98px;"><strong>04.17.2026 18:00</strong><br>Acumulado: +$179</div>
 
 <!-- EMBEDDED DATABASE — NO EDITAR MANUALMENTE -->
-<script id="db-store" type="application/json">
-[
+<script id="db-store" type="application/json">[
   {
     "id": "mot87jsnxcixhg4pfr",
     "name": "Strategy 2.7.19(1) - Improved 1.1.7",
@@ -3225,23 +3477,24 @@
       "endDate": "Close Price"
     },
     "overviewData": {
-      "sqn": 0.87,
+      "totalProfit": 10017.02,
+      "cagr": 3.53,
+      "trades": 1312,
+      "sharpe": 1.08,
+      "pf": 1.47,
+      "retdd": 14.09,
+      "winPct": 52.06,
+      "dd": 711.02,
+      "ddPct": 4.9,
+      "rExp": 0.23,
+      "rExpScore": 14.79,
       "strQuality": 1.39,
+      "sqn": 0.87,
+      "ahpr": 4.77,
+      "zScore": 1.09,
+      "zProb": 13.79,
       "stag": 854,
       "stagPct": 11.58,
-      "zScore": 1.09,
-      "zp": 13.79,
-      "ahpr": 4.77,
-      "cagr": null,
-      "totalProfit": null,
-      "sharpe": null,
-      "pf": null,
-      "trades": null,
-      "winPct": null,
-      "dd": null,
-      "ddPct": null,
-      "retdd": null,
-      "rExp": null,
       "monthlyData": [
         {
           "year": 2006,
@@ -4821,23 +5074,24 @@
       "fitness": 0
     },
     "overviewData": {
-      "sqn": 0.78,
+      "totalProfit": 11141.82,
+      "cagr": 3.81,
+      "trades": 1510,
+      "sharpe": 0.91,
+      "pf": 1.35,
+      "retdd": 10.04,
+      "winPct": 50.86,
+      "dd": 1109.96,
+      "ddPct": 6.24,
+      "rExp": 0.17,
+      "rExpScore": 12.82,
       "strQuality": 1.08,
+      "sqn": 0.78,
+      "ahpr": 5.31,
+      "zScore": -1.4,
+      "zProb": 91.92,
       "stag": 792,
       "stagPct": 10.74,
-      "zScore": -1.4,
-      "zp": 91.92,
-      "ahpr": 5.31,
-      "cagr": null,
-      "totalProfit": null,
-      "sharpe": null,
-      "pf": null,
-      "trades": null,
-      "winPct": null,
-      "dd": null,
-      "ddPct": null,
-      "retdd": null,
-      "rExp": null,
       "monthlyData": [
         {
           "year": 2006,
@@ -5224,7 +5478,7 @@
       "absGain": 1.69,
       "daily": 0.04,
       "monthly": 1.15,
-      "ddPct": 0,
+      "ddPct": null,
       "balance": null,
       "trades": 2,
       "pips": 13,
@@ -5254,8 +5508,8 @@
       },
       "bestTradeUsd": 8,
       "worstTradeUsd": 17,
-      "bestTradePips": 8,
-      "worstTradePips": 17,
+      "bestTradePips": null,
+      "worstTradePips": null,
       "avgTradeLength": "2h 42m",
       "tradeList": [
         {
@@ -5916,9 +6170,352 @@
       "startDate": "03.25.2026 18:17",
       "endDate": "Close Price"
     }
+  },
+  {
+    "id": "mouxa61bs9pa3vqu4xh",
+    "name": "Strategy 1.3.19(1) - Improved 1.1.6",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 5548.86,
+      "trades": 557,
+      "pf": 1.41,
+      "sharpe": 0.65,
+      "cagr": 2.77,
+      "stability": 0.91,
+      "dd": 838.91,
+      "wr": 1.03,
+      "retdd": 6.61,
+      "cagrdd": 0.38,
+      "fitness": 0.84,
+      "exposure": 0.14,
+      "rexp": 0.2
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxa61c8wn8ixule2b",
+    "name": "Strategy 1.4.16 - Improved 2.1.4",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 7444.88,
+      "trades": 579,
+      "pf": 1.35,
+      "sharpe": 0.67,
+      "cagr": 3.72,
+      "stability": 0.91,
+      "dd": 1250.71,
+      "wr": 1.1,
+      "retdd": 5.95,
+      "cagrdd": 0.35,
+      "fitness": 0.82,
+      "exposure": 0.95,
+      "rexp": 0.17
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxa61criarl4hdkdj",
+    "name": "Strategy 1.4.20 - Improved 3.1.4",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 7023.15,
+      "trades": 550,
+      "pf": 1.42,
+      "sharpe": 0.66,
+      "cagr": 3.51,
+      "stability": 0.91,
+      "dd": 944.72,
+      "wr": 1.06,
+      "retdd": 7.43,
+      "cagrdd": 0.43,
+      "fitness": 0.85,
+      "exposure": 0.81,
+      "rexp": 0.2
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxa61dpb28l6b7ll",
+    "name": "Strategy 3.1.18(1) - Improved 5.1.4",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 5228.27,
+      "trades": 581,
+      "pf": 1.41,
+      "sharpe": 0.64,
+      "cagr": 2.61,
+      "stability": 0.88,
+      "dd": 745.82,
+      "wr": 1.11,
+      "retdd": 7.01,
+      "cagrdd": 0.41,
+      "fitness": 0.84,
+      "exposure": 1.2,
+      "rexp": 0.2
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxa61dln4jrpsm5em",
+    "name": "Strategy 3.1.18(1) - Improved 5.1.6",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 5667.83,
+      "trades": 581,
+      "pf": 1.43,
+      "sharpe": 0.66,
+      "cagr": 2.83,
+      "stability": 0.88,
+      "dd": 776.28,
+      "wr": 1.11,
+      "retdd": 7.3,
+      "cagrdd": 0.42,
+      "fitness": 0.85,
+      "exposure": 1.2,
+      "rexp": 0.21
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxa61dr0g4um2jbbo",
+    "name": "Strategy 3.2.20(1) - Improved 4.1.4",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 6193.43,
+      "trades": 562,
+      "pf": 1.43,
+      "sharpe": 0.66,
+      "cagr": 3.1,
+      "stability": 0.92,
+      "dd": 1089.67,
+      "wr": 1.08,
+      "retdd": 5.68,
+      "cagrdd": 0.34,
+      "fitness": 0.82,
+      "exposure": 1.2,
+      "rexp": 0.21
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxa61d7hm6oz6e40c",
+    "name": "Strategy 3.2.20(1) - Improved 4.1.7",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 5337.45,
+      "trades": 560,
+      "pf": 1.45,
+      "sharpe": 0.67,
+      "cagr": 2.67,
+      "stability": 0.89,
+      "dd": 744.33,
+      "wr": 1.12,
+      "retdd": 7.17,
+      "cagrdd": 0.41,
+      "fitness": 0.85,
+      "exposure": 1.2,
+      "rexp": 0.21
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxa61d84qg938o4gm",
+    "name": "Strategy 5.6.16 - Improved 3.1.5",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 3644.38,
+      "trades": 608,
+      "pf": 1.23,
+      "sharpe": 0.42,
+      "cagr": 1.82,
+      "stability": 0.91,
+      "dd": 839.69,
+      "wr": 1.09,
+      "retdd": 4.34,
+      "cagrdd": 0.24,
+      "fitness": 0.78,
+      "exposure": 0.39,
+      "rexp": 0.11
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
   }
-]
-</script>
+]</script>
 
 <script>
 // ── DB LOAD ────────────────────────────────────────────────────
@@ -6865,6 +7462,7 @@ document.addEventListener('mousemove', e => {
 updateDbCount();
 render();
 </script>
-</body>
-</html>
 
+
+
+</body></html>
