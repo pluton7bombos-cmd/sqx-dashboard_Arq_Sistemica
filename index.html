@@ -141,7 +141,7 @@
     <span class="module-tag">Arq. Sistémica</span>
   </div>
   <div class="topbar-right">
-    <span id="db-count" style="font-size:11px;color:var(--text3);margin-right:4px">17 bots guardados</span>
+    <span id="db-count" style="font-size:11px;color:var(--text3);margin-right:4px">23 bots guardados</span>
     <span id="sync-status" style="font-size: 11px; margin-right: 4px; color: rgb(217, 119, 6);">⏳ Guardando...</span>
     <button onclick="saveToGitHub()" id="btn-save" disabled="">☁ Guardar en GitHub</button>
     <button onclick="exportCSV()">⬇ CSV</button>
@@ -182,7 +182,7 @@
       <span class="fmt fmt-on">✓ Myfxbook Live</span>
     </div>
   </div>
-  <div class="alert alert-ok" id="alert-ok" style="display: block;">✓ 8 bots importados.</div>
+  <div class="alert alert-ok" id="alert-ok" style="display: none;">✓ 1 bots importados.</div>
   <div class="alert alert-err" id="alert-err" style="display: none;"></div>
 
   <!-- CRITERIOS -->
@@ -247,7 +247,7 @@
       <div class="form-inner">
         <div class="field" style="margin-bottom:12px">
           <label>Bot al que pertenece este Overview</label>
-          <select id="ov-bot-select"><option value="">— Seleccioná un bot —</option><option value="mot87jsnxcixhg4pfr">Strategy 2.7.19(1) - Improved 1.1.7 — AUDUSD</option><option value="mot87jsn7ayp189u9qe">Strategy 4.9.14 - Improved 1.1.5 — AUDUSD</option><option value="mot87jsozw09pgmjwwc">Strategy 2.6.23 - Improved 2.1.4 — AUDUSD</option><option value="mouryfc0aht88q4e805">Strategy 2.6.20 - Improved 2.1.5(1) — XAUUSD</option><option value="mouryfc1nb5jsxr98f">Strategy 3.1.15(2) - Improved 2.1.6 — XAUUSD</option><option value="mouryfc1yr0lro6p9sc">Strategy 3.1.15(3) - Improved 4.1.5(1) — XAUUSD</option><option value="mouryfc1mcw1gxbo67f">Strategy 1.2.22 - Improved 4.1.5 — XAUUSD</option><option value="mouryfc26nrm62e7ehx">Strategy 2.3.25 - Improved 2.1.4(1) — XAUUSD</option><option value="mouryfc2ie40evly0ok">Strategy 3.1.18(6) - Improved 1.1.5 — XAUUSD</option><option value="mouxa61bs9pa3vqu4xh">Strategy 1.3.19(1) - Improved 1.1.6 — GBPJPY</option><option value="mouxa61c8wn8ixule2b">Strategy 1.4.16 - Improved 2.1.4 — GBPJPY</option><option value="mouxa61criarl4hdkdj">Strategy 1.4.20 - Improved 3.1.4 — GBPJPY</option><option value="mouxa61dpb28l6b7ll">Strategy 3.1.18(1) - Improved 5.1.4 — GBPJPY</option><option value="mouxa61dln4jrpsm5em">Strategy 3.1.18(1) - Improved 5.1.6 — GBPJPY</option><option value="mouxa61dr0g4um2jbbo">Strategy 3.2.20(1) - Improved 4.1.4 — GBPJPY</option><option value="mouxa61d7hm6oz6e40c">Strategy 3.2.20(1) - Improved 4.1.7 — GBPJPY</option><option value="mouxa61d84qg938o4gm">Strategy 5.6.16 - Improved 3.1.5 — GBPJPY</option></select>
+          <select id="ov-bot-select"><option value="">— Seleccioná un bot —</option><option value="mot87jsnxcixhg4pfr">Strategy 2.7.19(1) - Improved 1.1.7 — AUDUSD</option><option value="mot87jsn7ayp189u9qe">Strategy 4.9.14 - Improved 1.1.5 — AUDUSD</option><option value="mot87jsozw09pgmjwwc">Strategy 2.6.23 - Improved 2.1.4 — AUDUSD</option><option value="mouryfc0aht88q4e805">Strategy 2.6.20 - Improved 2.1.5(1) — XAUUSD</option><option value="mouryfc1nb5jsxr98f">Strategy 3.1.15(2) - Improved 2.1.6 — XAUUSD</option><option value="mouryfc1yr0lro6p9sc">Strategy 3.1.15(3) - Improved 4.1.5(1) — XAUUSD</option><option value="mouryfc1mcw1gxbo67f">Strategy 1.2.22 - Improved 4.1.5 — XAUUSD</option><option value="mouryfc26nrm62e7ehx">Strategy 2.3.25 - Improved 2.1.4(1) — XAUUSD</option><option value="mouryfc2ie40evly0ok">Strategy 3.1.18(6) - Improved 1.1.5 — XAUUSD</option><option value="mouxa61bs9pa3vqu4xh">Strategy 1.3.19(1) - Improved 1.1.6 — GBPJPY</option><option value="mouxa61c8wn8ixule2b">Strategy 1.4.16 - Improved 2.1.4 — GBPJPY</option><option value="mouxa61criarl4hdkdj">Strategy 1.4.20 - Improved 3.1.4 — GBPJPY</option><option value="mouxa61dpb28l6b7ll">Strategy 3.1.18(1) - Improved 5.1.4 — GBPJPY</option><option value="mouxa61dln4jrpsm5em">Strategy 3.1.18(1) - Improved 5.1.6 — GBPJPY</option><option value="mouxa61dr0g4um2jbbo">Strategy 3.2.20(1) - Improved 4.1.4 — GBPJPY</option><option value="mouxa61d7hm6oz6e40c">Strategy 3.2.20(1) - Improved 4.1.7 — GBPJPY</option><option value="mouxa61d84qg938o4gm">Strategy 5.6.16 - Improved 3.1.5 — GBPJPY</option><option value="mouxb9ht1jom7eabgwh">Strategy 1.2.6(3) - Improved 1.1.4 — EURUSD</option><option value="mouxb9hus22igs6x2wf">Strategy 1.5.5(5) - Improved 4.1.4 — EURUSD</option><option value="mouxb9hurbn9thy81x">Strategy 3.8.4(5) - Improved 5.1.4 — EURUSD</option><option value="mouxb9hujum0gd0ptf">WFM_Strategy 1.5.5(5) - Improved 1.1.5 — EURUSD</option><option value="mouxb9hu3edjlagn2wc">Strategy 4.6.4(2) - Improved 3.1.7 — EURUSD</option><option value="mouxuiat215f0t8bbvh">Strategy 3.1.17 - Improved 2.1.5(1) — XAUUSD</option></select>
         </div>
         <div class="field" style="margin-bottom:12px">
           <label>Pegá el texto completo del Overview de SQX</label>
@@ -270,11 +270,11 @@
 
   <!-- SUMMARY -->
   <div class="summary-grid" id="sum-grid" style="display: grid;">
-    <div class="stat"><div class="stat-lbl">Total bots</div><div class="stat-val" id="s-tot">17</div></div>
+    <div class="stat"><div class="stat-lbl">Total bots</div><div class="stat-val" id="s-tot">23</div></div>
     <div class="stat"><div class="stat-lbl">Aprobados</div><div class="stat-val green" id="s-ok">0</div></div>
-    <div class="stat"><div class="stat-lbl">Parciales (1-2 fallos)</div><div class="stat-val amber" id="s-warn">8</div></div>
-    <div class="stat"><div class="stat-lbl">Descartados</div><div class="stat-val red" id="s-fail">9</div></div>
-    <div class="stat"><div class="stat-lbl">Desde CSV</div><div class="stat-val blue" id="s-csv">17</div></div>
+    <div class="stat"><div class="stat-lbl">Parciales (1-2 fallos)</div><div class="stat-val amber" id="s-warn">11</div></div>
+    <div class="stat"><div class="stat-lbl">Descartados</div><div class="stat-val red" id="s-fail">12</div></div>
+    <div class="stat"><div class="stat-lbl">Desde CSV</div><div class="stat-val blue" id="s-csv">23</div></div>
   </div>
 
   <!-- TABLE -->
@@ -282,7 +282,7 @@
     <div class="table-topbar">
       <div>
         <div class="t-title">Base de datos de estrategias</div>
-        <div class="t-sub" id="t-sub">Mostrando 17 de 17 — Vista IS</div>
+        <div class="t-sub" id="t-sub">Mostrando 23 de 23 — Vista IS</div>
       </div>
       <div class="view-tabs">
         <button class="vtab active" onclick="setView('IS',this)">IS</button>
@@ -319,52 +319,7 @@
             <th style="width:30px"></th>
           </tr>
         </thead>
-        <tbody id="tbody"><tr id="datarow-0" class="data-row" onclick="toggleRow(0)">
-      <td class="left name-cell" title="Strategy 2.7.19(1) - Improved 1.1.7">Strategy 2.7.19(1) - Improve…<span class="src-tag">CSV</span> 📋 📊</td>
-      <td class="left">AUDUSD</td>
-      <td class="left">H1</td>
-      <td><span class="sqx-ok">PASSED</span></td>
-      <td class="fail">1.18</td>
-      <td class="fail">2.41%</td>
-      <td class="pass">1.06</td>
-      <td class="pass">901</td>
-      <td class="fail">0.43</td>
-      <td><span class="badge badge-fail">✗ Descartar</span></td>
-      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
-        <button class="btn-del-row" onclick="delS(0)">🗑 Borrar</button>
-        <span class="expand-arrow" id="arrow-0" style="margin-left:6px">▶</span>
-      </td>
-    </tr><tr id="datarow-1" class="data-row" onclick="toggleRow(1)">
-      <td class="left name-cell" title="Strategy 4.9.14 - Improved 1.1.5">Strategy 4.9.14 - Improved 1…<span class="src-tag">CSV</span> 📋 📊</td>
-      <td class="left">AUDUSD</td>
-      <td class="left">H1</td>
-      <td><span class="sqx-ok">PASSED</span></td>
-      <td class="fail">1.18</td>
-      <td class="fail">2.65%</td>
-      <td class="pass">1.16</td>
-      <td class="pass">1168</td>
-      <td class="pass">0.51</td>
-      <td><span class="badge badge-fail">✗ Descartar</span></td>
-      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
-        <button class="btn-del-row" onclick="delS(1)">🗑 Borrar</button>
-        <span class="expand-arrow" id="arrow-1" style="margin-left:6px">▶</span>
-      </td>
-    </tr><tr id="datarow-2" class="data-row" onclick="toggleRow(2)">
-      <td class="left name-cell" title="Strategy 2.6.23 - Improved 2.1.4">Strategy 2.6.23 - Improved 2…<span class="src-tag">CSV</span> 📋 📊</td>
-      <td class="left">AUDUSD</td>
-      <td class="left">H1</td>
-      <td><span class="sqx-ok">PASSED</span></td>
-      <td class="warn-cell">1.20</td>
-      <td class="fail">3.22%</td>
-      <td class="pass">1.05</td>
-      <td class="pass">1027</td>
-      <td class="fail">0.49</td>
-      <td><span class="badge badge-fail">✗ Descartar</span></td>
-      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
-        <button class="btn-del-row" onclick="delS(2)">🗑 Borrar</button>
-        <span class="expand-arrow" id="arrow-2" style="margin-left:6px">▶</span>
-      </td>
-    </tr><tr id="datarow-3" class="data-row" onclick="toggleRow(3)">
+        <tbody id="tbody"><tr id="datarow-3" class="data-row" onclick="toggleRow(3)">
       <td class="left name-cell" title="Strategy 2.6.20 - Improved 2.1.5(1)">Strategy 2.6.20 - Improved 2…<span class="src-tag">CSV</span> 📋 📊</td>
       <td class="left">XAUUSD</td>
       <td class="left">H1</td>
@@ -454,7 +409,271 @@
         <button class="btn-del-row" onclick="delS(8)">🗑 Borrar</button>
         <span class="expand-arrow" id="arrow-8" style="margin-left:6px">▶</span>
       </td>
-    </tr><tr id="datarow-9" class="data-row" onclick="toggleRow(9)">
+    </tr><tr id="datarow-22" class="data-row" onclick="toggleRow(22)">
+      <td class="left name-cell" title="Strategy 3.1.17 - Improved 2.1.5(1)">Strategy 3.1.17 - Improved 2…<span class="src-tag">CSV</span></td>
+      <td class="left">XAUUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.42</td>
+      <td class="fail">6.27%</td>
+      <td class="pass">1.03</td>
+      <td class="pass">1293</td>
+      <td class="pass">0.97</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(22)">🗑 Borrar</button>
+        <span class="expand-arrow open" id="arrow-22" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="expanded-22" class="expanded-row"><td colspan="11" style="padding: 0px; border-bottom: 2px solid rgb(99, 102, 241);"><div style="padding:1.5rem;background:#f8f9fa;animation:slideDown 0.2s ease">
+    <!-- HEADER -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;flex-wrap:wrap">
+      <div style="font-size:16px;font-weight:500;color:#111318">Strategy 3.1.17 - Improved 2.1.5(1)</div>
+      <span style="font-size:11px;background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:4px;font-weight:600">XAUUSD</span>
+      <span style="font-size:11px;background:#f1f3f5;color:#4a5060;padding:2px 8px;border-radius:4px">H1</span>
+      <span class="badge badge-fail">✗ Descartar</span>
+      <span style="font-size:11px;color:#9098a8">Cargado: 2026-05-07</span>
+      <button onclick="event.stopPropagation();deleteBot('mouxuiat215f0t8bbvh',22)" style="margin-left:auto;height:28px;padding:0 12px;border-radius:6px;border:1px solid #fcc;background:#fef2f2;color:#b91c1c;font-size:11px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:5px" title="Eliminar esta estrategia de la base de datos">
+        🗑 Eliminar
+      </button>
+    </div>
+    <div style="font-size:12px;color:var(--red);margin-bottom:1rem">Criterios fallando: SQN, Ann%, Stag~640d</div>
+
+    <!-- MÉTRICAS IS/OOS/Full -->
+    <div class="ficha-sec-hdr" onclick="toggleFichaSection('metrics-22')">
+      <span>📊 Métricas IS / OOS / Full</span><span>▾</span>
+    </div>
+    <div id="metrics-22" class="ficha-subsection" style="margin-bottom:1rem;overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:400px">
+        <thead><tr style="background:#f1f3f5">
+          <th style="padding:7px 10px;text-align:left;font-weight:600;color:#4a5060;border-bottom:1px solid #e0e3e8">Métrica</th>
+          <th style="padding:7px 10px;text-align:right;font-weight:600;color:#4a5060;border-bottom:1px solid #e0e3e8">IS</th>
+          <th style="padding:7px 10px;text-align:right;font-weight:600;color:#4a5060;border-bottom:1px solid #e0e3e8">OOS</th>
+          <th style="padding:7px 10px;text-align:right;font-weight:600;color:#4a5060;border-bottom:1px solid #e0e3e8">Full</th>
+        </tr></thead>
+        <tbody><tr style="border-bottom:1px solid #f1f3f5">
+      <td style="padding:6px 10px;font-weight:600;color:#4a5060;font-size:12px">Profit Factor</td>
+      <td class="pass" style="text-align:right">1.42</td><td class="fail" style="text-align:right">0.00</td>
+      <td class="pass" style="text-align:right">1.42</td>
+    </tr><tr style="border-bottom:1px solid #f1f3f5">
+      <td style="padding:6px 10px;font-weight:600;color:#4a5060;font-size:12px">Ann. Return %</td>
+      <td class="fail" style="text-align:right">6.27%</td><td class="fail" style="text-align:right">0.00%</td>
+      <td class="fail" style="text-align:right">6.27%</td>
+    </tr><tr style="border-bottom:1px solid #f1f3f5">
+      <td style="padding:6px 10px;font-weight:600;color:#4a5060;font-size:12px">W/L Ratio</td>
+      <td class="pass" style="text-align:right">1.03</td><td class="fail" style="text-align:right">0.00</td>
+      <td class="pass" style="text-align:right">1.03</td>
+    </tr><tr style="border-bottom:1px solid #f1f3f5">
+      <td style="padding:6px 10px;font-weight:600;color:#4a5060;font-size:12px"># Trades</td>
+      <td class="pass" style="text-align:right">1293</td><td class="fail" style="text-align:right">—</td>
+      <td class="pass" style="text-align:right">1293</td>
+    </tr><tr style="border-bottom:1px solid #f1f3f5">
+      <td style="padding:6px 10px;font-weight:600;color:#4a5060;font-size:12px">Sharpe</td>
+      <td class="pass" style="text-align:right">0.97</td><td class="fail" style="text-align:right">0.00</td>
+      <td class="pass" style="text-align:right">0.97</td>
+    </tr><tr style="border-bottom:1px solid #f1f3f5">
+      <td style="padding:6px 10px;font-weight:600;color:#4a5060;font-size:12px">Drawdown $</td>
+      <td class="" style="text-align:right">$1.198</td><td class="" style="text-align:right">$0</td>
+      <td class="" style="text-align:right">$1.198</td>
+    </tr><tr style="border-bottom:1px solid #f1f3f5">
+      <td style="padding:6px 10px;font-weight:600;color:#4a5060;font-size:12px">Net Profit</td>
+      <td class="" style="text-align:right">$12.543</td><td class="" style="text-align:right">$0</td>
+      <td class="" style="text-align:right">$12.543</td>
+    </tr><tr style="border-bottom:1px solid #f1f3f5">
+      <td style="padding:6px 10px;font-weight:600;color:#4a5060;font-size:12px">Ret/DD</td>
+      <td class="" style="text-align:right">10.47</td><td class="" style="text-align:right">0.00</td>
+      <td class="" style="text-align:right">10.47</td>
+    </tr><tr style="border-bottom:1px solid #f1f3f5">
+      <td style="padding:6px 10px;font-weight:600;color:#4a5060;font-size:12px">CAGR/DD%</td>
+      <td class="" style="text-align:right">0.59</td><td class="" style="text-align:right">0.00</td>
+      <td class="" style="text-align:right">0.59</td>
+    </tr><tr style="border-bottom:1px solid #f1f3f5">
+      <td style="padding:6px 10px;font-weight:600;color:#4a5060;font-size:12px">Stability</td>
+      <td class="" style="text-align:right">0.89</td><td class="" style="text-align:right">0.00</td>
+      <td class="" style="text-align:right">0.89</td>
+    </tr><tr style="border-bottom:1px solid #f1f3f5">
+      <td style="padding:6px 10px;font-weight:600;color:#4a5060;font-size:12px">Fitness</td>
+      <td class="" style="text-align:right">0.89</td><td class="" style="text-align:right">0.00</td>
+      <td class="" style="text-align:right">0.89</td>
+    </tr></tbody>
+      </table>
+    </div>
+
+    <!-- OVERVIEW METRICS -->
+    <div class="ficha-sec-hdr" onclick="toggleFichaSection('overview-22')">
+      <span style="display:flex;align-items:center">📋 Métricas Overview <span style="font-size:9px;background:#eaf7f0;color:#1a7f4b;padding:1px 6px;border-radius:8px;border:1px solid #b2dfc8;margin-left:6px">✓ Cargado</span><button onclick="event.stopPropagation();resetOverview('mouxuiat215f0t8bbvh',22)" style="margin-left:8px;height:22px;padding:0 8px;border-radius:6px;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;font-size:10px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:3px">↺ Recargar</button></span><span>▾</span>
+    </div>
+    <div id="overview-22" class="ficha-subsection" style="margin-bottom:1rem">
+      
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px">
+      <div class="kpi-main" style="border-top:3px solid #1a7f4b">
+        <div class="kpi-lbl">Profit Factor</div>
+        <div class="kpi-val" style="color:#1a7f4b">1.42</div>
+      </div>
+      <div class="kpi-main" style="border-top:3px solid #b91c1c">
+        <div class="kpi-lbl">Drawdown $</div>
+        <div class="kpi-val" style="color:#111318">$1.198</div>
+      </div>
+      <div class="kpi-main" style="border-top:3px solid #1d4ed8">
+        <div class="kpi-lbl"># Trades</div>
+        <div class="kpi-val" style="color:#1a7f4b">1293</div>
+      </div>
+      <div class="kpi-main" style="border-top:3px solid #d97706">
+        <div class="kpi-lbl">Ret/DD Ratio</div>
+        <div class="kpi-val" style="color:#111318">10.47</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px">
+      <div class="kpi-sm"><div class="kpi-sm-lbl">SQN</div><div class="kpi-sm-val" style="color:#b91c1c">0.77</div></div>
+      <div class="kpi-sm"><div class="kpi-sm-lbl">Stagnation</div><div class="kpi-sm-val" style="color:#d97706">640d</div></div>
+      <div class="kpi-sm"><div class="kpi-sm-lbl">Z-Prob %</div><div class="kpi-sm-val" style="color:#b91c1c">11.90%</div></div>
+      <div class="kpi-sm"><div class="kpi-sm-lbl">AHPR</div><div class="kpi-sm-val">5.97</div></div>
+      <div class="kpi-sm"><div class="kpi-sm-lbl">Z-Score</div><div class="kpi-sm-val">1.18</div></div>
+      <div class="kpi-sm"><div class="kpi-sm-lbl">STR Quality</div><div class="kpi-sm-val">1.25</div></div>
+      <div class="kpi-sm"><div class="kpi-sm-lbl">Win %</div><div class="kpi-sm-val">50.7%</div></div>
+      <div class="kpi-sm"><div class="kpi-sm-lbl">R Expectancy</div><div class="kpi-sm-val">0.21</div></div>
+    </div>
+      <details style="margin-top:12px">
+        <summary>🔄 Actualizar datos del Overview</summary>
+        <div style="margin-top:8px">
+          <textarea id="ov-inline-22" rows="8" style="width:100%;border:1px solid #e0e3e8;border-radius:6px;padding:8px;font-size:11px;font-family:monospace;background:#fff;color:#111318;resize:vertical" placeholder="Pegá el texto completo del Overview de SQX acá..."></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+            <button onclick="processOverviewInline('mouxuiat215f0t8bbvh',22)" style="height:32px;padding:0 16px;border-radius:6px;background:#4f46e5;border:none;color:#fff;font-size:12px;font-weight:500;cursor:pointer">⚡ Parsear y cargar</button>
+          </div>
+          <div id="ov-err-22" style="display:none;color:#b91c1c;font-size:12px;margin-top:6px"></div>
+        </div>
+      </details>
+    </div>
+
+    <!-- EQUITY CURVE -->
+    <div class="ficha-sec-hdr" onclick="toggleFichaSection('equity-22')">
+      <span>📈 Equity Curve</span><span>▾</span>
+    </div>
+    <div id="equity-22" class="ficha-subsection" style="margin-bottom:1rem">
+      <div id="ov-chart-22"><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
+    <div style="border:1px solid #e0e3e8;border-radius:8px;padding:12px;background:#fff">
+      <div style="font-size:11px;font-weight:700;color:#4a5060;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:#1a7f4b;display:inline-block"></span>Backtest SQX
+      </div><svg viewBox="0 0 560 260" style="width:100%;height:auto;display:block">
+      <defs><linearGradient id="agovchart22" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a7f4b" stop-opacity="0.15"></stop><stop offset="100%" stop-color="#1a7f4b" stop-opacity="0.01"></stop></linearGradient></defs>
+      <line x1="64" y1="224" x2="544" y2="224" stroke="#e0e3e8" stroke-width="0.5" stroke-dasharray="3,3"></line><line x1="64" y1="173" x2="544" y2="173" stroke="#e0e3e8" stroke-width="0.5" stroke-dasharray="3,3"></line><line x1="64" y1="122" x2="544" y2="122" stroke="#e0e3e8" stroke-width="0.5" stroke-dasharray="3,3"></line><line x1="64" y1="71" x2="544" y2="71" stroke="#e0e3e8" stroke-width="0.5" stroke-dasharray="3,3"></line><line x1="64" y1="20" x2="544" y2="20" stroke="#e0e3e8" stroke-width="0.5" stroke-dasharray="3,3"></line>
+      <line x1="64" y1="219.4416957498797" x2="544" y2="219.4416957498797" stroke="#9098a8" stroke-width="0.8"></line>
+      <path d="M 64,219.4416957498797 L 64,219.16244084077348 L 65.91235059760956,219.491415196154 L 67.82470119521912,218.30148429506497 L 69.73705179282868,218.88334477973845 L 71.64940239043824,221.44540531954158 L 73.56175298804781,219.42422246205166 L 75.47410358565737,218.09799991590396 L 77.38645418326693,216.980821431408 L 79.2988047808765,214.82493540957105 L 81.21115537848605,217.57554860984578 L 83.12350597609561,214.30931457057292 L 85.03585657370519,217.55950495465822 L 86.94820717131475,214.71278867132932 L 88.86055776892431,214.68149560131002 L 90.77290836653387,218.53324363089314 L 92.68525896414343,221.48479964119025 L 94.59760956175299,224 L 96.50996015936255,223.83384491756252 L 98.42231075697211,223.51440144645184 L 100.33466135458167,222.1011301573063 L 102.24701195219123,216.31890151886788 L 104.15936254980079,215.02365434659714 L 106.07171314741036,214.73026195915736 L 107.98406374501992,214.27484453913036 L 109.89641434262948,214.69912773720924 L 111.80876494023904,213.9701739386379 L 113.72111553784862,213.49299433286146 L 115.63346613545818,209.75196340887962 L 117.54581673306774,209.68429413056376 L 119.4581673306773,209.81915614298194 L 121.37051792828686,208.6552763255638 L 123.28286852589642,208.2883372811751 L 125.19521912350598,204.79685667699178 L 127.10756972111554,202.74501614176722 L 129.0199203187251,202.7454926859807 L 130.93227091633466,198.98730617031316 L 132.84462151394422,196.83094360426273 L 134.7569721115538,195.31029101901038 L 136.66932270916334,194.44933447330183 L 138.58167330677293,197.4715778752669 L 140.49402390438246,194.65329539667633 L 142.40637450199205,195.92471535827246 L 144.31872509960158,196.504669666092 L 146.23107569721117,195.6154381637163 L 148.14342629482073,197.1481632023771 L 150.0557768924303,194.72144121920567 L 151.96812749003985,192.5048752341841 L 153.8804780876494,194.304147336258 L 155.79282868525897,193.76708200765273 L 157.70517928286853,196.78249494255772 L 159.6175298804781,195.41100069612833 L 161.52988047808765,190.94991146556032 L 163.44223107569724,191.7503468961554 L 165.35458167330677,192.899136146813 L 167.26693227091636,193.7478613910419 L 169.1792828685259,190.76914236057578 L 171.09163346613548,186.8851481725464 L 173.003984063745,187.13612812498542 L 174.9163346613546,185.17292481347033 L 176.82868525896416,183.5186810003691 L 178.74103585657372,181.8012156549446 L 180.65338645418328,182.661060264155 L 182.56573705179284,182.53016945351592 L 184.4780876494024,184.9209917726043 L 186.39043824701196,185.91093295209797 L 188.30278884462152,187.28592185609298 L 190.21513944223108,183.7696609528081 L 192.12749003984064,181.9519624744792 L 194.0398406374502,184.12659256871348 L 195.95219123505976,179.16068416798652 L 197.86454183266932,175.01173139725566 L 199.7768924302789,178.70336057110552 L 201.68924302788847,175.9770511257189 L 203.60159362549803,178.90239720427394 L 205.5139442231076,175.03126971000881 L 207.42629482071715,170.98525048939223 L 209.3386454183267,171.85970912114968 L 211.25099601593627,167.8726225349349 L 213.16334661354583,171.86304493064412 L 215.0756972111554,172.27875033288015 L 216.98804780876495,166.7084250213744 L 218.9003984063745,168.3540910386328 L 220.81274900398407,169.619792469667 L 222.72509960159363,169.36277629052378 L 224.6374501992032,166.12942380198186 L 226.54980079681275,170.03295630276443 L 228.4621513944223,170.57812288299905 L 230.3745019920319,171.42573619072982 L 232.28685258964146,174.0834232693736 L 234.19920318725102,173.12207474268948 L 236.11155378486058,175.1529473325204 L 238.02390438247014,168.6706752444625 L 239.9362549800797,162.484337112983 L 241.84860557768926,156.72593568521918 L 243.76095617529882,157.19247247022764 L 245.67330677290838,158.5083698917497 L 247.58565737051794,159.35026466891856 L 249.4980079681275,158.96013380613994 L 251.41035856573706,155.29137875453767 L 253.32270916334662,152.8201793114403 L 255.23505976095618,149.8792661219112 L 257.1474103585657,148.3738629514906 L 259.0597609561753,147.351040221266 L 260.9721115537849,146.55632332123284 L 262.8844621513945,147.31657018982344 L 264.796812749004,147.92972374451625 L 266.70916334661354,142.196102615854 L 268.6215139442231,143.5877705673212 L 270.5338645418327,143.17667175914895 L 272.44621513944224,143.7469363346275 L 274.3585657370518,142.34510210660574 L 276.27091633466136,140.09803729192072 L 278.18326693227095,140.31661223784226 L 280.0956175298805,141.10561060731357 L 282.00796812749,142.6734410697016 L 283.9203187250996,142.3946627048089 L 285.8326693227092,139.85214047775892 L 287.7450199203187,134.196354903967 L 289.6573705179283,133.53062263771892 L 291.56972111553785,133.8460949070505 L 293.48207171314743,136.00229862502977 L 295.39442231075697,133.4281656318182 L 297.30677290836655,130.62084367013796 L 299.2191235059761,128.37028419788732 L 301.1314741035857,130.1784517919464 L 303.0438247011952,114.67090884456717 L 304.9561752988048,113.02127162552968 L 306.8685258964143,111.87232352680093 L 308.7808764940239,112.81143332352212 L 310.69322709163345,114.23709476221843 L 312.60557768924303,112.4926252446961 L 314.51792828685257,112.71469484818327 L 316.43027888446215,112.66291037698385 L 318.3426294820717,115.28310931083296 L 320.2549800796813,109.30565639293405 L 322.1673306772908,106.44639111198322 L 324.0796812749004,110.76165781322268 L 325.9920318725099,108.69790367266083 L 327.9043824701195,105.78542428787007 L 329.81673306772905,107.79755280530365 L 331.72908366533864,105.42086796454885 L 333.64143426294817,104.67046967637042 L 335.5537848605578,104.82645848225339 L 337.46613545816734,108.34367247396527 L 339.37848605577693,109.01226400549427 L 341.29083665338646,104.40678187823828 L 343.20318725099605,103.04910741400012 L 345.1155378486056,101.80818628206744 L 347.0278884462152,102.84371685798513 L 348.9402390438247,106.65877098312939 L 350.8525896414343,108.3887853261758 L 352.7649402390438,110.95704094075433 L 354.6772908366534,109.075962082031 L 356.58964143426294,102.87723380100074 L 358.50199203187253,104.64823094640745 L 360.41434262948206,101.38755658962533 L 362.32669322709165,100.0051018262856 L 364.2390438247012,101.09940618853396 L 366.1513944223108,101.14960217902176 L 368.0637450199203,100.80934961058863 L 369.9760956175299,98.35673539181745 L 371.8884462151394,95.09749066767583 L 373.800796812749,94.44621357590367 L 375.71314741035854,88.61918978139701 L 377.62549800796813,88.06083881125579 L 379.53784860557766,88.7818502062689 L 381.45019920318725,89.76988520890859 L 383.3625498007968,88.94864068099105 L 385.2749003984064,85.00476077013283 L 387.1872509960159,84.8262155381446 L 389.0996015936255,82.57327334482648 L 391.011952191235,82.30720282562689 L 392.9243027888446,83.22153232324649 L 394.8366533864542,83.05918959451697 L 396.7490039840638,80.97494405277493 L 398.6613545816733,77.22295261188279 L 400.5737051792829,80.56781644638178 L 402.48605577689244,83.03901588947912 L 404.39840637450203,86.18738465994832 L 406.31075697211156,85.29370541158002 L 408.22310756972115,83.70252428273088 L 410.1354581673307,86.93508253091699 L 412.04780876494027,88.3088006503427 L 413.9601593625498,87.77967772529564 L 415.8725099601594,88.18902920468508 L 417.7848605577689,91.46257025523147 L 419.6972111553785,93.13809970986867 L 421.60956175298804,91.05560149690947 L 423.52191235059763,93.6669049387734 L 425.43426294820716,88.37392835951991 L 427.34661354581675,84.99221177251087 L 429.2589641434263,86.62167528651054 L 431.17131474103587,82.92893417616253 L 433.0836653386454,79.45826266930169 L 434.996015936255,79.0309613578707 L 436.9083665338645,79.7329109843441 L 438.8207171314741,78.38985054265305 L 440.73306772908364,76.28511359973089 L 442.64541832669323,76.269705336828 L 444.55776892430276,77.98732953032362 L 446.47011952191235,75.086604902799 L 448.3824701195219,73.00220051298584 L 450.2948207171315,65.59289108161519 L 452.207171314741,59.21815913773531 L 454.11952191235065,56.926616863124366 L 456.0318725099602,59.32411080120164 L 457.94422310756977,57.43143603328335 L 459.8565737051793,59.76920309660301 L 461.7689243027889,56.71360159969353 L 463.6812749003984,60.06037161104649 L 465.593625498008,59.11840254904433 L 467.50597609561754,57.66716657089063 L 469.41832669322713,54.49068169182539 L 471.33067729083666,51.81552132535356 L 473.24302788844625,45.80947575464515 L 475.1553784860558,45.1321475792021 L 477.06772908366537,45.753561233595434 L 478.9800796812749,46.1532229806439 L 480.8924302788845,40.495848926140326 L 482.804780876494,40.806873449479326 L 484.7171314741036,40.42468499025887 L 486.62948207171314,38.75630369882407 L 488.54183266932273,37.24073425184898 L 490.45418326693226,36.543073523296954 L 492.36653386454185,37.890105166767114 L 494.2788844621514,42.26986418489912 L 496.19123505976097,40.022005129858314 L 498.1035856573705,42.16025901579604 L 500.0159362549801,40.72236627562009 L 501.9282868525896,41.99982246392045 L 503.8406374501992,43.45391770735512 L 505.75298804780874,41.98171378380778 L 507.66533864541833,42.569451647114334 L 509.57768924302786,38.55138968702258 L 511.49003984063745,39.338640727711066 L 513.402390438247,34.1805261608757 L 515.3147410358566,29.834125237688113 L 517.2270916334662,27.831686452595534 L 519.1394422310757,22.720749762895906 L 521.0517928286853,21.68347185819539 L 522.9641434262949,20 L 524.8764940239043,20.200942810022383 L 526.7888446215139,20.200942810022383 L 528.7011952191235,20.200942810022383 L 530.6135458167331,20.200942810022383 L 532.5258964143427,20.200942810022383 L 534.4382470119522,20.200942810022383 L 536.3505976095618,20.200942810022383 L 538.2629482071713,20.200942810022383 L 540.1752988047808,20.200942810022383 L 542.0876494023904,20.200942810022383 L 544,20.200942810022383 L 544,219.4416957498797 Z" fill="url(#agovchart22)" stroke="none"></path>
+      <polyline points="64,219.16244084077348 65.91235059760956,219.491415196154 67.82470119521912,218.30148429506497 69.73705179282868,218.88334477973845 71.64940239043824,221.44540531954158 73.56175298804781,219.42422246205166 75.47410358565737,218.09799991590396 77.38645418326693,216.980821431408 79.2988047808765,214.82493540957105 81.21115537848605,217.57554860984578 83.12350597609561,214.30931457057292 85.03585657370519,217.55950495465822 86.94820717131475,214.71278867132932 88.86055776892431,214.68149560131002 90.77290836653387,218.53324363089314 92.68525896414343,221.48479964119025 94.59760956175299,224 96.50996015936255,223.83384491756252 98.42231075697211,223.51440144645184 100.33466135458167,222.1011301573063 102.24701195219123,216.31890151886788 104.15936254980079,215.02365434659714 106.07171314741036,214.73026195915736 107.98406374501992,214.27484453913036 109.89641434262948,214.69912773720924 111.80876494023904,213.9701739386379 113.72111553784862,213.49299433286146 115.63346613545818,209.75196340887962 117.54581673306774,209.68429413056376 119.4581673306773,209.81915614298194 121.37051792828686,208.6552763255638 123.28286852589642,208.2883372811751 125.19521912350598,204.79685667699178 127.10756972111554,202.74501614176722 129.0199203187251,202.7454926859807 130.93227091633466,198.98730617031316 132.84462151394422,196.83094360426273 134.7569721115538,195.31029101901038 136.66932270916334,194.44933447330183 138.58167330677293,197.4715778752669 140.49402390438246,194.65329539667633 142.40637450199205,195.92471535827246 144.31872509960158,196.504669666092 146.23107569721117,195.6154381637163 148.14342629482073,197.1481632023771 150.0557768924303,194.72144121920567 151.96812749003985,192.5048752341841 153.8804780876494,194.304147336258 155.79282868525897,193.76708200765273 157.70517928286853,196.78249494255772 159.6175298804781,195.41100069612833 161.52988047808765,190.94991146556032 163.44223107569724,191.7503468961554 165.35458167330677,192.899136146813 167.26693227091636,193.7478613910419 169.1792828685259,190.76914236057578 171.09163346613548,186.8851481725464 173.003984063745,187.13612812498542 174.9163346613546,185.17292481347033 176.82868525896416,183.5186810003691 178.74103585657372,181.8012156549446 180.65338645418328,182.661060264155 182.56573705179284,182.53016945351592 184.4780876494024,184.9209917726043 186.39043824701196,185.91093295209797 188.30278884462152,187.28592185609298 190.21513944223108,183.7696609528081 192.12749003984064,181.9519624744792 194.0398406374502,184.12659256871348 195.95219123505976,179.16068416798652 197.86454183266932,175.01173139725566 199.7768924302789,178.70336057110552 201.68924302788847,175.9770511257189 203.60159362549803,178.90239720427394 205.5139442231076,175.03126971000881 207.42629482071715,170.98525048939223 209.3386454183267,171.85970912114968 211.25099601593627,167.8726225349349 213.16334661354583,171.86304493064412 215.0756972111554,172.27875033288015 216.98804780876495,166.7084250213744 218.9003984063745,168.3540910386328 220.81274900398407,169.619792469667 222.72509960159363,169.36277629052378 224.6374501992032,166.12942380198186 226.54980079681275,170.03295630276443 228.4621513944223,170.57812288299905 230.3745019920319,171.42573619072982 232.28685258964146,174.0834232693736 234.19920318725102,173.12207474268948 236.11155378486058,175.1529473325204 238.02390438247014,168.6706752444625 239.9362549800797,162.484337112983 241.84860557768926,156.72593568521918 243.76095617529882,157.19247247022764 245.67330677290838,158.5083698917497 247.58565737051794,159.35026466891856 249.4980079681275,158.96013380613994 251.41035856573706,155.29137875453767 253.32270916334662,152.8201793114403 255.23505976095618,149.8792661219112 257.1474103585657,148.3738629514906 259.0597609561753,147.351040221266 260.9721115537849,146.55632332123284 262.8844621513945,147.31657018982344 264.796812749004,147.92972374451625 266.70916334661354,142.196102615854 268.6215139442231,143.5877705673212 270.5338645418327,143.17667175914895 272.44621513944224,143.7469363346275 274.3585657370518,142.34510210660574 276.27091633466136,140.09803729192072 278.18326693227095,140.31661223784226 280.0956175298805,141.10561060731357 282.00796812749,142.6734410697016 283.9203187250996,142.3946627048089 285.8326693227092,139.85214047775892 287.7450199203187,134.196354903967 289.6573705179283,133.53062263771892 291.56972111553785,133.8460949070505 293.48207171314743,136.00229862502977 295.39442231075697,133.4281656318182 297.30677290836655,130.62084367013796 299.2191235059761,128.37028419788732 301.1314741035857,130.1784517919464 303.0438247011952,114.67090884456717 304.9561752988048,113.02127162552968 306.8685258964143,111.87232352680093 308.7808764940239,112.81143332352212 310.69322709163345,114.23709476221843 312.60557768924303,112.4926252446961 314.51792828685257,112.71469484818327 316.43027888446215,112.66291037698385 318.3426294820717,115.28310931083296 320.2549800796813,109.30565639293405 322.1673306772908,106.44639111198322 324.0796812749004,110.76165781322268 325.9920318725099,108.69790367266083 327.9043824701195,105.78542428787007 329.81673306772905,107.79755280530365 331.72908366533864,105.42086796454885 333.64143426294817,104.67046967637042 335.5537848605578,104.82645848225339 337.46613545816734,108.34367247396527 339.37848605577693,109.01226400549427 341.29083665338646,104.40678187823828 343.20318725099605,103.04910741400012 345.1155378486056,101.80818628206744 347.0278884462152,102.84371685798513 348.9402390438247,106.65877098312939 350.8525896414343,108.3887853261758 352.7649402390438,110.95704094075433 354.6772908366534,109.075962082031 356.58964143426294,102.87723380100074 358.50199203187253,104.64823094640745 360.41434262948206,101.38755658962533 362.32669322709165,100.0051018262856 364.2390438247012,101.09940618853396 366.1513944223108,101.14960217902176 368.0637450199203,100.80934961058863 369.9760956175299,98.35673539181745 371.8884462151394,95.09749066767583 373.800796812749,94.44621357590367 375.71314741035854,88.61918978139701 377.62549800796813,88.06083881125579 379.53784860557766,88.7818502062689 381.45019920318725,89.76988520890859 383.3625498007968,88.94864068099105 385.2749003984064,85.00476077013283 387.1872509960159,84.8262155381446 389.0996015936255,82.57327334482648 391.011952191235,82.30720282562689 392.9243027888446,83.22153232324649 394.8366533864542,83.05918959451697 396.7490039840638,80.97494405277493 398.6613545816733,77.22295261188279 400.5737051792829,80.56781644638178 402.48605577689244,83.03901588947912 404.39840637450203,86.18738465994832 406.31075697211156,85.29370541158002 408.22310756972115,83.70252428273088 410.1354581673307,86.93508253091699 412.04780876494027,88.3088006503427 413.9601593625498,87.77967772529564 415.8725099601594,88.18902920468508 417.7848605577689,91.46257025523147 419.6972111553785,93.13809970986867 421.60956175298804,91.05560149690947 423.52191235059763,93.6669049387734 425.43426294820716,88.37392835951991 427.34661354581675,84.99221177251087 429.2589641434263,86.62167528651054 431.17131474103587,82.92893417616253 433.0836653386454,79.45826266930169 434.996015936255,79.0309613578707 436.9083665338645,79.7329109843441 438.8207171314741,78.38985054265305 440.73306772908364,76.28511359973089 442.64541832669323,76.269705336828 444.55776892430276,77.98732953032362 446.47011952191235,75.086604902799 448.3824701195219,73.00220051298584 450.2948207171315,65.59289108161519 452.207171314741,59.21815913773531 454.11952191235065,56.926616863124366 456.0318725099602,59.32411080120164 457.94422310756977,57.43143603328335 459.8565737051793,59.76920309660301 461.7689243027889,56.71360159969353 463.6812749003984,60.06037161104649 465.593625498008,59.11840254904433 467.50597609561754,57.66716657089063 469.41832669322713,54.49068169182539 471.33067729083666,51.81552132535356 473.24302788844625,45.80947575464515 475.1553784860558,45.1321475792021 477.06772908366537,45.753561233595434 478.9800796812749,46.1532229806439 480.8924302788845,40.495848926140326 482.804780876494,40.806873449479326 484.7171314741036,40.42468499025887 486.62948207171314,38.75630369882407 488.54183266932273,37.24073425184898 490.45418326693226,36.543073523296954 492.36653386454185,37.890105166767114 494.2788844621514,42.26986418489912 496.19123505976097,40.022005129858314 498.1035856573705,42.16025901579604 500.0159362549801,40.72236627562009 501.9282868525896,41.99982246392045 503.8406374501992,43.45391770735512 505.75298804780874,41.98171378380778 507.66533864541833,42.569451647114334 509.57768924302786,38.55138968702258 511.49003984063745,39.338640727711066 513.402390438247,34.1805261608757 515.3147410358566,29.834125237688113 517.2270916334662,27.831686452595534 519.1394422310757,22.720749762895906 521.0517928286853,21.68347185819539 522.9641434262949,20 524.8764940239043,20.200942810022383 526.7888446215139,20.200942810022383 528.7011952191235,20.200942810022383 530.6135458167331,20.200942810022383 532.5258964143427,20.200942810022383 534.4382470119522,20.200942810022383 536.3505976095618,20.200942810022383 538.2629482071713,20.200942810022383 540.1752988047808,20.200942810022383 542.0876494023904,20.200942810022383 544,20.200942810022383" fill="none" stroke="#1a7f4b" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"></polyline>
+      <text x="60" y="227" text-anchor="end" font-size="9" fill="#9098a8">$-287</text><text x="60" y="176" text-anchor="end" font-size="9" fill="#9098a8">$2.9k</text><text x="60" y="125" text-anchor="end" font-size="9" fill="#9098a8">$6.1k</text><text x="60" y="74" text-anchor="end" font-size="9" fill="#9098a8">$9.3k</text><text x="60" y="23" text-anchor="end" font-size="9" fill="#9098a8">$12.6k</text><text x="64" y="238" text-anchor="middle" font-size="9" fill="#9098a8">Ene 2006</text><text x="144.31872509960158" y="238" text-anchor="middle" font-size="9" fill="#9098a8">Jul 2009</text><text x="224.6374501992032" y="238" text-anchor="middle" font-size="9" fill="#9098a8">Ene 2013</text><text x="304.9561752988048" y="238" text-anchor="middle" font-size="9" fill="#9098a8">Jul 2016</text><text x="385.2749003984064" y="238" text-anchor="middle" font-size="9" fill="#9098a8">Ene 2020</text><text x="465.593625498008" y="238" text-anchor="middle" font-size="9" fill="#9098a8">Jul 2023</text><text x="544" y="238" text-anchor="middle" font-size="9" fill="#9098a8">Dic 2026</text><circle cx="64" cy="219.16244084077348" r="5" fill="transparent" class="eq-point" data-label="Ene 2006" data-val="+$18" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="65.91235059760956" cy="219.491415196154" r="5" fill="transparent" class="eq-point" data-label="Feb 2006" data-val="$-3" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="67.82470119521912" cy="218.30148429506497" r="5" fill="transparent" class="eq-point" data-label="Mar 2006" data-val="+$72" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="69.73705179282868" cy="218.88334477973845" r="5" fill="transparent" class="eq-point" data-label="Abr 2006" data-val="+$35" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="71.64940239043824" cy="221.44540531954158" r="5" fill="transparent" class="eq-point" data-label="May 2006" data-val="$-126" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="73.56175298804781" cy="219.42422246205166" r="5" fill="transparent" class="eq-point" data-label="Jun 2006" data-val="+$1" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="75.47410358565737" cy="218.09799991590396" r="5" fill="transparent" class="eq-point" data-label="Jul 2006" data-val="+$85" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="77.38645418326693" cy="216.980821431408" r="5" fill="transparent" class="eq-point" data-label="Ago 2006" data-val="+$155" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="79.2988047808765" cy="214.82493540957105" r="5" fill="transparent" class="eq-point" data-label="Sep 2006" data-val="+$291" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="81.21115537848605" cy="217.57554860984578" r="5" fill="transparent" class="eq-point" data-label="Oct 2006" data-val="+$117" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="83.12350597609561" cy="214.30931457057292" r="5" fill="transparent" class="eq-point" data-label="Nov 2006" data-val="+$323" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="85.03585657370519" cy="217.55950495465822" r="5" fill="transparent" class="eq-point" data-label="Dic 2006" data-val="+$118" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="86.94820717131475" cy="214.71278867132932" r="5" fill="transparent" class="eq-point" data-label="Ene 2007" data-val="+$298" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="88.86055776892431" cy="214.68149560131002" r="5" fill="transparent" class="eq-point" data-label="Feb 2007" data-val="+$300" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="90.77290836653387" cy="218.53324363089314" r="5" fill="transparent" class="eq-point" data-label="Mar 2007" data-val="+$57" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="92.68525896414343" cy="221.48479964119025" r="5" fill="transparent" class="eq-point" data-label="Abr 2007" data-val="$-129" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="94.59760956175299" cy="224" r="5" fill="transparent" class="eq-point" data-label="May 2007" data-val="$-287" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="96.50996015936255" cy="223.83384491756252" r="5" fill="transparent" class="eq-point" data-label="Jun 2007" data-val="$-277" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="98.42231075697211" cy="223.51440144645184" r="5" fill="transparent" class="eq-point" data-label="Jul 2007" data-val="$-256" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="100.33466135458167" cy="222.1011301573063" r="5" fill="transparent" class="eq-point" data-label="Ago 2007" data-val="$-167" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="102.24701195219123" cy="216.31890151886788" r="5" fill="transparent" class="eq-point" data-label="Sep 2007" data-val="+$197" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="104.15936254980079" cy="215.02365434659714" r="5" fill="transparent" class="eq-point" data-label="Oct 2007" data-val="+$278" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="106.07171314741036" cy="214.73026195915736" r="5" fill="transparent" class="eq-point" data-label="Nov 2007" data-val="+$297" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="107.98406374501992" cy="214.27484453913036" r="5" fill="transparent" class="eq-point" data-label="Dic 2007" data-val="+$325" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="109.89641434262948" cy="214.69912773720924" r="5" fill="transparent" class="eq-point" data-label="Ene 2008" data-val="+$299" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="111.80876494023904" cy="213.9701739386379" r="5" fill="transparent" class="eq-point" data-label="Feb 2008" data-val="+$344" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="113.72111553784862" cy="213.49299433286146" r="5" fill="transparent" class="eq-point" data-label="Mar 2008" data-val="+$374" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="115.63346613545818" cy="209.75196340887962" r="5" fill="transparent" class="eq-point" data-label="Abr 2008" data-val="+$610" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="117.54581673306774" cy="209.68429413056376" r="5" fill="transparent" class="eq-point" data-label="May 2008" data-val="+$614" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="119.4581673306773" cy="209.81915614298194" r="5" fill="transparent" class="eq-point" data-label="Jun 2008" data-val="+$606" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="121.37051792828686" cy="208.6552763255638" r="5" fill="transparent" class="eq-point" data-label="Jul 2008" data-val="+$679" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="123.28286852589642" cy="208.2883372811751" r="5" fill="transparent" class="eq-point" data-label="Ago 2008" data-val="+$702" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="125.19521912350598" cy="204.79685667699178" r="5" fill="transparent" class="eq-point" data-label="Sep 2008" data-val="+$922" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="127.10756972111554" cy="202.74501614176722" r="5" fill="transparent" class="eq-point" data-label="Oct 2008" data-val="+$1.051" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="129.0199203187251" cy="202.7454926859807" r="5" fill="transparent" class="eq-point" data-label="Nov 2008" data-val="+$1.051" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="130.93227091633466" cy="198.98730617031316" r="5" fill="transparent" class="eq-point" data-label="Dic 2008" data-val="+$1.288" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="132.84462151394422" cy="196.83094360426273" r="5" fill="transparent" class="eq-point" data-label="Ene 2009" data-val="+$1.423" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="134.7569721115538" cy="195.31029101901038" r="5" fill="transparent" class="eq-point" data-label="Feb 2009" data-val="+$1.519" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="136.66932270916334" cy="194.44933447330183" r="5" fill="transparent" class="eq-point" data-label="Mar 2009" data-val="+$1.573" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="138.58167330677293" cy="197.4715778752669" r="5" fill="transparent" class="eq-point" data-label="Abr 2009" data-val="+$1.383" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="140.49402390438246" cy="194.65329539667633" r="5" fill="transparent" class="eq-point" data-label="May 2009" data-val="+$1.561" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="142.40637450199205" cy="195.92471535827246" r="5" fill="transparent" class="eq-point" data-label="Jun 2009" data-val="+$1.480" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="144.31872509960158" cy="196.504669666092" r="5" fill="transparent" class="eq-point" data-label="Jul 2009" data-val="+$1.444" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="146.23107569721117" cy="195.6154381637163" r="5" fill="transparent" class="eq-point" data-label="Ago 2009" data-val="+$1.500" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="148.14342629482073" cy="197.1481632023771" r="5" fill="transparent" class="eq-point" data-label="Sep 2009" data-val="+$1.403" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="150.0557768924303" cy="194.72144121920567" r="5" fill="transparent" class="eq-point" data-label="Oct 2009" data-val="+$1.556" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="151.96812749003985" cy="192.5048752341841" r="5" fill="transparent" class="eq-point" data-label="Nov 2009" data-val="+$1.696" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="153.8804780876494" cy="194.304147336258" r="5" fill="transparent" class="eq-point" data-label="Dic 2009" data-val="+$1.582" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="155.79282868525897" cy="193.76708200765273" r="5" fill="transparent" class="eq-point" data-label="Ene 2010" data-val="+$1.616" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="157.70517928286853" cy="196.78249494255772" r="5" fill="transparent" class="eq-point" data-label="Feb 2010" data-val="+$1.426" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="159.6175298804781" cy="195.41100069612833" r="5" fill="transparent" class="eq-point" data-label="Mar 2010" data-val="+$1.513" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="161.52988047808765" cy="190.94991146556032" r="5" fill="transparent" class="eq-point" data-label="Abr 2010" data-val="+$1.794" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="163.44223107569724" cy="191.7503468961554" r="5" fill="transparent" class="eq-point" data-label="May 2010" data-val="+$1.743" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="165.35458167330677" cy="192.899136146813" r="5" fill="transparent" class="eq-point" data-label="Jun 2010" data-val="+$1.671" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="167.26693227091636" cy="193.7478613910419" r="5" fill="transparent" class="eq-point" data-label="Jul 2010" data-val="+$1.618" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="169.1792828685259" cy="190.76914236057578" r="5" fill="transparent" class="eq-point" data-label="Ago 2010" data-val="+$1.805" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="171.09163346613548" cy="186.8851481725464" r="5" fill="transparent" class="eq-point" data-label="Sep 2010" data-val="+$2.050" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="173.003984063745" cy="187.13612812498542" r="5" fill="transparent" class="eq-point" data-label="Oct 2010" data-val="+$2.034" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="174.9163346613546" cy="185.17292481347033" r="5" fill="transparent" class="eq-point" data-label="Nov 2010" data-val="+$2.157" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="176.82868525896416" cy="183.5186810003691" r="5" fill="transparent" class="eq-point" data-label="Dic 2010" data-val="+$2.261" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="178.74103585657372" cy="181.8012156549446" r="5" fill="transparent" class="eq-point" data-label="Ene 2011" data-val="+$2.370" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="180.65338645418328" cy="182.661060264155" r="5" fill="transparent" class="eq-point" data-label="Feb 2011" data-val="+$2.315" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="182.56573705179284" cy="182.53016945351592" r="5" fill="transparent" class="eq-point" data-label="Mar 2011" data-val="+$2.324" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="184.4780876494024" cy="184.9209917726043" r="5" fill="transparent" class="eq-point" data-label="Abr 2011" data-val="+$2.173" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="186.39043824701196" cy="185.91093295209797" r="5" fill="transparent" class="eq-point" data-label="May 2011" data-val="+$2.111" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="188.30278884462152" cy="187.28592185609298" r="5" fill="transparent" class="eq-point" data-label="Jun 2011" data-val="+$2.024" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="190.21513944223108" cy="183.7696609528081" r="5" fill="transparent" class="eq-point" data-label="Jul 2011" data-val="+$2.246" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="192.12749003984064" cy="181.9519624744792" r="5" fill="transparent" class="eq-point" data-label="Ago 2011" data-val="+$2.360" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="194.0398406374502" cy="184.12659256871348" r="5" fill="transparent" class="eq-point" data-label="Sep 2011" data-val="+$2.223" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="195.95219123505976" cy="179.16068416798652" r="5" fill="transparent" class="eq-point" data-label="Oct 2011" data-val="+$2.536" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="197.86454183266932" cy="175.01173139725566" r="5" fill="transparent" class="eq-point" data-label="Nov 2011" data-val="+$2.797" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="199.7768924302789" cy="178.70336057110552" r="5" fill="transparent" class="eq-point" data-label="Dic 2011" data-val="+$2.565" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="201.68924302788847" cy="175.9770511257189" r="5" fill="transparent" class="eq-point" data-label="Ene 2012" data-val="+$2.736" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="203.60159362549803" cy="178.90239720427394" r="5" fill="transparent" class="eq-point" data-label="Feb 2012" data-val="+$2.552" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="205.5139442231076" cy="175.03126971000881" r="5" fill="transparent" class="eq-point" data-label="Mar 2012" data-val="+$2.796" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="207.42629482071715" cy="170.98525048939223" r="5" fill="transparent" class="eq-point" data-label="Abr 2012" data-val="+$3.050" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="209.3386454183267" cy="171.85970912114968" r="5" fill="transparent" class="eq-point" data-label="May 2012" data-val="+$2.995" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="211.25099601593627" cy="167.8726225349349" r="5" fill="transparent" class="eq-point" data-label="Jun 2012" data-val="+$3.246" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="213.16334661354583" cy="171.86304493064412" r="5" fill="transparent" class="eq-point" data-label="Jul 2012" data-val="+$2.995" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="215.0756972111554" cy="172.27875033288015" r="5" fill="transparent" class="eq-point" data-label="Ago 2012" data-val="+$2.969" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="216.98804780876495" cy="166.7084250213744" r="5" fill="transparent" class="eq-point" data-label="Sep 2012" data-val="+$3.320" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="218.9003984063745" cy="168.3540910386328" r="5" fill="transparent" class="eq-point" data-label="Oct 2012" data-val="+$3.216" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="220.81274900398407" cy="169.619792469667" r="5" fill="transparent" class="eq-point" data-label="Nov 2012" data-val="+$3.136" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="222.72509960159363" cy="169.36277629052378" r="5" fill="transparent" class="eq-point" data-label="Dic 2012" data-val="+$3.153" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="224.6374501992032" cy="166.12942380198186" r="5" fill="transparent" class="eq-point" data-label="Ene 2013" data-val="+$3.356" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="226.54980079681275" cy="170.03295630276443" r="5" fill="transparent" class="eq-point" data-label="Feb 2013" data-val="+$3.110" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="228.4621513944223" cy="170.57812288299905" r="5" fill="transparent" class="eq-point" data-label="Mar 2013" data-val="+$3.076" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="230.3745019920319" cy="171.42573619072982" r="5" fill="transparent" class="eq-point" data-label="Abr 2013" data-val="+$3.023" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="232.28685258964146" cy="174.0834232693736" r="5" fill="transparent" class="eq-point" data-label="May 2013" data-val="+$2.855" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="234.19920318725102" cy="173.12207474268948" r="5" fill="transparent" class="eq-point" data-label="Jun 2013" data-val="+$2.916" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="236.11155378486058" cy="175.1529473325204" r="5" fill="transparent" class="eq-point" data-label="Jul 2013" data-val="+$2.788" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="238.02390438247014" cy="168.6706752444625" r="5" fill="transparent" class="eq-point" data-label="Ago 2013" data-val="+$3.196" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="239.9362549800797" cy="162.484337112983" r="5" fill="transparent" class="eq-point" data-label="Sep 2013" data-val="+$3.586" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="241.84860557768926" cy="156.72593568521918" r="5" fill="transparent" class="eq-point" data-label="Oct 2013" data-val="+$3.948" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="243.76095617529882" cy="157.19247247022764" r="5" fill="transparent" class="eq-point" data-label="Nov 2013" data-val="+$3.919" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="245.67330677290838" cy="158.5083698917497" r="5" fill="transparent" class="eq-point" data-label="Dic 2013" data-val="+$3.836" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="247.58565737051794" cy="159.35026466891856" r="5" fill="transparent" class="eq-point" data-label="Ene 2014" data-val="+$3.783" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="249.4980079681275" cy="158.96013380613994" r="5" fill="transparent" class="eq-point" data-label="Feb 2014" data-val="+$3.808" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="251.41035856573706" cy="155.29137875453767" r="5" fill="transparent" class="eq-point" data-label="Mar 2014" data-val="+$4.038" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="253.32270916334662" cy="152.8201793114403" r="5" fill="transparent" class="eq-point" data-label="Abr 2014" data-val="+$4.194" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="255.23505976095618" cy="149.8792661219112" r="5" fill="transparent" class="eq-point" data-label="May 2014" data-val="+$4.379" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="257.1474103585657" cy="148.3738629514906" r="5" fill="transparent" class="eq-point" data-label="Jun 2014" data-val="+$4.474" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="259.0597609561753" cy="147.351040221266" r="5" fill="transparent" class="eq-point" data-label="Jul 2014" data-val="+$4.538" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="260.9721115537849" cy="146.55632332123284" r="5" fill="transparent" class="eq-point" data-label="Ago 2014" data-val="+$4.588" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="262.8844621513945" cy="147.31657018982344" r="5" fill="transparent" class="eq-point" data-label="Sep 2014" data-val="+$4.541" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="264.796812749004" cy="147.92972374451625" r="5" fill="transparent" class="eq-point" data-label="Oct 2014" data-val="+$4.502" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="266.70916334661354" cy="142.196102615854" r="5" fill="transparent" class="eq-point" data-label="Nov 2014" data-val="+$4.863" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="268.6215139442231" cy="143.5877705673212" r="5" fill="transparent" class="eq-point" data-label="Dic 2014" data-val="+$4.775" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="270.5338645418327" cy="143.17667175914895" r="5" fill="transparent" class="eq-point" data-label="Ene 2015" data-val="+$4.801" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="272.44621513944224" cy="143.7469363346275" r="5" fill="transparent" class="eq-point" data-label="Feb 2015" data-val="+$4.765" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="274.3585657370518" cy="142.34510210660574" r="5" fill="transparent" class="eq-point" data-label="Mar 2015" data-val="+$4.853" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="276.27091633466136" cy="140.09803729192072" r="5" fill="transparent" class="eq-point" data-label="Abr 2015" data-val="+$4.995" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="278.18326693227095" cy="140.31661223784226" r="5" fill="transparent" class="eq-point" data-label="May 2015" data-val="+$4.981" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="280.0956175298805" cy="141.10561060731357" r="5" fill="transparent" class="eq-point" data-label="Jun 2015" data-val="+$4.932" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="282.00796812749" cy="142.6734410697016" r="5" fill="transparent" class="eq-point" data-label="Jul 2015" data-val="+$4.833" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="283.9203187250996" cy="142.3946627048089" r="5" fill="transparent" class="eq-point" data-label="Ago 2015" data-val="+$4.850" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="285.8326693227092" cy="139.85214047775892" r="5" fill="transparent" class="eq-point" data-label="Sep 2015" data-val="+$5.010" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="287.7450199203187" cy="134.196354903967" r="5" fill="transparent" class="eq-point" data-label="Oct 2015" data-val="+$5.366" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="289.6573705179283" cy="133.53062263771892" r="5" fill="transparent" class="eq-point" data-label="Nov 2015" data-val="+$5.408" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="291.56972111553785" cy="133.8460949070505" r="5" fill="transparent" class="eq-point" data-label="Dic 2015" data-val="+$5.389" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="293.48207171314743" cy="136.00229862502977" r="5" fill="transparent" class="eq-point" data-label="Ene 2016" data-val="+$5.253" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="295.39442231075697" cy="133.4281656318182" r="5" fill="transparent" class="eq-point" data-label="Feb 2016" data-val="+$5.415" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="297.30677290836655" cy="130.62084367013796" r="5" fill="transparent" class="eq-point" data-label="Mar 2016" data-val="+$5.592" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="299.2191235059761" cy="128.37028419788732" r="5" fill="transparent" class="eq-point" data-label="Abr 2016" data-val="+$5.733" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="301.1314741035857" cy="130.1784517919464" r="5" fill="transparent" class="eq-point" data-label="May 2016" data-val="+$5.619" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="303.0438247011952" cy="114.67090884456717" r="5" fill="transparent" class="eq-point" data-label="Jun 2016" data-val="+$6.596" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="304.9561752988048" cy="113.02127162552968" r="5" fill="transparent" class="eq-point" data-label="Jul 2016" data-val="+$6.700" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="306.8685258964143" cy="111.87232352680093" r="5" fill="transparent" class="eq-point" data-label="Ago 2016" data-val="+$6.772" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="308.7808764940239" cy="112.81143332352212" r="5" fill="transparent" class="eq-point" data-label="Sep 2016" data-val="+$6.713" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="310.69322709163345" cy="114.23709476221843" r="5" fill="transparent" class="eq-point" data-label="Oct 2016" data-val="+$6.623" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="312.60557768924303" cy="112.4926252446961" r="5" fill="transparent" class="eq-point" data-label="Nov 2016" data-val="+$6.733" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="314.51792828685257" cy="112.71469484818327" r="5" fill="transparent" class="eq-point" data-label="Dic 2016" data-val="+$6.719" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="316.43027888446215" cy="112.66291037698385" r="5" fill="transparent" class="eq-point" data-label="Ene 2017" data-val="+$6.722" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="318.3426294820717" cy="115.28310931083296" r="5" fill="transparent" class="eq-point" data-label="Feb 2017" data-val="+$6.557" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="320.2549800796813" cy="109.30565639293405" r="5" fill="transparent" class="eq-point" data-label="Mar 2017" data-val="+$6.933" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="322.1673306772908" cy="106.44639111198322" r="5" fill="transparent" class="eq-point" data-label="Abr 2017" data-val="+$7.113" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="324.0796812749004" cy="110.76165781322268" r="5" fill="transparent" class="eq-point" data-label="May 2017" data-val="+$6.842" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="325.9920318725099" cy="108.69790367266083" r="5" fill="transparent" class="eq-point" data-label="Jun 2017" data-val="+$6.972" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="327.9043824701195" cy="105.78542428787007" r="5" fill="transparent" class="eq-point" data-label="Jul 2017" data-val="+$7.155" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="329.81673306772905" cy="107.79755280530365" r="5" fill="transparent" class="eq-point" data-label="Ago 2017" data-val="+$7.028" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="331.72908366533864" cy="105.42086796454885" r="5" fill="transparent" class="eq-point" data-label="Sep 2017" data-val="+$7.178" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="333.64143426294817" cy="104.67046967637042" r="5" fill="transparent" class="eq-point" data-label="Oct 2017" data-val="+$7.225" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="335.5537848605578" cy="104.82645848225339" r="5" fill="transparent" class="eq-point" data-label="Nov 2017" data-val="+$7.215" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="337.46613545816734" cy="108.34367247396527" r="5" fill="transparent" class="eq-point" data-label="Dic 2017" data-val="+$6.994" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="339.37848605577693" cy="109.01226400549427" r="5" fill="transparent" class="eq-point" data-label="Ene 2018" data-val="+$6.952" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="341.29083665338646" cy="104.40678187823828" r="5" fill="transparent" class="eq-point" data-label="Feb 2018" data-val="+$7.242" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="343.20318725099605" cy="103.04910741400012" r="5" fill="transparent" class="eq-point" data-label="Mar 2018" data-val="+$7.327" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="345.1155378486056" cy="101.80818628206744" r="5" fill="transparent" class="eq-point" data-label="Abr 2018" data-val="+$7.405" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="347.0278884462152" cy="102.84371685798513" r="5" fill="transparent" class="eq-point" data-label="May 2018" data-val="+$7.340" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="348.9402390438247" cy="106.65877098312939" r="5" fill="transparent" class="eq-point" data-label="Jun 2018" data-val="+$7.100" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="350.8525896414343" cy="108.3887853261758" r="5" fill="transparent" class="eq-point" data-label="Jul 2018" data-val="+$6.991" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="352.7649402390438" cy="110.95704094075433" r="5" fill="transparent" class="eq-point" data-label="Ago 2018" data-val="+$6.829" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="354.6772908366534" cy="109.075962082031" r="5" fill="transparent" class="eq-point" data-label="Sep 2018" data-val="+$6.948" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="356.58964143426294" cy="102.87723380100074" r="5" fill="transparent" class="eq-point" data-label="Oct 2018" data-val="+$7.338" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="358.50199203187253" cy="104.64823094640745" r="5" fill="transparent" class="eq-point" data-label="Nov 2018" data-val="+$7.227" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="360.41434262948206" cy="101.38755658962533" r="5" fill="transparent" class="eq-point" data-label="Dic 2018" data-val="+$7.432" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="362.32669322709165" cy="100.0051018262856" r="5" fill="transparent" class="eq-point" data-label="Ene 2019" data-val="+$7.519" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="364.2390438247012" cy="101.09940618853396" r="5" fill="transparent" class="eq-point" data-label="Feb 2019" data-val="+$7.450" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="366.1513944223108" cy="101.14960217902176" r="5" fill="transparent" class="eq-point" data-label="Mar 2019" data-val="+$7.447" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="368.0637450199203" cy="100.80934961058863" r="5" fill="transparent" class="eq-point" data-label="Abr 2019" data-val="+$7.468" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="369.9760956175299" cy="98.35673539181745" r="5" fill="transparent" class="eq-point" data-label="May 2019" data-val="+$7.623" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="371.8884462151394" cy="95.09749066767583" r="5" fill="transparent" class="eq-point" data-label="Jun 2019" data-val="+$7.828" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="373.800796812749" cy="94.44621357590367" r="5" fill="transparent" class="eq-point" data-label="Jul 2019" data-val="+$7.869" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="375.71314741035854" cy="88.61918978139701" r="5" fill="transparent" class="eq-point" data-label="Ago 2019" data-val="+$8.236" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="377.62549800796813" cy="88.06083881125579" r="5" fill="transparent" class="eq-point" data-label="Sep 2019" data-val="+$8.271" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="379.53784860557766" cy="88.7818502062689" r="5" fill="transparent" class="eq-point" data-label="Oct 2019" data-val="+$8.225" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="381.45019920318725" cy="89.76988520890859" r="5" fill="transparent" class="eq-point" data-label="Nov 2019" data-val="+$8.163" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="383.3625498007968" cy="88.94864068099105" r="5" fill="transparent" class="eq-point" data-label="Dic 2019" data-val="+$8.215" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="385.2749003984064" cy="85.00476077013283" r="5" fill="transparent" class="eq-point" data-label="Ene 2020" data-val="+$8.463" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="387.1872509960159" cy="84.8262155381446" r="5" fill="transparent" class="eq-point" data-label="Feb 2020" data-val="+$8.474" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="389.0996015936255" cy="82.57327334482648" r="5" fill="transparent" class="eq-point" data-label="Mar 2020" data-val="+$8.616" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="391.011952191235" cy="82.30720282562689" r="5" fill="transparent" class="eq-point" data-label="Abr 2020" data-val="+$8.633" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="392.9243027888446" cy="83.22153232324649" r="5" fill="transparent" class="eq-point" data-label="May 2020" data-val="+$8.576" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="394.8366533864542" cy="83.05918959451697" r="5" fill="transparent" class="eq-point" data-label="Jun 2020" data-val="+$8.586" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="396.7490039840638" cy="80.97494405277493" r="5" fill="transparent" class="eq-point" data-label="Jul 2020" data-val="+$8.717" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="398.6613545816733" cy="77.22295261188279" r="5" fill="transparent" class="eq-point" data-label="Ago 2020" data-val="+$8.953" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="400.5737051792829" cy="80.56781644638178" r="5" fill="transparent" class="eq-point" data-label="Sep 2020" data-val="+$8.743" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="402.48605577689244" cy="83.03901588947912" r="5" fill="transparent" class="eq-point" data-label="Oct 2020" data-val="+$8.587" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="404.39840637450203" cy="86.18738465994832" r="5" fill="transparent" class="eq-point" data-label="Nov 2020" data-val="+$8.389" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="406.31075697211156" cy="85.29370541158002" r="5" fill="transparent" class="eq-point" data-label="Dic 2020" data-val="+$8.445" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="408.22310756972115" cy="83.70252428273088" r="5" fill="transparent" class="eq-point" data-label="Ene 2021" data-val="+$8.545" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="410.1354581673307" cy="86.93508253091699" r="5" fill="transparent" class="eq-point" data-label="Feb 2021" data-val="+$8.342" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="412.04780876494027" cy="88.3088006503427" r="5" fill="transparent" class="eq-point" data-label="Mar 2021" data-val="+$8.255" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="413.9601593625498" cy="87.77967772529564" r="5" fill="transparent" class="eq-point" data-label="Abr 2021" data-val="+$8.289" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="415.8725099601594" cy="88.18902920468508" r="5" fill="transparent" class="eq-point" data-label="May 2021" data-val="+$8.263" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="417.7848605577689" cy="91.46257025523147" r="5" fill="transparent" class="eq-point" data-label="Jun 2021" data-val="+$8.057" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="419.6972111553785" cy="93.13809970986867" r="5" fill="transparent" class="eq-point" data-label="Jul 2021" data-val="+$7.951" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="421.60956175298804" cy="91.05560149690947" r="5" fill="transparent" class="eq-point" data-label="Ago 2021" data-val="+$8.082" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="423.52191235059763" cy="93.6669049387734" r="5" fill="transparent" class="eq-point" data-label="Sep 2021" data-val="+$7.918" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="425.43426294820716" cy="88.37392835951991" r="5" fill="transparent" class="eq-point" data-label="Oct 2021" data-val="+$8.251" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="427.34661354581675" cy="84.99221177251087" r="5" fill="transparent" class="eq-point" data-label="Nov 2021" data-val="+$8.464" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="429.2589641434263" cy="86.62167528651054" r="5" fill="transparent" class="eq-point" data-label="Dic 2021" data-val="+$8.361" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="431.17131474103587" cy="82.92893417616253" r="5" fill="transparent" class="eq-point" data-label="Ene 2022" data-val="+$8.594" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="433.0836653386454" cy="79.45826266930169" r="5" fill="transparent" class="eq-point" data-label="Feb 2022" data-val="+$8.812" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="434.996015936255" cy="79.0309613578707" r="5" fill="transparent" class="eq-point" data-label="Mar 2022" data-val="+$8.839" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="436.9083665338645" cy="79.7329109843441" r="5" fill="transparent" class="eq-point" data-label="Abr 2022" data-val="+$8.795" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="438.8207171314741" cy="78.38985054265305" r="5" fill="transparent" class="eq-point" data-label="May 2022" data-val="+$8.880" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="440.73306772908364" cy="76.28511359973089" r="5" fill="transparent" class="eq-point" data-label="Jun 2022" data-val="+$9.012" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="442.64541832669323" cy="76.269705336828" r="5" fill="transparent" class="eq-point" data-label="Jul 2022" data-val="+$9.013" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="444.55776892430276" cy="77.98732953032362" r="5" fill="transparent" class="eq-point" data-label="Ago 2022" data-val="+$8.905" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="446.47011952191235" cy="75.086604902799" r="5" fill="transparent" class="eq-point" data-label="Sep 2022" data-val="+$9.088" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="448.3824701195219" cy="73.00220051298584" r="5" fill="transparent" class="eq-point" data-label="Oct 2022" data-val="+$9.219" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="450.2948207171315" cy="65.59289108161519" r="5" fill="transparent" class="eq-point" data-label="Nov 2022" data-val="+$9.685" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="452.207171314741" cy="59.21815913773531" r="5" fill="transparent" class="eq-point" data-label="Dic 2022" data-val="+$10.087" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="454.11952191235065" cy="56.926616863124366" r="5" fill="transparent" class="eq-point" data-label="Ene 2023" data-val="+$10.231" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="456.0318725099602" cy="59.32411080120164" r="5" fill="transparent" class="eq-point" data-label="Feb 2023" data-val="+$10.080" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="457.94422310756977" cy="57.43143603328335" r="5" fill="transparent" class="eq-point" data-label="Mar 2023" data-val="+$10.199" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="459.8565737051793" cy="59.76920309660301" r="5" fill="transparent" class="eq-point" data-label="Abr 2023" data-val="+$10.052" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="461.7689243027889" cy="56.71360159969353" r="5" fill="transparent" class="eq-point" data-label="May 2023" data-val="+$10.244" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="463.6812749003984" cy="60.06037161104649" r="5" fill="transparent" class="eq-point" data-label="Jun 2023" data-val="+$10.034" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="465.593625498008" cy="59.11840254904433" r="5" fill="transparent" class="eq-point" data-label="Jul 2023" data-val="+$10.093" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="467.50597609561754" cy="57.66716657089063" r="5" fill="transparent" class="eq-point" data-label="Ago 2023" data-val="+$10.184" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="469.41832669322713" cy="54.49068169182539" r="5" fill="transparent" class="eq-point" data-label="Sep 2023" data-val="+$10.384" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="471.33067729083666" cy="51.81552132535356" r="5" fill="transparent" class="eq-point" data-label="Oct 2023" data-val="+$10.553" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="473.24302788844625" cy="45.80947575464515" r="5" fill="transparent" class="eq-point" data-label="Nov 2023" data-val="+$10.931" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="475.1553784860558" cy="45.1321475792021" r="5" fill="transparent" class="eq-point" data-label="Dic 2023" data-val="+$10.973" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="477.06772908366537" cy="45.753561233595434" r="5" fill="transparent" class="eq-point" data-label="Ene 2024" data-val="+$10.934" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="478.9800796812749" cy="46.1532229806439" r="5" fill="transparent" class="eq-point" data-label="Feb 2024" data-val="+$10.909" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="480.8924302788845" cy="40.495848926140326" r="5" fill="transparent" class="eq-point" data-label="Mar 2024" data-val="+$11.265" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="482.804780876494" cy="40.806873449479326" r="5" fill="transparent" class="eq-point" data-label="Abr 2024" data-val="+$11.246" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="484.7171314741036" cy="40.42468499025887" r="5" fill="transparent" class="eq-point" data-label="May 2024" data-val="+$11.270" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="486.62948207171314" cy="38.75630369882407" r="5" fill="transparent" class="eq-point" data-label="Jun 2024" data-val="+$11.375" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="488.54183266932273" cy="37.24073425184898" r="5" fill="transparent" class="eq-point" data-label="Jul 2024" data-val="+$11.470" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="490.45418326693226" cy="36.543073523296954" r="5" fill="transparent" class="eq-point" data-label="Ago 2024" data-val="+$11.514" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="492.36653386454185" cy="37.890105166767114" r="5" fill="transparent" class="eq-point" data-label="Sep 2024" data-val="+$11.429" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="494.2788844621514" cy="42.26986418489912" r="5" fill="transparent" class="eq-point" data-label="Oct 2024" data-val="+$11.154" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="496.19123505976097" cy="40.022005129858314" r="5" fill="transparent" class="eq-point" data-label="Nov 2024" data-val="+$11.295" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="498.1035856573705" cy="42.16025901579604" r="5" fill="transparent" class="eq-point" data-label="Dic 2024" data-val="+$11.160" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="500.0159362549801" cy="40.72236627562009" r="5" fill="transparent" class="eq-point" data-label="Ene 2025" data-val="+$11.251" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="501.9282868525896" cy="41.99982246392045" r="5" fill="transparent" class="eq-point" data-label="Feb 2025" data-val="+$11.171" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="503.8406374501992" cy="43.45391770735512" r="5" fill="transparent" class="eq-point" data-label="Mar 2025" data-val="+$11.079" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="505.75298804780874" cy="41.98171378380778" r="5" fill="transparent" class="eq-point" data-label="Abr 2025" data-val="+$11.172" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="507.66533864541833" cy="42.569451647114334" r="5" fill="transparent" class="eq-point" data-label="May 2025" data-val="+$11.135" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="509.57768924302786" cy="38.55138968702258" r="5" fill="transparent" class="eq-point" data-label="Jun 2025" data-val="+$11.388" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="511.49003984063745" cy="39.338640727711066" r="5" fill="transparent" class="eq-point" data-label="Jul 2025" data-val="+$11.338" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="513.402390438247" cy="34.1805261608757" r="5" fill="transparent" class="eq-point" data-label="Ago 2025" data-val="+$11.663" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="515.3147410358566" cy="29.834125237688113" r="5" fill="transparent" class="eq-point" data-label="Sep 2025" data-val="+$11.936" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="517.2270916334662" cy="27.831686452595534" r="5" fill="transparent" class="eq-point" data-label="Oct 2025" data-val="+$12.062" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="519.1394422310757" cy="22.720749762895906" r="5" fill="transparent" class="eq-point" data-label="Nov 2025" data-val="+$12.384" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="521.0517928286853" cy="21.68347185819539" r="5" fill="transparent" class="eq-point" data-label="Dic 2025" data-val="+$12.450" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="522.9641434262949" cy="20" r="5" fill="transparent" class="eq-point" data-label="Ene 2026" data-val="+$12.556" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="524.8764940239043" cy="20.200942810022383" r="5" fill="transparent" class="eq-point" data-label="Feb 2026" data-val="+$12.543" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="526.7888446215139" cy="20.200942810022383" r="5" fill="transparent" class="eq-point" data-label="Mar 2026" data-val="+$12.543" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="528.7011952191235" cy="20.200942810022383" r="5" fill="transparent" class="eq-point" data-label="Abr 2026" data-val="+$12.543" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="530.6135458167331" cy="20.200942810022383" r="5" fill="transparent" class="eq-point" data-label="May 2026" data-val="+$12.543" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="532.5258964143427" cy="20.200942810022383" r="5" fill="transparent" class="eq-point" data-label="Jun 2026" data-val="+$12.543" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="534.4382470119522" cy="20.200942810022383" r="5" fill="transparent" class="eq-point" data-label="Jul 2026" data-val="+$12.543" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="536.3505976095618" cy="20.200942810022383" r="5" fill="transparent" class="eq-point" data-label="Ago 2026" data-val="+$12.543" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="538.2629482071713" cy="20.200942810022383" r="5" fill="transparent" class="eq-point" data-label="Sep 2026" data-val="+$12.543" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="540.1752988047808" cy="20.200942810022383" r="5" fill="transparent" class="eq-point" data-label="Oct 2026" data-val="+$12.543" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="542.0876494023904" cy="20.200942810022383" r="5" fill="transparent" class="eq-point" data-label="Nov 2026" data-val="+$12.543" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="544" cy="20.200942810022383" r="5" fill="transparent" class="eq-point" data-label="Dic 2026" data-val="+$12.543" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle>
+    </svg></div>
+    <div style="border:1px solid #e0e3e8;border-radius:8px;padding:12px;background:#fff">
+      <div style="font-size:11px;font-weight:700;color:#4a5060;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:#6366f1;display:inline-block"></span>Incubación Live
+      </div><svg viewBox="0 0 560 260" style="width:100%;height:auto;display:block">
+      <defs><linearGradient id="agovchart22" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a7f4b" stop-opacity="0.15"></stop><stop offset="100%" stop-color="#1a7f4b" stop-opacity="0.01"></stop></linearGradient></defs>
+      <line x1="64" y1="224" x2="544" y2="224" stroke="#e0e3e8" stroke-width="0.5" stroke-dasharray="3,3"></line><line x1="64" y1="173" x2="544" y2="173" stroke="#e0e3e8" stroke-width="0.5" stroke-dasharray="3,3"></line><line x1="64" y1="122" x2="544" y2="122" stroke="#e0e3e8" stroke-width="0.5" stroke-dasharray="3,3"></line><line x1="64" y1="71" x2="544" y2="71" stroke="#e0e3e8" stroke-width="0.5" stroke-dasharray="3,3"></line><line x1="64" y1="20" x2="544" y2="20" stroke="#e0e3e8" stroke-width="0.5" stroke-dasharray="3,3"></line>
+      <line x1="64" y1="224" x2="544" y2="224" stroke="#9098a8" stroke-width="0.8"></line>
+      <path d="M 64,224 L 64,212.52514343570707 L 184,76.63989200134998 L 304,82.74451569355384 L 424,20 L 544,20 L 544,224 Z" fill="url(#agovchart22)" stroke="none"></path>
+      <polyline points="64,212.52514343570707 184,76.63989200134998 304,82.74451569355384 424,20 544,20" fill="none" stroke="#1a7f4b" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"></polyline>
+      <text x="60" y="227" text-anchor="end" font-size="9" fill="#9098a8">$0</text><text x="60" y="176" text-anchor="end" font-size="9" fill="#9098a8">$44</text><text x="60" y="125" text-anchor="end" font-size="9" fill="#9098a8">$89</text><text x="60" y="74" text-anchor="end" font-size="9" fill="#9098a8">$133</text><text x="60" y="23" text-anchor="end" font-size="9" fill="#9098a8">$178</text><text x="64" y="238" text-anchor="middle" font-size="9" fill="#9098a8">03.25.2026 18:17</text><text x="184" y="238" text-anchor="middle" font-size="9" fill="#9098a8">04.08.2026 03:00</text><text x="304" y="238" text-anchor="middle" font-size="9" fill="#9098a8">04.09.2026 03:00</text><text x="424" y="238" text-anchor="middle" font-size="9" fill="#9098a8">04.17.2026 19:00</text><text x="544" y="238" text-anchor="middle" font-size="9" fill="#9098a8">Close Price</text><circle cx="64" cy="212.52514343570707" r="5" fill="transparent" class="eq-point" data-label="03.25.2026 18:17" data-val="+$10" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="184" cy="76.63989200134998" r="5" fill="transparent" class="eq-point" data-label="04.08.2026 03:00" data-val="+$128" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="304" cy="82.74451569355384" r="5" fill="transparent" class="eq-point" data-label="04.09.2026 03:00" data-val="+$123" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="424" cy="20" r="5" fill="transparent" class="eq-point" data-label="04.17.2026 19:00" data-val="+$178" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle><circle cx="544" cy="20" r="5" fill="transparent" class="eq-point" data-label="Close Price" data-val="+$178" onmouseenter="showEqTooltip(event,this)" onmouseleave="hideEqTooltip()"></circle>
+    </svg></div>
+  </div></div>
+    </div>
+
+    <!-- MYFXBOOK LIVE -->
+    <div class="ficha-sec-hdr" onclick="toggleFichaSection('mfxsec-22')">
+      <span>📊 Myfxbook — Live <span style="font-size:10px;background:#fffbeb;color:#92400e;border:1px solid #fde68a;padding:2px 8px;border-radius:10px;font-weight:600;margin-left:6px">🟡 En incubación</span></span><span>▾</span>
+    </div>
+    <div id="mfxsec-22" class="ficha-subsection" style="margin-bottom:1rem">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px">
+    <div class="kpi-main" style="border-top:3px solid #1a7f4b"><div class="kpi-lbl">Profit Factor</div><div class="kpi-val" style="color:#1a7f4b">32.54</div></div>
+    <div class="kpi-main" style="border-top:3px solid #b91c1c"><div class="kpi-lbl">Drawdown %</div><div class="kpi-val" style="color:#111318">0.06%</div></div>
+    <div class="kpi-main" style="border-top:3px solid #1d4ed8"><div class="kpi-lbl"># Trades</div><div class="kpi-val" style="color:#111318">3</div></div>
+    <div class="kpi-main" style="border-top:3px solid #d97706"><div class="kpi-lbl">Win Rate</div><div class="kpi-val" style="color:#111318">75%</div></div>
+  </div><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px">
+    <div class="kpi-sm"><div class="kpi-sm-lbl">Gain</div><div class="kpi-sm-val">+1.68%</div></div><div class="kpi-sm"><div class="kpi-sm-lbl">Balance</div><div class="kpi-sm-val">—</div></div><div class="kpi-sm"><div class="kpi-sm-lbl">Sharpe</div><div class="kpi-sm-val">0.91</div></div><div class="kpi-sm"><div class="kpi-sm-lbl">Z-Prob</div><div class="kpi-sm-val">98.64%</div></div><div class="kpi-sm"><div class="kpi-sm-lbl">Avg Win$</div><div class="kpi-sm-val">—</div></div><div class="kpi-sm"><div class="kpi-sm-lbl">Avg Loss$</div><div class="kpi-sm-val">-$5.32</div></div>
+  </div>
+    <div style="font-size:11px;font-weight:700;color:#4a5060;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Trades (5)</div>
+    <div style="overflow-x:auto;max-height:250px;overflow-y:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:700px">
+        <thead style="position:sticky;top:0;background:#f1f3f5">
+          <tr><th style="padding:5px 8px;text-align:right;font-size:9px;font-weight:700;color:#4a5060;border-bottom:1px solid #e0e3e8;white-space:nowrap">Apertura</th><th style="padding:5px 8px;text-align:right;font-size:9px;font-weight:700;color:#4a5060;border-bottom:1px solid #e0e3e8;white-space:nowrap">Cierre</th><th style="padding:5px 8px;text-align:right;font-size:9px;font-weight:700;color:#4a5060;border-bottom:1px solid #e0e3e8;white-space:nowrap">Par</th><th style="padding:5px 8px;text-align:right;font-size:9px;font-weight:700;color:#4a5060;border-bottom:1px solid #e0e3e8;white-space:nowrap">Dir.</th><th style="padding:5px 8px;text-align:right;font-size:9px;font-weight:700;color:#4a5060;border-bottom:1px solid #e0e3e8;white-space:nowrap">Lots</th><th style="padding:5px 8px;text-align:right;font-size:9px;font-weight:700;color:#4a5060;border-bottom:1px solid #e0e3e8;white-space:nowrap">Open</th><th style="padding:5px 8px;text-align:right;font-size:9px;font-weight:700;color:#4a5060;border-bottom:1px solid #e0e3e8;white-space:nowrap">Close</th><th style="padding:5px 8px;text-align:right;font-size:9px;font-weight:700;color:#4a5060;border-bottom:1px solid #e0e3e8;white-space:nowrap">Pips</th><th style="padding:5px 8px;text-align:right;font-size:9px;font-weight:700;color:#4a5060;border-bottom:1px solid #e0e3e8;white-space:nowrap">P&amp;L</th><th style="padding:5px 8px;text-align:right;font-size:9px;font-weight:700;color:#4a5060;border-bottom:1px solid #e0e3e8;white-space:nowrap">Gain%</th><th style="padding:5px 8px;text-align:right;font-size:9px;font-weight:700;color:#4a5060;border-bottom:1px solid #e0e3e8;white-space:nowrap">Acum</th></tr>
+        </thead>
+        <tbody><tr style="border-bottom:1px solid #f1f3f5">
+            <td style="padding:4px 8px;color:#4a5060;white-space:nowrap;text-align:left">Open Price</td>
+            <td style="padding:4px 8px;text-align:right;color:#9098a8;white-space:nowrap">Close Price</td>
+            <td style="padding:4px 8px;font-weight:600;color:#111318;text-align:left">Pips</td>
+            <td style="padding:4px 8px;font-weight:600;color:#b91c1c;text-align:left">Net Profit</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">—</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">—</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">—</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#9098a8">—</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#9098a8">—</td>
+            <td style="padding:4px 8px;text-align:right;color:#9098a8">—</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#1a7f4b">+$0.00</td>
+          </tr><tr style="border-bottom:1px solid #f1f3f5">
+            <td style="padding:4px 8px;color:#4a5060;white-space:nowrap;text-align:left">04.17.2026 15:48</td>
+            <td style="padding:4px 8px;text-align:right;color:#9098a8;white-space:nowrap">04.17.2026 19:00</td>
+            <td style="padding:4px 8px;font-weight:600;color:#111318;text-align:left">XAUUSD</td>
+            <td style="padding:4px 8px;font-weight:600;color:#1a7f4b;text-align:left">Buy</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">0.02</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">4</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">4</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#1a7f4b">2</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#1a7f4b">+$54.68</td>
+            <td style="padding:4px 8px;text-align:right;color:#1a7f4b">+0.54%</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#1a7f4b">+$54.68</td>
+          </tr><tr style="border-bottom:1px solid #f1f3f5">
+            <td style="padding:4px 8px;color:#4a5060;white-space:nowrap;text-align:left">04.08.2026 22:15</td>
+            <td style="padding:4px 8px;text-align:right;color:#9098a8;white-space:nowrap">04.09.2026 03:00</td>
+            <td style="padding:4px 8px;font-weight:600;color:#111318;text-align:left">XAUUSD</td>
+            <td style="padding:4px 8px;font-weight:600;color:#1a7f4b;text-align:left">Buy</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">0.01</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">4</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">4</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#b91c1c">-298</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#b91c1c">-$5.32</td>
+            <td style="padding:4px 8px;text-align:right;color:#b91c1c">-0.05%</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#1a7f4b">+$49.36</td>
+          </tr><tr style="border-bottom:1px solid #f1f3f5">
+            <td style="padding:4px 8px;color:#4a5060;white-space:nowrap;text-align:left">04.07.2026 22:46</td>
+            <td style="padding:4px 8px;text-align:right;color:#9098a8;white-space:nowrap">04.08.2026 03:00</td>
+            <td style="padding:4px 8px;font-weight:600;color:#111318;text-align:left">XAUUSD</td>
+            <td style="padding:4px 8px;font-weight:600;color:#1a7f4b;text-align:left">Buy</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">0.01</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">4</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">4</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#1a7f4b">11</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#1a7f4b">+$118.42</td>
+            <td style="padding:4px 8px;text-align:right;color:#1a7f4b">+1.18%</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#1a7f4b">+$167.78</td>
+          </tr><tr style="border-bottom:1px solid #f1f3f5">
+            <td style="padding:4px 8px;color:#4a5060;white-space:nowrap;text-align:left">03.25.2026 18:17</td>
+            <td style="padding:4px 8px;text-align:right;color:#9098a8;white-space:nowrap">—</td>
+            <td style="padding:4px 8px;font-weight:600;color:#111318;text-align:left">—</td>
+            <td style="padding:4px 8px;font-weight:600;color:#b91c1c;text-align:left">Deposit</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">—</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">—</td>
+            <td style="padding:4px 8px;text-align:right;color:#4a5060">—</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#9098a8">—</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#1a7f4b">+$10.00</td>
+            <td style="padding:4px 8px;text-align:right;color:#1a7f4b">—</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600;color:#1a7f4b">+$177.78</td>
+          </tr></tbody>
+      </table>
+    </div>
+      <details style="margin-top:12px">
+        <summary>🔄 Actualizar datos Myfxbook</summary>
+        <div style="margin-top:8px">
+          <textarea id="mfx-22" rows="8" style="width:100%;border:1px solid #e0e3e8;border-radius:6px;padding:8px;font-size:11px;font-family:monospace;background:#fff;color:#111318;resize:vertical" placeholder="Pegá acá el texto copiado de Myfxbook (los 3 bloques juntos)..."></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button onclick="processMyfxbook('mouxuiat215f0t8bbvh',22)" style="height:32px;padding:0 16px;border-radius:6px;background:#4f46e5;border:none;color:#fff;font-size:12px;font-weight:500;cursor:pointer">⚡ Parsear y cargar</button>
+          </div>
+          <div id="mfx-err-22" style="display:none;color:#b91c1c;font-size:12px;margin-top:6px"></div>
+        </div>
+      </details>
+    </div>
+
+    <!-- NOTAS -->
+    <div style="font-size:11px;font-weight:700;color:#4a5060;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">📝 Notas</div>
+    <textarea style="width:100%;border:1px solid #e0e3e8;border-radius:6px;padding:8px;font-size:12px;color:#111318;background:#fff;resize:vertical" rows="2" onchange="updateBotNotes('mouxuiat215f0t8bbvh',this.value)"></textarea>
+
+  </div></td></tr><tr id="datarow-9" class="data-row" onclick="toggleRow(9)">
       <td class="left name-cell" title="Strategy 1.3.19(1) - Improved 1.1.6">Strategy 1.3.19(1) - Improve…<span class="src-tag">CSV</span></td>
       <td class="left">GBPJPY</td>
       <td class="left">H1</td>
@@ -545,7 +764,7 @@
         <span class="expand-arrow" id="arrow-14" style="margin-left:6px">▶</span>
       </td>
     </tr><tr id="datarow-15" class="data-row" onclick="toggleRow(15)">
-      <td class="left name-cell" title="Strategy 3.2.20(1) - Improved 4.1.7">Strategy 3.2.20(1) - Improve…<span class="src-tag">CSV</span></td>
+      <td class="left name-cell" title="Strategy 3.2.20(1) - Improved 4.1.7">Strategy 3.2.20(1) - Improve…<span class="src-tag">CSV</span> 📋</td>
       <td class="left">GBPJPY</td>
       <td class="left">H1</td>
       <td><span class="sqx-ok">PASSED</span></td>
@@ -554,7 +773,7 @@
       <td class="pass">1.12</td>
       <td class="pass">560</td>
       <td class="pass">0.67</td>
-      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
       <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
         <button class="btn-del-row" onclick="delS(15)">🗑 Borrar</button>
         <span class="expand-arrow" id="arrow-15" style="margin-left:6px">▶</span>
@@ -574,6 +793,126 @@
         <button class="btn-del-row" onclick="delS(16)">🗑 Borrar</button>
         <span class="expand-arrow" id="arrow-16" style="margin-left:6px">▶</span>
       </td>
+    </tr><tr id="datarow-17" class="data-row" onclick="toggleRow(17)">
+      <td class="left name-cell" title="Strategy 1.2.6(3) - Improved 1.1.4">Strategy 1.2.6(3) - Improved…<span class="src-tag">CSV</span></td>
+      <td class="left">EURUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="warn-cell">1.20</td>
+      <td class="fail">2.12%</td>
+      <td class="pass">1.11</td>
+      <td class="pass">942</td>
+      <td class="fail">0.48</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(17)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-17" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-18" class="data-row" onclick="toggleRow(18)">
+      <td class="left name-cell" title="Strategy 1.5.5(5) - Improved 4.1.4">Strategy 1.5.5(5) - Improved…<span class="src-tag">CSV</span></td>
+      <td class="left">EURUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="warn-cell">1.20</td>
+      <td class="fail">4.95%</td>
+      <td class="fail">0.99</td>
+      <td class="pass">1345</td>
+      <td class="pass">0.58</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(18)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-18" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-19" class="data-row" onclick="toggleRow(19)">
+      <td class="left name-cell" title="Strategy 3.8.4(5) - Improved 5.1.4">Strategy 3.8.4(5) - Improved…<span class="src-tag">CSV</span></td>
+      <td class="left">EURUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="fail">1.15</td>
+      <td class="fail">4.68%</td>
+      <td class="pass">1.12</td>
+      <td class="pass">1905</td>
+      <td class="pass">0.58</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(19)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-19" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-20" class="data-row" onclick="toggleRow(20)">
+      <td class="left name-cell" title="WFM_Strategy 1.5.5(5) - Improved 1.1.5">WFM_Strategy 1.5.5(5) - Impr…<span class="src-tag">CSV</span></td>
+      <td class="left">EURUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="warn-cell">1.24</td>
+      <td class="fail">4.22%</td>
+      <td class="pass">1.01</td>
+      <td class="pass">1353</td>
+      <td class="pass">0.68</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(20)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-20" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-21" class="data-row" onclick="toggleRow(21)">
+      <td class="left name-cell" title="Strategy 4.6.4(2) - Improved 3.1.7">Strategy 4.6.4(2) - Improved…<span class="src-tag">CSV</span></td>
+      <td class="left">EURUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.31</td>
+      <td class="fail">6.01%</td>
+      <td class="pass">1.17</td>
+      <td class="pass">1482</td>
+      <td class="pass">0.90</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(21)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-21" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-0" class="data-row" onclick="toggleRow(0)">
+      <td class="left name-cell" title="Strategy 2.7.19(1) - Improved 1.1.7">Strategy 2.7.19(1) - Improve…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">AUDUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="fail">1.18</td>
+      <td class="fail">2.41%</td>
+      <td class="pass">1.06</td>
+      <td class="pass">901</td>
+      <td class="fail">0.43</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(0)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-0" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-1" class="data-row" onclick="toggleRow(1)">
+      <td class="left name-cell" title="Strategy 4.9.14 - Improved 1.1.5">Strategy 4.9.14 - Improved 1…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">AUDUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="fail">1.18</td>
+      <td class="fail">2.65%</td>
+      <td class="pass">1.16</td>
+      <td class="pass">1168</td>
+      <td class="pass">0.51</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(1)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-1" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-2" class="data-row" onclick="toggleRow(2)">
+      <td class="left name-cell" title="Strategy 2.6.23 - Improved 2.1.4">Strategy 2.6.23 - Improved 2…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">AUDUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="warn-cell">1.20</td>
+      <td class="fail">3.22%</td>
+      <td class="pass">1.05</td>
+      <td class="pass">1027</td>
+      <td class="fail">0.49</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(2)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-2" style="margin-left:6px">▶</span>
+      </td>
     </tr></tbody>
       </table>
     </div>
@@ -582,7 +921,7 @@
 </div>
 
 <!-- GLOBAL TOOLTIP -->
-<div id="eq-tooltip" style="position: fixed; display: none; background: rgb(17, 19, 24); color: rgb(255, 255, 255); font-size: 11px; padding: 6px 10px; border-radius: 6px; pointer-events: none; z-index: 9999; box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 8px; white-space: nowrap; left: 1331px; top: 98px;"><strong>04.17.2026 18:00</strong><br>Acumulado: +$179</div>
+<div id="eq-tooltip" style="position: fixed; display: none; background: rgb(17, 19, 24); color: rgb(255, 255, 255); font-size: 11px; padding: 6px 10px; border-radius: 6px; pointer-events: none; z-index: 9999; box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 8px; white-space: nowrap; left: 791px; top: 403px;"><strong>Dic 2025</strong><br>Acumulado: +$5.685</div>
 
 <!-- EMBEDDED DATABASE — NO EDITAR MANUALMENTE -->
 <script id="db-store" type="application/json">[
@@ -6440,9 +6779,9 @@
     "source": "csv",
     "added": "2026-05-07",
     "notes": "",
-    "sqn": null,
-    "stag": null,
-    "zp": null,
+    "sqn": 0.34,
+    "stag": 688,
+    "zp": 35.57,
     "is": {
       "np": 5337.45,
       "trades": 560,
@@ -6470,6 +6809,406 @@
       "retdd": 0,
       "cagrdd": 0,
       "fitness": 0
+    },
+    "overviewData": {
+      "totalProfit": 5337.45,
+      "cagr": 2.16,
+      "trades": 560,
+      "sharpe": 0.67,
+      "pf": 1.45,
+      "retdd": 7.17,
+      "winPct": 52.86,
+      "dd": 744.33,
+      "ddPct": 5.29,
+      "rExp": 0.21,
+      "rExpScore": 5.86,
+      "strQuality": 1.33,
+      "sqn": 0.34,
+      "ahpr": 2.54,
+      "zScore": 0.37,
+      "zProb": 35.57,
+      "stag": 688,
+      "stagPct": 9.31,
+      "monthlyData": [
+        {
+          "year": 2006,
+          "months": [
+            45.9,
+            -20.48,
+            -3.94,
+            48.49,
+            -65.02,
+            -51.81,
+            6.26,
+            120.31,
+            3.95,
+            101.71,
+            83.25,
+            -30.52
+          ],
+          "ytd": 238.1
+        },
+        {
+          "year": 2007,
+          "months": [
+            199.59,
+            0,
+            28.56,
+            56.78,
+            -23.31,
+            267.92,
+            35.5,
+            100.43,
+            -25.42,
+            -57.59,
+            -42.55,
+            -61.48
+          ],
+          "ytd": 478.43
+        },
+        {
+          "year": 2008,
+          "months": [
+            -149.79,
+            25.17,
+            57.4,
+            105.19,
+            9.76,
+            116.33,
+            -96.32,
+            44.18,
+            44.71,
+            -19.7,
+            0,
+            -87.07
+          ],
+          "ytd": 49.86
+        },
+        {
+          "year": 2009,
+          "months": [
+            0,
+            -24.71,
+            18.93,
+            71.74,
+            -88.61,
+            192.57,
+            -10.58,
+            -95.26,
+            -7.49,
+            127.25,
+            -72.91,
+            81.92
+          ],
+          "ytd": 192.85
+        },
+        {
+          "year": 2010,
+          "months": [
+            -117.47,
+            -36.95,
+            22.86,
+            0,
+            74.73,
+            -117.72,
+            52.8,
+            -26.03,
+            191.42,
+            0,
+            177.08,
+            44.97
+          ],
+          "ytd": 265.69
+        },
+        {
+          "year": 2011,
+          "months": [
+            -23.27,
+            61.5,
+            0,
+            185.9,
+            79.55,
+            -28.02,
+            -1.46,
+            -289.11,
+            0,
+            246.73,
+            -62.82,
+            0.79
+          ],
+          "ytd": 169.79
+        },
+        {
+          "year": 2012,
+          "months": [
+            -37.74,
+            29.16,
+            41.1,
+            70.51,
+            -98.67,
+            16.86,
+            51.91,
+            -219.86,
+            -22.53,
+            26.07,
+            0,
+            45.49
+          ],
+          "ytd": -97.7
+        },
+        {
+          "year": 2013,
+          "months": [
+            17.02,
+            -97.81,
+            45.14,
+            340.26,
+            -29.32,
+            -19.28,
+            64.08,
+            7.58,
+            186.97,
+            -71.79,
+            292.52,
+            -46.11
+          ],
+          "ytd": 689.26
+        },
+        {
+          "year": 2014,
+          "months": [
+            0,
+            -103.26,
+            13.92,
+            9.26,
+            13.08,
+            -142.75,
+            20.52,
+            58.12,
+            33.82,
+            225.83,
+            -174.91,
+            -33.59
+          ],
+          "ytd": -79.96
+        },
+        {
+          "year": 2015,
+          "months": [
+            141.28,
+            92.06,
+            21.32,
+            -81.92,
+            -67.93,
+            27.27,
+            17,
+            -73.41,
+            -70.45,
+            50.92,
+            0,
+            -187.53
+          ],
+          "ytd": -131.39
+        },
+        {
+          "year": 2016,
+          "months": [
+            164.43,
+            0,
+            57,
+            197.59,
+            144.12,
+            142.76,
+            97.35,
+            0.77,
+            -81.72,
+            -71.09,
+            -58.99,
+            81.25
+          ],
+          "ytd": 673.47
+        },
+        {
+          "year": 2017,
+          "months": [
+            -93.8,
+            18.03,
+            90.88,
+            -109.29,
+            5.19,
+            29.59,
+            -13.36,
+            57.69,
+            200.49,
+            -20.17,
+            -79.63,
+            66.79
+          ],
+          "ytd": 152.41
+        },
+        {
+          "year": 2018,
+          "months": [
+            147.63,
+            0,
+            -3.3,
+            -8.1,
+            87.64,
+            35.95,
+            -79.49,
+            376.14,
+            -6.95,
+            -18.33,
+            110.4,
+            -246.2
+          ],
+          "ytd": 395.39
+        },
+        {
+          "year": 2019,
+          "months": [
+            181.28,
+            94.48,
+            202.72,
+            0,
+            -21.2,
+            -137.16,
+            147.28,
+            -11.83,
+            81.51,
+            186.13,
+            136.27,
+            32.85
+          ],
+          "ytd": 892.33
+        },
+        {
+          "year": 2020,
+          "months": [
+            -167.16,
+            111.08,
+            11.19,
+            -120.92,
+            -170.17,
+            0,
+            185.28,
+            6.93,
+            0,
+            4.69,
+            328.87,
+            -31.6
+          ],
+          "ytd": 158.19
+        },
+        {
+          "year": 2021,
+          "months": [
+            -120.09,
+            -73.99,
+            -4.66,
+            -53.26,
+            -258.82,
+            0,
+            -1.28,
+            80.4,
+            -245.03,
+            89.73,
+            -125.73,
+            213.88
+          ],
+          "ytd": -498.85
+        },
+        {
+          "year": 2022,
+          "months": [
+            191.62,
+            236.98,
+            364.81,
+            248.53,
+            0,
+            0,
+            -96.05,
+            -7.5,
+            17.27,
+            161.78,
+            -124.17,
+            13.3
+          ],
+          "ytd": 1006.57
+        },
+        {
+          "year": 2023,
+          "months": [
+            240.33,
+            55.35,
+            -46.37,
+            35.43,
+            155.03,
+            205.38,
+            -98.06,
+            131.18,
+            -2.87,
+            -18.74,
+            -17.79,
+            0
+          ],
+          "ytd": 638.87
+        },
+        {
+          "year": 2024,
+          "months": [
+            77.75,
+            23.96,
+            160.74,
+            87.78,
+            104.2,
+            0,
+            -91.42,
+            -63.49,
+            0,
+            139.96,
+            0,
+            298.22
+          ],
+          "ytd": 737.7
+        },
+        {
+          "year": 2025,
+          "months": [
+            60.06,
+            -93.97,
+            40.12,
+            2.83,
+            98.38,
+            -81.1,
+            -117.37,
+            57.32,
+            -198.53,
+            -45.57,
+            35.24,
+            -3.3
+          ],
+          "ytd": -245.89
+        },
+        {
+          "year": 2026,
+          "months": [
+            -40.93,
+            -28.39,
+            -188.12,
+            -90.23,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "ytd": -347.67
+        }
+      ]
     }
   },
   {
@@ -6513,6 +7252,784 @@
       "retdd": 0,
       "cagrdd": 0,
       "fitness": 0
+    }
+  },
+  {
+    "id": "mouxb9ht1jom7eabgwh",
+    "name": "Strategy 1.2.6(3) - Improved 1.1.4",
+    "symbol": "EURUSD",
+    "symbolFull": "EURUSD_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 4247.28,
+      "trades": 942,
+      "pf": 1.2,
+      "sharpe": 0.48,
+      "cagr": 2.12,
+      "stability": 0.86,
+      "dd": 719.53,
+      "wr": 1.11,
+      "retdd": 5.9,
+      "cagrdd": 0.26,
+      "fitness": 0.82,
+      "exposure": 0,
+      "rexp": 0.1
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxb9hus22igs6x2wf",
+    "name": "Strategy 1.5.5(5) - Improved 4.1.4",
+    "symbol": "EURUSD",
+    "symbolFull": "EURUSD_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 9898.32,
+      "trades": 1345,
+      "pf": 1.2,
+      "sharpe": 0.58,
+      "cagr": 4.95,
+      "stability": 0.88,
+      "dd": 1705.65,
+      "wr": 0.99,
+      "retdd": 5.8,
+      "cagrdd": 0.22,
+      "fitness": 0.82,
+      "exposure": 2.23,
+      "rexp": 0.1
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxb9hurbn9thy81x",
+    "name": "Strategy 3.8.4(5) - Improved 5.1.4",
+    "symbol": "EURUSD",
+    "symbolFull": "EURUSD_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 9357.45,
+      "trades": 1905,
+      "pf": 1.15,
+      "sharpe": 0.58,
+      "cagr": 4.68,
+      "stability": 0.7,
+      "dd": 1670,
+      "wr": 1.12,
+      "retdd": 5.6,
+      "cagrdd": 0.21,
+      "fitness": 0.82,
+      "exposure": 0.22,
+      "rexp": 0.07
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxb9hujum0gd0ptf",
+    "name": "WFM_Strategy 1.5.5(5) - Improved 1.1.5",
+    "symbol": "EURUSD",
+    "symbolFull": "EURUSD_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 8437.01,
+      "trades": 1353,
+      "pf": 1.24,
+      "sharpe": 0.68,
+      "cagr": 4.22,
+      "stability": 0.88,
+      "dd": 1126.7,
+      "wr": 1.01,
+      "retdd": 7.49,
+      "cagrdd": 0.32,
+      "fitness": 0.85,
+      "exposure": 2.29,
+      "rexp": 0.12
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxb9hu3edjlagn2wc",
+    "name": "Strategy 4.6.4(2) - Improved 3.1.7",
+    "symbol": "EURUSD",
+    "symbolFull": "EURUSD_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 12018.3,
+      "trades": 1482,
+      "pf": 1.31,
+      "sharpe": 0.9,
+      "cagr": 6.01,
+      "stability": 0.85,
+      "dd": 1028.76,
+      "wr": 1.17,
+      "retdd": 11.68,
+      "cagrdd": 0.76,
+      "fitness": 0.9,
+      "exposure": 0,
+      "rexp": 0.14
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxuiat215f0t8bbvh",
+    "name": "Strategy 3.1.17 - Improved 2.1.5(1)",
+    "symbol": "XAUUSD",
+    "symbolFull": "XAUUSD_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": 0.77,
+    "stag": 640,
+    "zp": 11.9,
+    "is": {
+      "np": 12542.85,
+      "trades": 1293,
+      "pf": 1.42,
+      "sharpe": 0.97,
+      "cagr": 6.27,
+      "stability": 0.89,
+      "dd": 1198.47,
+      "wr": 1.03,
+      "retdd": 10.47,
+      "cagrdd": 0.59,
+      "fitness": 0.89,
+      "exposure": 0.42,
+      "rexp": 0.21
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    },
+    "overviewData": {
+      "totalProfit": 12542.85,
+      "cagr": 4.15,
+      "trades": 1293,
+      "sharpe": 0.97,
+      "pf": 1.42,
+      "retdd": 10.47,
+      "winPct": 50.73,
+      "dd": 1198.47,
+      "ddPct": 7.02,
+      "rExp": 0.21,
+      "rExpScore": 13.27,
+      "strQuality": 1.25,
+      "sqn": 0.77,
+      "ahpr": 5.97,
+      "zScore": 1.18,
+      "zProb": 11.9,
+      "stag": 640,
+      "stagPct": 8.69,
+      "monthlyData": [
+        {
+          "year": 2006,
+          "months": [
+            17.58,
+            -20.71,
+            74.91,
+            -36.63,
+            -161.29,
+            127.24,
+            83.49,
+            70.33,
+            135.72,
+            -173.16,
+            205.62,
+            -204.61
+          ],
+          "ytd": 118.49
+        },
+        {
+          "year": 2007,
+          "months": [
+            179.21,
+            1.97,
+            -242.48,
+            -185.81,
+            -158.34,
+            10.46,
+            20.11,
+            88.97,
+            364.01,
+            81.54,
+            18.47,
+            28.67
+          ],
+          "ytd": 206.78
+        },
+        {
+          "year": 2008,
+          "months": [
+            -26.71,
+            45.89,
+            30.04,
+            235.51,
+            4.26,
+            -8.49,
+            73.27,
+            23.1,
+            219.8,
+            129.17,
+            -0.03,
+            236.59
+          ],
+          "ytd": 962.4
+        },
+        {
+          "year": 2009,
+          "months": [
+            135.75,
+            95.73,
+            54.2,
+            -190.26,
+            177.42,
+            -80.04,
+            -36.51,
+            55.98,
+            -96.49,
+            152.77,
+            139.54,
+            -113.27
+          ],
+          "ytd": 294.82
+        },
+        {
+          "year": 2010,
+          "months": [
+            33.81,
+            -189.83,
+            86.34,
+            280.84,
+            -50.39,
+            -72.32,
+            -53.43,
+            187.52,
+            244.51,
+            -15.8,
+            123.59,
+            104.14
+          ],
+          "ytd": 678.98
+        },
+        {
+          "year": 2011,
+          "months": [
+            108.12,
+            -54.13,
+            8.24,
+            -150.51,
+            -62.32,
+            -86.56,
+            221.36,
+            114.43,
+            -136.9,
+            312.62,
+            261.19,
+            -232.4
+          ],
+          "ytd": 303.14
+        },
+        {
+          "year": 2012,
+          "months": [
+            171.63,
+            -184.16,
+            243.7,
+            254.71,
+            -55.05,
+            251,
+            -251.21,
+            -26.17,
+            350.67,
+            -103.6,
+            -79.68,
+            16.18
+          ],
+          "ytd": 588.02
+        },
+        {
+          "year": 2013,
+          "months": [
+            203.55,
+            -245.74,
+            -34.32,
+            -53.36,
+            -167.31,
+            60.52,
+            -127.85,
+            408.08,
+            389.45,
+            362.51,
+            -29.37,
+            -82.84
+          ],
+          "ytd": 683.32
+        },
+        {
+          "year": 2014,
+          "months": [
+            -53,
+            24.56,
+            230.96,
+            155.57,
+            185.14,
+            94.77,
+            64.39,
+            50.03,
+            -47.86,
+            -38.6,
+            360.95,
+            -87.61
+          ],
+          "ytd": 939.3
+        },
+        {
+          "year": 2015,
+          "months": [
+            25.88,
+            -35.9,
+            88.25,
+            141.46,
+            -13.76,
+            -49.67,
+            -98.7,
+            17.55,
+            160.06,
+            356.05,
+            41.91,
+            -19.86
+          ],
+          "ytd": 613.27
+        },
+        {
+          "year": 2016,
+          "months": [
+            -135.74,
+            162.05,
+            176.73,
+            141.68,
+            -113.83,
+            976.25,
+            103.85,
+            72.33,
+            -59.12,
+            -89.75,
+            109.82,
+            -13.98
+          ],
+          "ytd": 1330.29
+        },
+        {
+          "year": 2017,
+          "months": [
+            3.26,
+            -164.95,
+            376.3,
+            180,
+            -271.66,
+            129.92,
+            183.35,
+            -126.67,
+            149.62,
+            47.24,
+            -9.82,
+            -221.42
+          ],
+          "ytd": 275.17
+        },
+        {
+          "year": 2018,
+          "months": [
+            -42.09,
+            289.93,
+            85.47,
+            78.12,
+            -65.19,
+            -240.17,
+            -108.91,
+            -161.68,
+            118.42,
+            390.23,
+            -111.49,
+            205.27
+          ],
+          "ytd": 437.91
+        },
+        {
+          "year": 2019,
+          "months": [
+            87.03,
+            -68.89,
+            -3.16,
+            21.42,
+            154.4,
+            205.18,
+            41,
+            366.83,
+            35.15,
+            -45.39,
+            -62.2,
+            51.7
+          ],
+          "ytd": 783.07
+        },
+        {
+          "year": 2020,
+          "months": [
+            248.28,
+            11.24,
+            141.83,
+            16.75,
+            -57.56,
+            10.22,
+            131.21,
+            236.2,
+            -210.57,
+            -155.57,
+            -198.2,
+            56.26
+          ],
+          "ytd": 230.09
+        },
+        {
+          "year": 2021,
+          "months": [
+            100.17,
+            -203.5,
+            -86.48,
+            33.31,
+            -25.77,
+            -206.08,
+            -105.48,
+            131.1,
+            -164.39,
+            333.21,
+            212.89,
+            -102.58
+          ],
+          "ytd": -83.6
+        },
+        {
+          "year": 2022,
+          "months": [
+            232.47,
+            218.49,
+            26.9,
+            -44.19,
+            84.55,
+            132.5,
+            0.97,
+            -108.13,
+            182.61,
+            131.22,
+            466.44,
+            401.31
+          ],
+          "ytd": 1725.14
+        },
+        {
+          "year": 2023,
+          "months": [
+            144.26,
+            -150.93,
+            119.15,
+            -147.17,
+            192.36,
+            -210.69,
+            59.3,
+            91.36,
+            199.97,
+            168.41,
+            378.1,
+            42.64
+          ],
+          "ytd": 886.76
+        },
+        {
+          "year": 2024,
+          "months": [
+            -39.12,
+            -25.16,
+            356.15,
+            -19.58,
+            24.06,
+            105.03,
+            95.41,
+            43.92,
+            -84.8,
+            -275.72,
+            141.51,
+            -134.61
+          ],
+          "ytd": 187.09
+        },
+        {
+          "year": 2025,
+          "months": [
+            90.52,
+            -80.42,
+            -91.54,
+            92.68,
+            -37,
+            252.95,
+            -49.56,
+            324.72,
+            273.62,
+            126.06,
+            321.75,
+            65.3
+          ],
+          "ytd": 1289.08
+        },
+        {
+          "year": 2026,
+          "months": [
+            105.98,
+            -12.65,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "ytd": 93.33
+        }
+      ]
+    },
+    "myfxbookData": {
+      "gain": 1.68,
+      "absGain": 1.68,
+      "daily": 0.04,
+      "monthly": 1.14,
+      "ddPct": 0.06,
+      "balance": null,
+      "trades": 3,
+      "pips": 14,
+      "pf": 32.54,
+      "sharpe": 0.91,
+      "zScore": 2.47,
+      "zProb": 98.64,
+      "expectancyPips": null,
+      "expectancyUsd": null,
+      "ahpr": 0.56,
+      "ghpr": 0.56,
+      "avgWinPips": null,
+      "avgWinUsd": null,
+      "avgLossPips": -298,
+      "avgLossUsd": -5.32,
+      "lots": 0.04,
+      "commissions": 0.96,
+      "longsWon": {
+        "won": 2,
+        "total": 3,
+        "pct": 66
+      },
+      "shortsWon": {
+        "won": 0,
+        "total": 0,
+        "pct": 0
+      },
+      "bestTradeUsd": 8,
+      "worstTradeUsd": 9,
+      "bestTradePips": null,
+      "worstTradePips": null,
+      "avgTradeLength": "4h 3m",
+      "tradeList": [
+        {
+          "magic": "(Price)",
+          "openDate": "Open Price",
+          "closeDate": "Close Price",
+          "symbol": "Pips",
+          "action": "Net Profit",
+          "lots": null,
+          "openPrice": null,
+          "closePrice": null,
+          "pips": null,
+          "netProfit": null,
+          "duration": null,
+          "gainPct": null,
+          "cumProfit": 0
+        },
+        {
+          "magic": "3117",
+          "openDate": "04.17.2026 15:48",
+          "closeDate": "04.17.2026 19:00",
+          "symbol": "XAUUSD",
+          "action": "Buy",
+          "lots": 0.02,
+          "openPrice": 4,
+          "closePrice": 4,
+          "pips": 2,
+          "netProfit": 54.68,
+          "duration": "3h 11m",
+          "gainPct": 0.54,
+          "cumProfit": 54.68
+        },
+        {
+          "magic": "3117",
+          "openDate": "04.08.2026 22:15",
+          "closeDate": "04.09.2026 03:00",
+          "symbol": "XAUUSD",
+          "action": "Buy",
+          "lots": 0.01,
+          "openPrice": 4,
+          "closePrice": 4,
+          "pips": -298,
+          "netProfit": -5.32,
+          "duration": "4h 44m",
+          "gainPct": -0.05,
+          "cumProfit": 49.36
+        },
+        {
+          "magic": "3117",
+          "openDate": "04.07.2026 22:46",
+          "closeDate": "04.08.2026 03:00",
+          "symbol": "XAUUSD",
+          "action": "Buy",
+          "lots": 0.01,
+          "openPrice": 4,
+          "closePrice": 4,
+          "pips": 11,
+          "netProfit": 118.42,
+          "duration": "4h 13m",
+          "gainPct": 1.18,
+          "cumProfit": 167.78
+        },
+        {
+          "magic": "0",
+          "openDate": "03.25.2026 18:17",
+          "closeDate": "",
+          "symbol": "",
+          "action": "Deposit",
+          "lots": null,
+          "openPrice": null,
+          "closePrice": null,
+          "pips": null,
+          "netProfit": 10,
+          "duration": null,
+          "gainPct": null,
+          "cumProfit": 177.78
+        }
+      ],
+      "winRate": 75,
+      "netProfit": 177.78,
+      "startDate": "03.25.2026 18:17",
+      "endDate": "Close Price"
     }
   }
 ]</script>
