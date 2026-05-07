@@ -146,9 +146,12 @@
     <span id="db-count" style="font-size:11px;color:var(--text3);margin-right:4px"></span>
     <span id="sync-status" style="font-size:11px;margin-right:4px"></span>
     <button onclick="saveToGitHub()" id="btn-save">☁ Guardar en GitHub</button>
+    <button onclick="exportJSON()">⬇ Exportar estado</button>
+    <input type="file" id="import-json-input" accept=".json" style="display:none" onchange="importJSON(this)">
+    <button onclick="document.getElementById('import-json-input').click()">⬆ Importar estado</button>
     <button onclick="exportCSV()">⬇ CSV</button>
     <button onclick="showConfig()">⚙ Config</button>
-    <button class="btn-danger" onclick="clearAll()">Borrar todo</button>
+    <button class="btn-danger" onclick="clearAll()">Limpiar todo</button>
   </div>
 </div>
 
@@ -5931,6 +5934,15 @@ try {
   }
 } catch(e) { DB = []; console.warn('DB parse error:', e); }
 
+// localStorage recovery — overrides embedded DB if present (survives browser close)
+try {
+  const _ls = localStorage.getItem('sqx_dashboard_state');
+  if (_ls !== null) {
+    const _lsParsed = JSON.parse(_ls);
+    if (Array.isArray(_lsParsed)) DB = _lsParsed;
+  }
+} catch(e) {}
+
 let dirty = false;
 
 // ── CRITERIOS ──────────────────────────────────────────────────
@@ -6007,7 +6019,7 @@ async function saveToGitHub() {
   finally { btn.disabled = false; }
 }
 function setSyncStatus(msg, color) { const el = document.getElementById('sync-status'); el.textContent = msg; el.style.color = color; }
-function markDirty() { dirty = true; document.getElementById('save-notice').style.display = 'block'; updateDbCount(); }
+function markDirty() { dirty = true; document.getElementById('save-notice').style.display = 'block'; updateDbCount(); localStorage.setItem('sqx_dashboard_state', JSON.stringify(DB)); }
 function updateDbCount() { document.getElementById('db-count').textContent = DB.length > 0 ? DB.length + ' bots guardados' : ''; }
 
 // ── CSV PARSER ─────────────────────────────────────────────────
@@ -6822,7 +6834,7 @@ function resetOverview(botId, idx) {
 }
 
 
-function clearAll() { if (!confirm('¿Borrar TODAS las estrategias?')) return; DB=[]; markDirty(); render(); }
+function clearAll() { if (!confirm('¿Borrar TODAS las estrategias?')) return; DB=[]; localStorage.removeItem('sqx_dashboard_state'); markDirty(); render(); }
 function setF(f2,btn) { filt=f2; document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); render(); }
 function setView(v,btn) { view=v; document.querySelectorAll('.vtab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); render(); }
 function sort(key) { if(sk===key)sd*=-1;else{sk=key;sd=-1;} render(); }
@@ -6844,6 +6856,27 @@ function showFE(m){const e=document.getElementById('form-err');e.textContent=m;e
 function hideFE(){document.getElementById('form-err').style.display='none';}
 function alertOk(m){const e=document.getElementById('alert-ok');e.textContent=m;e.style.display='block';document.getElementById('alert-err').style.display='none';setTimeout(()=>e.style.display='none',8000);}
 function alertErr(m){const e=document.getElementById('alert-err');e.textContent=m;e.style.display='block';document.getElementById('alert-ok').style.display='none';}
+
+function exportJSON() {
+  if (!DB.length){alert('Sin datos.');return;}
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}));
+  a.download=`sqx_dashboard_${new Date().toISOString().slice(0,10)}.json`;a.click();
+}
+function importJSON(input) {
+  if (!input.files[0]) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try {
+      const data=JSON.parse(e.target.result);
+      if (!Array.isArray(data)) throw new Error('Formato inválido');
+      DB=data; markDirty(); render();
+      alertOk(`✓ ${DB.length} bots importados desde JSON.`);
+    } catch(err) { alertErr('Error al importar JSON: '+err.message); }
+    input.value='';
+  };
+  reader.readAsText(input.files[0]);
+}
 
 function exportCSV() {
   if (!DB.length){alert('Sin datos.');return;}
