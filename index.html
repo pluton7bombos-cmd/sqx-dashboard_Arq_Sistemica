@@ -1,6 +1,4 @@
-﻿<!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SQX Dashboard — Arq. Sistémica</title>
@@ -174,7 +172,7 @@
     </div>
   </div>
 
-  <div class="save-notice" id="save-notice">⚠ Hay cambios sin guardar. Hacé clic en <strong>☁ Guardar en GitHub</strong> para sincronizar.</div>
+  <div class="save-notice" id="save-notice" style="display: none;">⚠ Hay cambios sin guardar. Hacé clic en <strong>☁ Guardar en GitHub</strong> para sincronizar.</div>
 
   <!-- DROP ZONE -->
   <div class="drop-zone" id="dropzone">
@@ -187,8 +185,8 @@
       <span class="fmt fmt-on">✓ Myfxbook Live</span>
     </div>
   </div>
-  <div class="alert alert-ok" id="alert-ok"></div>
-  <div class="alert alert-err" id="alert-err"></div>
+  <div class="alert alert-ok" id="alert-ok" style="display: none;">✓ 24 bots guardados en GitHub.</div>
+  <div class="alert alert-err" id="alert-err" style="display: none;"></div>
 
   <!-- CRITERIOS -->
   <div class="criteria-bar">
@@ -198,7 +196,7 @@
     <div class="crit"><span class="crit-lbl">W/L Ratio</span><span class="crit-val">≥ 1.00</span></div>
     <div class="crit"><span class="crit-lbl">Trades mín</span><span class="crit-val">≥ 500</span></div>
     <div class="crit"><span class="crit-lbl">Sharpe mín</span><span class="crit-val">≥ 0.50</span></div>
-    <div class="crit"><span class="crit-lbl">Stagnation</span><span class="crit-val" style="font-size:11px"><span style="color:var(--green)">≤500</span> <span style="color:#d97706">≤1300</span> <span style="color:var(--red)">>1300</span></span></div>
+    <div class="crit"><span class="crit-lbl">Stagnation</span><span class="crit-val" style="font-size:11px"><span style="color:var(--green)">≤500</span> <span style="color:#d97706">≤1300</span> <span style="color:var(--red)">&gt;1300</span></span></div>
     <div class="crit"><span class="crit-lbl">Z-Prob máx</span><span class="crit-val">≤ 88%</span></div>
     <div class="crit"><span class="crit-lbl">Historia</span><span class="crit-val">≥ 10 años</span></div>
   </div>
@@ -214,8 +212,8 @@
         <div class="form-grid">
           <div class="field"><label>Nombre / Magic ID</label><input id="f-name" placeholder="ej. 2623 AUDUSD H1"></div>
           <div class="field"><label>Símbolo</label><input id="f-symbol" placeholder="AUDUSD"></div>
-          <div class="field"><label>Timeframe</label><select id="f-tf"><option>M1</option><option>M5</option><option>M15</option><option>M30</option><option selected>H1</option><option>H4</option><option>D1</option></select></div>
-          <div class="field"><label>Fase</label><select id="f-phase"><option>IS</option><option>OOS</option><option selected>IS+OOS</option><option>WFM</option><option>Demo Live</option></select></div>
+          <div class="field"><label>Timeframe</label><select id="f-tf"><option>M1</option><option>M5</option><option>M15</option><option>M30</option><option selected="">H1</option><option>H4</option><option>D1</option></select></div>
+          <div class="field"><label>Fase</label><select id="f-phase"><option>IS</option><option>OOS</option><option selected="">IS+OOS</option><option>WFM</option><option>Demo Live</option></select></div>
           <div class="field"><label>Profit Factor</label><input id="f-pf" type="number" step="0.01" placeholder="1.45"></div>
           <div class="field"><label>SQN ★</label><input id="f-sqn" type="number" step="0.01" placeholder="2.10"></div>
           <div class="field"><label>DD $ (absoluto)</label><input id="f-dd" type="number" placeholder="1350"></div>
@@ -252,7 +250,7 @@
       <div class="form-inner">
         <div class="field" style="margin-bottom:12px">
           <label>Bot al que pertenece este Overview</label>
-          <select id="ov-bot-select"><option value="">— Seleccioná un bot —</option></select>
+          <select id="ov-bot-select"><option value="">— Seleccioná un bot —</option><option value="mot87jsnxcixhg4pfr">Strategy 2.7.19(1) - Improved 1.1.7 — AUDUSD</option><option value="mot87jsn7ayp189u9qe">Strategy 4.9.14 - Improved 1.1.5 — AUDUSD</option><option value="mot87jsozw09pgmjwwc">Strategy 2.6.23 - Improved 2.1.4 — AUDUSD</option><option value="mouryfc0aht88q4e805">Strategy 2.6.20 - Improved 2.1.5(1) — XAUUSD</option><option value="mouryfc1nb5jsxr98f">Strategy 3.1.15(2) - Improved 2.1.6 — XAUUSD</option><option value="mouryfc1yr0lro6p9sc">Strategy 3.1.15(3) - Improved 4.1.5(1) — XAUUSD</option><option value="mouryfc1mcw1gxbo67f">Strategy 1.2.22 - Improved 4.1.5 — XAUUSD</option><option value="mouryfc26nrm62e7ehx">Strategy 2.3.25 - Improved 2.1.4(1) — XAUUSD</option><option value="mouryfc2ie40evly0ok">Strategy 3.1.18(6) - Improved 1.1.5 — XAUUSD</option><option value="mouxa61bs9pa3vqu4xh">Strategy 1.3.19(1) - Improved 1.1.6 — GBPJPY</option><option value="mouxa61c8wn8ixule2b">Strategy 1.4.16 - Improved 2.1.4 — GBPJPY</option><option value="mouxa61criarl4hdkdj">Strategy 1.4.20 - Improved 3.1.4 — GBPJPY</option><option value="mouxa61dpb28l6b7ll">Strategy 3.1.18(1) - Improved 5.1.4 — GBPJPY</option><option value="mouxa61dln4jrpsm5em">Strategy 3.1.18(1) - Improved 5.1.6 — GBPJPY</option><option value="mouxa61dr0g4um2jbbo">Strategy 3.2.20(1) - Improved 4.1.4 — GBPJPY</option><option value="mouxa61d7hm6oz6e40c">Strategy 3.2.20(1) - Improved 4.1.7 — GBPJPY</option><option value="mouxa61d84qg938o4gm">Strategy 5.6.16 - Improved 3.1.5 — GBPJPY</option><option value="mouxb9ht1jom7eabgwh">Strategy 1.2.6(3) - Improved 1.1.4 — EURUSD</option><option value="mouxb9hus22igs6x2wf">Strategy 1.5.5(5) - Improved 4.1.4 — EURUSD</option><option value="mouxb9hurbn9thy81x">Strategy 3.8.4(5) - Improved 5.1.4 — EURUSD</option><option value="mouxb9hujum0gd0ptf">WFM_Strategy 1.5.5(5) - Improved 1.1.5 — EURUSD</option><option value="mouxb9hu3edjlagn2wc">Strategy 4.6.4(2) - Improved 3.1.7 — EURUSD</option><option value="mouxuiat215f0t8bbvh">Strategy 3.1.17 - Improved 2.1.5(1) — XAUUSD</option><option value="mouyafa0upq28mv0uja">Strategy 1.9.16 - Improved 2.1.4(2) — AUDJPY</option></select>
         </div>
         <div class="field" style="margin-bottom:12px">
           <label>Pegá el texto completo del Overview de SQX</label>
@@ -274,12 +272,12 @@
   </div>
 
   <!-- SUMMARY -->
-  <div class="summary-grid" id="sum-grid" style="display:none">
-    <div class="stat"><div class="stat-lbl">Total bots</div><div class="stat-val" id="s-tot">0</div></div>
+  <div class="summary-grid" id="sum-grid" style="display: grid;">
+    <div class="stat"><div class="stat-lbl">Total bots</div><div class="stat-val" id="s-tot">24</div></div>
     <div class="stat"><div class="stat-lbl">Aprobados</div><div class="stat-val green" id="s-ok">0</div></div>
-    <div class="stat"><div class="stat-lbl">Parciales (1-2 fallos)</div><div class="stat-val amber" id="s-warn">0</div></div>
-    <div class="stat"><div class="stat-lbl">Descartados</div><div class="stat-val red" id="s-fail">0</div></div>
-    <div class="stat"><div class="stat-lbl">Desde CSV</div><div class="stat-val blue" id="s-csv">0</div></div>
+    <div class="stat"><div class="stat-lbl">Parciales (1-2 fallos)</div><div class="stat-val amber" id="s-warn">10</div></div>
+    <div class="stat"><div class="stat-lbl">Descartados</div><div class="stat-val red" id="s-fail">14</div></div>
+    <div class="stat"><div class="stat-lbl">Desde CSV</div><div class="stat-val blue" id="s-csv">24</div></div>
   </div>
 
   <!-- TABLE -->
@@ -287,7 +285,7 @@
     <div class="table-topbar">
       <div>
         <div class="t-title">Base de datos de estrategias</div>
-        <div class="t-sub" id="t-sub">Sin datos cargados</div>
+        <div class="t-sub" id="t-sub">Mostrando 24 de 24 — Vista IS</div>
       </div>
       <div class="view-tabs">
         <button class="vtab active" onclick="setView('IS',this)">IS</button>
@@ -324,7 +322,367 @@
             <th style="width:30px"></th>
           </tr>
         </thead>
-        <tbody id="tbody"></tbody>
+        <tbody id="tbody"><tr id="datarow-0" class="data-row" onclick="toggleRow(0)">
+      <td class="left name-cell" title="Strategy 2.7.19(1) - Improved 1.1.7">Strategy 2.7.19(1) - Improve…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">AUDUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="fail">1.18</td>
+      <td class="fail">2.41%</td>
+      <td class="pass">1.06</td>
+      <td class="pass">901</td>
+      <td class="fail">0.43</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(0)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-0" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-1" class="data-row" onclick="toggleRow(1)">
+      <td class="left name-cell" title="Strategy 4.9.14 - Improved 1.1.5">Strategy 4.9.14 - Improved 1…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">AUDUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="fail">1.18</td>
+      <td class="fail">2.65%</td>
+      <td class="pass">1.16</td>
+      <td class="pass">1168</td>
+      <td class="pass">0.51</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(1)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-1" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-2" class="data-row" onclick="toggleRow(2)">
+      <td class="left name-cell" title="Strategy 2.6.23 - Improved 2.1.4">Strategy 2.6.23 - Improved 2…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">AUDUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="warn-cell">1.20</td>
+      <td class="fail">3.22%</td>
+      <td class="pass">1.05</td>
+      <td class="pass">1027</td>
+      <td class="fail">0.49</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(2)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-2" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-3" class="data-row" onclick="toggleRow(3)">
+      <td class="left name-cell" title="Strategy 2.6.20 - Improved 2.1.5(1)">Strategy 2.6.20 - Improved 2…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">XAUUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.47</td>
+      <td class="fail">5.07%</td>
+      <td class="pass">1.22</td>
+      <td class="pass">1335</td>
+      <td class="pass">1.02</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(3)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-3" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-4" class="data-row" onclick="toggleRow(4)">
+      <td class="left name-cell" title="Strategy 3.1.15(2) - Improved 2.1.6">Strategy 3.1.15(2) - Improve…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">XAUUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.47</td>
+      <td class="fail">5.01%</td>
+      <td class="pass">1.09</td>
+      <td class="pass">1312</td>
+      <td class="pass">1.08</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(4)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-4" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-5" class="data-row" onclick="toggleRow(5)">
+      <td class="left name-cell" title="Strategy 3.1.15(3) - Improved 4.1.5(1)">Strategy 3.1.15(3) - Improve…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">XAUUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.35</td>
+      <td class="fail">7.51%</td>
+      <td class="pass">1.01</td>
+      <td class="pass">1408</td>
+      <td class="pass">0.92</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(5)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-5" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-6" class="data-row" onclick="toggleRow(6)">
+      <td class="left name-cell" title="Strategy 1.2.22 - Improved 4.1.5">Strategy 1.2.22 - Improved 4…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">XAUUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.41</td>
+      <td class="fail">7.52%</td>
+      <td class="pass">1.09</td>
+      <td class="pass">1706</td>
+      <td class="pass">1.09</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(6)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-6" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-7" class="data-row" onclick="toggleRow(7)">
+      <td class="left name-cell" title="Strategy 2.3.25 - Improved 2.1.4(1)">Strategy 2.3.25 - Improved 2…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">XAUUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.35</td>
+      <td class="fail">5.57%</td>
+      <td class="pass">1.04</td>
+      <td class="pass">1510</td>
+      <td class="pass">0.91</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(7)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-7" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-8" class="data-row" onclick="toggleRow(8)">
+      <td class="left name-cell" title="Strategy 3.1.18(6) - Improved 1.1.5">Strategy 3.1.18(6) - Improve…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">XAUUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.34</td>
+      <td class="pass">10.15%</td>
+      <td class="pass">1.02</td>
+      <td class="pass">2475</td>
+      <td class="pass">1.16</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(8)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-8" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-9" class="data-row" onclick="toggleRow(9)">
+      <td class="left name-cell" title="Strategy 1.3.19(1) - Improved 1.1.6">Strategy 1.3.19(1) - Improve…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.41</td>
+      <td class="fail">2.77%</td>
+      <td class="pass">1.03</td>
+      <td class="pass">557</td>
+      <td class="pass">0.65</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(9)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-9" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-10" class="data-row" onclick="toggleRow(10)">
+      <td class="left name-cell" title="Strategy 1.4.16 - Improved 2.1.4">Strategy 1.4.16 - Improved 2…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.35</td>
+      <td class="fail">3.72%</td>
+      <td class="pass">1.10</td>
+      <td class="pass">579</td>
+      <td class="pass">0.67</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(10)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-10" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-11" class="data-row" onclick="toggleRow(11)">
+      <td class="left name-cell" title="Strategy 1.4.20 - Improved 3.1.4">Strategy 1.4.20 - Improved 3…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.42</td>
+      <td class="fail">3.51%</td>
+      <td class="pass">1.06</td>
+      <td class="pass">550</td>
+      <td class="pass">0.66</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(11)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-11" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-12" class="data-row" onclick="toggleRow(12)">
+      <td class="left name-cell" title="Strategy 3.1.18(1) - Improved 5.1.4">Strategy 3.1.18(1) - Improve…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.41</td>
+      <td class="fail">2.61%</td>
+      <td class="pass">1.11</td>
+      <td class="pass">581</td>
+      <td class="pass">0.64</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(12)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-12" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-13" class="data-row" onclick="toggleRow(13)">
+      <td class="left name-cell" title="Strategy 3.1.18(1) - Improved 5.1.6">Strategy 3.1.18(1) - Improve…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.43</td>
+      <td class="fail">2.83%</td>
+      <td class="pass">1.11</td>
+      <td class="pass">581</td>
+      <td class="pass">0.66</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(13)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-13" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-14" class="data-row" onclick="toggleRow(14)">
+      <td class="left name-cell" title="Strategy 3.2.20(1) - Improved 4.1.4">Strategy 3.2.20(1) - Improve…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.43</td>
+      <td class="fail">3.10%</td>
+      <td class="pass">1.08</td>
+      <td class="pass">562</td>
+      <td class="pass">0.66</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(14)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-14" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-15" class="data-row" onclick="toggleRow(15)">
+      <td class="left name-cell" title="Strategy 3.2.20(1) - Improved 4.1.7">Strategy 3.2.20(1) - Improve…<span class="src-tag">CSV</span> 📋</td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.45</td>
+      <td class="fail">2.67%</td>
+      <td class="pass">1.12</td>
+      <td class="pass">560</td>
+      <td class="pass">0.67</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(15)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-15" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-16" class="data-row" onclick="toggleRow(16)">
+      <td class="left name-cell" title="Strategy 5.6.16 - Improved 3.1.5">Strategy 5.6.16 - Improved 3…<span class="src-tag">CSV</span></td>
+      <td class="left">GBPJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="warn-cell">1.23</td>
+      <td class="fail">1.82%</td>
+      <td class="pass">1.09</td>
+      <td class="pass">608</td>
+      <td class="fail">0.42</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(16)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-16" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-17" class="data-row" onclick="toggleRow(17)">
+      <td class="left name-cell" title="Strategy 1.2.6(3) - Improved 1.1.4">Strategy 1.2.6(3) - Improved…<span class="src-tag">CSV</span></td>
+      <td class="left">EURUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="warn-cell">1.20</td>
+      <td class="fail">2.12%</td>
+      <td class="pass">1.11</td>
+      <td class="pass">942</td>
+      <td class="fail">0.48</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(17)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-17" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-18" class="data-row" onclick="toggleRow(18)">
+      <td class="left name-cell" title="Strategy 1.5.5(5) - Improved 4.1.4">Strategy 1.5.5(5) - Improved…<span class="src-tag">CSV</span></td>
+      <td class="left">EURUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="warn-cell">1.20</td>
+      <td class="fail">4.95%</td>
+      <td class="fail">0.99</td>
+      <td class="pass">1345</td>
+      <td class="pass">0.58</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(18)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-18" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-19" class="data-row" onclick="toggleRow(19)">
+      <td class="left name-cell" title="Strategy 3.8.4(5) - Improved 5.1.4">Strategy 3.8.4(5) - Improved…<span class="src-tag">CSV</span></td>
+      <td class="left">EURUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="fail">1.15</td>
+      <td class="fail">4.68%</td>
+      <td class="pass">1.12</td>
+      <td class="pass">1905</td>
+      <td class="pass">0.58</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(19)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-19" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-20" class="data-row" onclick="toggleRow(20)">
+      <td class="left name-cell" title="WFM_Strategy 1.5.5(5) - Improved 1.1.5">WFM_Strategy 1.5.5(5) - Impr…<span class="src-tag">CSV</span></td>
+      <td class="left">EURUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="warn-cell">1.24</td>
+      <td class="fail">4.22%</td>
+      <td class="pass">1.01</td>
+      <td class="pass">1353</td>
+      <td class="pass">0.68</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(20)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-20" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-21" class="data-row" onclick="toggleRow(21)">
+      <td class="left name-cell" title="Strategy 4.6.4(2) - Improved 3.1.7">Strategy 4.6.4(2) - Improved…<span class="src-tag">CSV</span></td>
+      <td class="left">EURUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.31</td>
+      <td class="fail">6.01%</td>
+      <td class="pass">1.17</td>
+      <td class="pass">1482</td>
+      <td class="pass">0.90</td>
+      <td><span class="badge badge-warn">~ Parcial</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(21)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-21" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-22" class="data-row" onclick="toggleRow(22)">
+      <td class="left name-cell" title="Strategy 3.1.17 - Improved 2.1.5(1)">Strategy 3.1.17 - Improved 2…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">XAUUSD</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="pass">1.42</td>
+      <td class="fail">6.27%</td>
+      <td class="pass">1.03</td>
+      <td class="pass">1293</td>
+      <td class="pass">0.97</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(22)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-22" style="margin-left:6px">▶</span>
+      </td>
+    </tr><tr id="datarow-23" class="data-row" onclick="toggleRow(23)">
+      <td class="left name-cell" title="Strategy 1.9.16 - Improved 2.1.4(2)">Strategy 1.9.16 - Improved 2…<span class="src-tag">CSV</span> 📋 📊</td>
+      <td class="left">AUDJPY</td>
+      <td class="left">H1</td>
+      <td><span class="sqx-ok">PASSED</span></td>
+      <td class="warn-cell">1.21</td>
+      <td class="fail">4.19%</td>
+      <td class="pass">1.15</td>
+      <td class="pass">1377</td>
+      <td class="pass">0.62</td>
+      <td><span class="badge badge-fail">✗ Descartar</span></td>
+      <td style="white-space:nowrap;padding:4px 8px;text-align:right" onclick="event.stopPropagation()">
+        <button class="btn-del-row" onclick="delS(23)">🗑 Borrar</button>
+        <span class="expand-arrow" id="arrow-23" style="margin-left:6px">▶</span>
+      </td>
+    </tr></tbody>
       </table>
     </div>
   </div>
@@ -332,11 +690,10 @@
 </div>
 
 <!-- GLOBAL TOOLTIP -->
-<div id="eq-tooltip" style="position:fixed;display:none;background:#111318;color:#fff;font-size:11px;padding:6px 10px;border-radius:6px;pointer-events:none;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,0.2);white-space:nowrap"></div>
+<div id="eq-tooltip" style="position: fixed; display: none; background: rgb(17, 19, 24); color: rgb(255, 255, 255); font-size: 11px; padding: 6px 10px; border-radius: 6px; pointer-events: none; z-index: 9999; box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 8px; white-space: nowrap; left: 596px; top: 237px;"><strong>Sep 2018</strong><br>Acumulado: +$5.909</div>
 
 <!-- EMBEDDED DATABASE — NO EDITAR MANUALMENTE -->
-<script id="db-store" type="application/json">
-[
+<script id="db-store" type="application/json">[
   {
     "id": "mot87jsnxcixhg4pfr",
     "name": "Strategy 2.7.19(1) - Improved 1.1.7",
@@ -3228,23 +3585,24 @@
       "endDate": "Close Price"
     },
     "overviewData": {
-      "sqn": 0.87,
+      "totalProfit": 10017.02,
+      "cagr": 3.53,
+      "trades": 1312,
+      "sharpe": 1.08,
+      "pf": 1.47,
+      "retdd": 14.09,
+      "winPct": 52.06,
+      "dd": 711.02,
+      "ddPct": 4.9,
+      "rExp": 0.23,
+      "rExpScore": 14.79,
       "strQuality": 1.39,
+      "sqn": 0.87,
+      "ahpr": 4.77,
+      "zScore": 1.09,
+      "zProb": 13.79,
       "stag": 854,
       "stagPct": 11.58,
-      "zScore": 1.09,
-      "zp": 13.79,
-      "ahpr": 4.77,
-      "cagr": null,
-      "totalProfit": null,
-      "sharpe": null,
-      "pf": null,
-      "trades": null,
-      "winPct": null,
-      "dd": null,
-      "ddPct": null,
-      "retdd": null,
-      "rExp": null,
       "monthlyData": [
         {
           "year": 2006,
@@ -4824,23 +5182,24 @@
       "fitness": 0
     },
     "overviewData": {
-      "sqn": 0.78,
+      "totalProfit": 11141.82,
+      "cagr": 3.81,
+      "trades": 1510,
+      "sharpe": 0.91,
+      "pf": 1.35,
+      "retdd": 10.04,
+      "winPct": 50.86,
+      "dd": 1109.96,
+      "ddPct": 6.24,
+      "rExp": 0.17,
+      "rExpScore": 12.82,
       "strQuality": 1.08,
+      "sqn": 0.78,
+      "ahpr": 5.31,
+      "zScore": -1.4,
+      "zProb": 91.92,
       "stag": 792,
       "stagPct": 10.74,
-      "zScore": -1.4,
-      "zp": 91.92,
-      "ahpr": 5.31,
-      "cagr": null,
-      "totalProfit": null,
-      "sharpe": null,
-      "pf": null,
-      "trades": null,
-      "winPct": null,
-      "dd": null,
-      "ddPct": null,
-      "retdd": null,
-      "rExp": null,
       "monthlyData": [
         {
           "year": 2006,
@@ -5227,7 +5586,7 @@
       "absGain": 1.69,
       "daily": 0.04,
       "monthly": 1.15,
-      "ddPct": 0,
+      "ddPct": null,
       "balance": null,
       "trades": 2,
       "pips": 13,
@@ -5257,8 +5616,8 @@
       },
       "bestTradeUsd": 8,
       "worstTradeUsd": 17,
-      "bestTradePips": 8,
-      "worstTradePips": 17,
+      "bestTradePips": null,
+      "worstTradePips": null,
       "avgTradeLength": "2h 42m",
       "tradeList": [
         {
@@ -5919,9 +6278,2108 @@
       "startDate": "03.25.2026 18:17",
       "endDate": "Close Price"
     }
+  },
+  {
+    "id": "mouxa61bs9pa3vqu4xh",
+    "name": "Strategy 1.3.19(1) - Improved 1.1.6",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 5548.86,
+      "trades": 557,
+      "pf": 1.41,
+      "sharpe": 0.65,
+      "cagr": 2.77,
+      "stability": 0.91,
+      "dd": 838.91,
+      "wr": 1.03,
+      "retdd": 6.61,
+      "cagrdd": 0.38,
+      "fitness": 0.84,
+      "exposure": 0.14,
+      "rexp": 0.2
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxa61c8wn8ixule2b",
+    "name": "Strategy 1.4.16 - Improved 2.1.4",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 7444.88,
+      "trades": 579,
+      "pf": 1.35,
+      "sharpe": 0.67,
+      "cagr": 3.72,
+      "stability": 0.91,
+      "dd": 1250.71,
+      "wr": 1.1,
+      "retdd": 5.95,
+      "cagrdd": 0.35,
+      "fitness": 0.82,
+      "exposure": 0.95,
+      "rexp": 0.17
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxa61criarl4hdkdj",
+    "name": "Strategy 1.4.20 - Improved 3.1.4",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 7023.15,
+      "trades": 550,
+      "pf": 1.42,
+      "sharpe": 0.66,
+      "cagr": 3.51,
+      "stability": 0.91,
+      "dd": 944.72,
+      "wr": 1.06,
+      "retdd": 7.43,
+      "cagrdd": 0.43,
+      "fitness": 0.85,
+      "exposure": 0.81,
+      "rexp": 0.2
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxa61dpb28l6b7ll",
+    "name": "Strategy 3.1.18(1) - Improved 5.1.4",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 5228.27,
+      "trades": 581,
+      "pf": 1.41,
+      "sharpe": 0.64,
+      "cagr": 2.61,
+      "stability": 0.88,
+      "dd": 745.82,
+      "wr": 1.11,
+      "retdd": 7.01,
+      "cagrdd": 0.41,
+      "fitness": 0.84,
+      "exposure": 1.2,
+      "rexp": 0.2
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxa61dln4jrpsm5em",
+    "name": "Strategy 3.1.18(1) - Improved 5.1.6",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 5667.83,
+      "trades": 581,
+      "pf": 1.43,
+      "sharpe": 0.66,
+      "cagr": 2.83,
+      "stability": 0.88,
+      "dd": 776.28,
+      "wr": 1.11,
+      "retdd": 7.3,
+      "cagrdd": 0.42,
+      "fitness": 0.85,
+      "exposure": 1.2,
+      "rexp": 0.21
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxa61dr0g4um2jbbo",
+    "name": "Strategy 3.2.20(1) - Improved 4.1.4",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 6193.43,
+      "trades": 562,
+      "pf": 1.43,
+      "sharpe": 0.66,
+      "cagr": 3.1,
+      "stability": 0.92,
+      "dd": 1089.67,
+      "wr": 1.08,
+      "retdd": 5.68,
+      "cagrdd": 0.34,
+      "fitness": 0.82,
+      "exposure": 1.2,
+      "rexp": 0.21
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxa61d7hm6oz6e40c",
+    "name": "Strategy 3.2.20(1) - Improved 4.1.7",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": 0.34,
+    "stag": 688,
+    "zp": 35.57,
+    "is": {
+      "np": 5337.45,
+      "trades": 560,
+      "pf": 1.45,
+      "sharpe": 0.67,
+      "cagr": 2.67,
+      "stability": 0.89,
+      "dd": 744.33,
+      "wr": 1.12,
+      "retdd": 7.17,
+      "cagrdd": 0.41,
+      "fitness": 0.85,
+      "exposure": 1.2,
+      "rexp": 0.21
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    },
+    "overviewData": {
+      "totalProfit": 5337.45,
+      "cagr": 2.16,
+      "trades": 560,
+      "sharpe": 0.67,
+      "pf": 1.45,
+      "retdd": 7.17,
+      "winPct": 52.86,
+      "dd": 744.33,
+      "ddPct": 5.29,
+      "rExp": 0.21,
+      "rExpScore": 5.86,
+      "strQuality": 1.33,
+      "sqn": 0.34,
+      "ahpr": 2.54,
+      "zScore": 0.37,
+      "zProb": 35.57,
+      "stag": 688,
+      "stagPct": 9.31,
+      "monthlyData": [
+        {
+          "year": 2006,
+          "months": [
+            45.9,
+            -20.48,
+            -3.94,
+            48.49,
+            -65.02,
+            -51.81,
+            6.26,
+            120.31,
+            3.95,
+            101.71,
+            83.25,
+            -30.52
+          ],
+          "ytd": 238.1
+        },
+        {
+          "year": 2007,
+          "months": [
+            199.59,
+            0,
+            28.56,
+            56.78,
+            -23.31,
+            267.92,
+            35.5,
+            100.43,
+            -25.42,
+            -57.59,
+            -42.55,
+            -61.48
+          ],
+          "ytd": 478.43
+        },
+        {
+          "year": 2008,
+          "months": [
+            -149.79,
+            25.17,
+            57.4,
+            105.19,
+            9.76,
+            116.33,
+            -96.32,
+            44.18,
+            44.71,
+            -19.7,
+            0,
+            -87.07
+          ],
+          "ytd": 49.86
+        },
+        {
+          "year": 2009,
+          "months": [
+            0,
+            -24.71,
+            18.93,
+            71.74,
+            -88.61,
+            192.57,
+            -10.58,
+            -95.26,
+            -7.49,
+            127.25,
+            -72.91,
+            81.92
+          ],
+          "ytd": 192.85
+        },
+        {
+          "year": 2010,
+          "months": [
+            -117.47,
+            -36.95,
+            22.86,
+            0,
+            74.73,
+            -117.72,
+            52.8,
+            -26.03,
+            191.42,
+            0,
+            177.08,
+            44.97
+          ],
+          "ytd": 265.69
+        },
+        {
+          "year": 2011,
+          "months": [
+            -23.27,
+            61.5,
+            0,
+            185.9,
+            79.55,
+            -28.02,
+            -1.46,
+            -289.11,
+            0,
+            246.73,
+            -62.82,
+            0.79
+          ],
+          "ytd": 169.79
+        },
+        {
+          "year": 2012,
+          "months": [
+            -37.74,
+            29.16,
+            41.1,
+            70.51,
+            -98.67,
+            16.86,
+            51.91,
+            -219.86,
+            -22.53,
+            26.07,
+            0,
+            45.49
+          ],
+          "ytd": -97.7
+        },
+        {
+          "year": 2013,
+          "months": [
+            17.02,
+            -97.81,
+            45.14,
+            340.26,
+            -29.32,
+            -19.28,
+            64.08,
+            7.58,
+            186.97,
+            -71.79,
+            292.52,
+            -46.11
+          ],
+          "ytd": 689.26
+        },
+        {
+          "year": 2014,
+          "months": [
+            0,
+            -103.26,
+            13.92,
+            9.26,
+            13.08,
+            -142.75,
+            20.52,
+            58.12,
+            33.82,
+            225.83,
+            -174.91,
+            -33.59
+          ],
+          "ytd": -79.96
+        },
+        {
+          "year": 2015,
+          "months": [
+            141.28,
+            92.06,
+            21.32,
+            -81.92,
+            -67.93,
+            27.27,
+            17,
+            -73.41,
+            -70.45,
+            50.92,
+            0,
+            -187.53
+          ],
+          "ytd": -131.39
+        },
+        {
+          "year": 2016,
+          "months": [
+            164.43,
+            0,
+            57,
+            197.59,
+            144.12,
+            142.76,
+            97.35,
+            0.77,
+            -81.72,
+            -71.09,
+            -58.99,
+            81.25
+          ],
+          "ytd": 673.47
+        },
+        {
+          "year": 2017,
+          "months": [
+            -93.8,
+            18.03,
+            90.88,
+            -109.29,
+            5.19,
+            29.59,
+            -13.36,
+            57.69,
+            200.49,
+            -20.17,
+            -79.63,
+            66.79
+          ],
+          "ytd": 152.41
+        },
+        {
+          "year": 2018,
+          "months": [
+            147.63,
+            0,
+            -3.3,
+            -8.1,
+            87.64,
+            35.95,
+            -79.49,
+            376.14,
+            -6.95,
+            -18.33,
+            110.4,
+            -246.2
+          ],
+          "ytd": 395.39
+        },
+        {
+          "year": 2019,
+          "months": [
+            181.28,
+            94.48,
+            202.72,
+            0,
+            -21.2,
+            -137.16,
+            147.28,
+            -11.83,
+            81.51,
+            186.13,
+            136.27,
+            32.85
+          ],
+          "ytd": 892.33
+        },
+        {
+          "year": 2020,
+          "months": [
+            -167.16,
+            111.08,
+            11.19,
+            -120.92,
+            -170.17,
+            0,
+            185.28,
+            6.93,
+            0,
+            4.69,
+            328.87,
+            -31.6
+          ],
+          "ytd": 158.19
+        },
+        {
+          "year": 2021,
+          "months": [
+            -120.09,
+            -73.99,
+            -4.66,
+            -53.26,
+            -258.82,
+            0,
+            -1.28,
+            80.4,
+            -245.03,
+            89.73,
+            -125.73,
+            213.88
+          ],
+          "ytd": -498.85
+        },
+        {
+          "year": 2022,
+          "months": [
+            191.62,
+            236.98,
+            364.81,
+            248.53,
+            0,
+            0,
+            -96.05,
+            -7.5,
+            17.27,
+            161.78,
+            -124.17,
+            13.3
+          ],
+          "ytd": 1006.57
+        },
+        {
+          "year": 2023,
+          "months": [
+            240.33,
+            55.35,
+            -46.37,
+            35.43,
+            155.03,
+            205.38,
+            -98.06,
+            131.18,
+            -2.87,
+            -18.74,
+            -17.79,
+            0
+          ],
+          "ytd": 638.87
+        },
+        {
+          "year": 2024,
+          "months": [
+            77.75,
+            23.96,
+            160.74,
+            87.78,
+            104.2,
+            0,
+            -91.42,
+            -63.49,
+            0,
+            139.96,
+            0,
+            298.22
+          ],
+          "ytd": 737.7
+        },
+        {
+          "year": 2025,
+          "months": [
+            60.06,
+            -93.97,
+            40.12,
+            2.83,
+            98.38,
+            -81.1,
+            -117.37,
+            57.32,
+            -198.53,
+            -45.57,
+            35.24,
+            -3.3
+          ],
+          "ytd": -245.89
+        },
+        {
+          "year": 2026,
+          "months": [
+            -40.93,
+            -28.39,
+            -188.12,
+            -90.23,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "ytd": -347.67
+        }
+      ]
+    }
+  },
+  {
+    "id": "mouxa61d84qg938o4gm",
+    "name": "Strategy 5.6.16 - Improved 3.1.5",
+    "symbol": "GBPJPY",
+    "symbolFull": "GBPJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 3644.38,
+      "trades": 608,
+      "pf": 1.23,
+      "sharpe": 0.42,
+      "cagr": 1.82,
+      "stability": 0.91,
+      "dd": 839.69,
+      "wr": 1.09,
+      "retdd": 4.34,
+      "cagrdd": 0.24,
+      "fitness": 0.78,
+      "exposure": 0.39,
+      "rexp": 0.11
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxb9ht1jom7eabgwh",
+    "name": "Strategy 1.2.6(3) - Improved 1.1.4",
+    "symbol": "EURUSD",
+    "symbolFull": "EURUSD_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 4247.28,
+      "trades": 942,
+      "pf": 1.2,
+      "sharpe": 0.48,
+      "cagr": 2.12,
+      "stability": 0.86,
+      "dd": 719.53,
+      "wr": 1.11,
+      "retdd": 5.9,
+      "cagrdd": 0.26,
+      "fitness": 0.82,
+      "exposure": 0,
+      "rexp": 0.1
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxb9hus22igs6x2wf",
+    "name": "Strategy 1.5.5(5) - Improved 4.1.4",
+    "symbol": "EURUSD",
+    "symbolFull": "EURUSD_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 9898.32,
+      "trades": 1345,
+      "pf": 1.2,
+      "sharpe": 0.58,
+      "cagr": 4.95,
+      "stability": 0.88,
+      "dd": 1705.65,
+      "wr": 0.99,
+      "retdd": 5.8,
+      "cagrdd": 0.22,
+      "fitness": 0.82,
+      "exposure": 2.23,
+      "rexp": 0.1
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxb9hurbn9thy81x",
+    "name": "Strategy 3.8.4(5) - Improved 5.1.4",
+    "symbol": "EURUSD",
+    "symbolFull": "EURUSD_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 9357.45,
+      "trades": 1905,
+      "pf": 1.15,
+      "sharpe": 0.58,
+      "cagr": 4.68,
+      "stability": 0.7,
+      "dd": 1670,
+      "wr": 1.12,
+      "retdd": 5.6,
+      "cagrdd": 0.21,
+      "fitness": 0.82,
+      "exposure": 0.22,
+      "rexp": 0.07
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxb9hujum0gd0ptf",
+    "name": "WFM_Strategy 1.5.5(5) - Improved 1.1.5",
+    "symbol": "EURUSD",
+    "symbolFull": "EURUSD_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 8437.01,
+      "trades": 1353,
+      "pf": 1.24,
+      "sharpe": 0.68,
+      "cagr": 4.22,
+      "stability": 0.88,
+      "dd": 1126.7,
+      "wr": 1.01,
+      "retdd": 7.49,
+      "cagrdd": 0.32,
+      "fitness": 0.85,
+      "exposure": 2.29,
+      "rexp": 0.12
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxb9hu3edjlagn2wc",
+    "name": "Strategy 4.6.4(2) - Improved 3.1.7",
+    "symbol": "EURUSD",
+    "symbolFull": "EURUSD_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": null,
+    "stag": null,
+    "zp": null,
+    "is": {
+      "np": 12018.3,
+      "trades": 1482,
+      "pf": 1.31,
+      "sharpe": 0.9,
+      "cagr": 6.01,
+      "stability": 0.85,
+      "dd": 1028.76,
+      "wr": 1.17,
+      "retdd": 11.68,
+      "cagrdd": 0.76,
+      "fitness": 0.9,
+      "exposure": 0,
+      "rexp": 0.14
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    }
+  },
+  {
+    "id": "mouxuiat215f0t8bbvh",
+    "name": "Strategy 3.1.17 - Improved 2.1.5(1)",
+    "symbol": "XAUUSD",
+    "symbolFull": "XAUUSD_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": 0.77,
+    "stag": 640,
+    "zp": 11.9,
+    "is": {
+      "np": 12542.85,
+      "trades": 1293,
+      "pf": 1.42,
+      "sharpe": 0.97,
+      "cagr": 6.27,
+      "stability": 0.89,
+      "dd": 1198.47,
+      "wr": 1.03,
+      "retdd": 10.47,
+      "cagrdd": 0.59,
+      "fitness": 0.89,
+      "exposure": 0.42,
+      "rexp": 0.21
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    },
+    "overviewData": {
+      "totalProfit": 12542.85,
+      "cagr": 4.15,
+      "trades": 1293,
+      "sharpe": 0.97,
+      "pf": 1.42,
+      "retdd": 10.47,
+      "winPct": 50.73,
+      "dd": 1198.47,
+      "ddPct": 7.02,
+      "rExp": 0.21,
+      "rExpScore": 13.27,
+      "strQuality": 1.25,
+      "sqn": 0.77,
+      "ahpr": 5.97,
+      "zScore": 1.18,
+      "zProb": 11.9,
+      "stag": 640,
+      "stagPct": 8.69,
+      "monthlyData": [
+        {
+          "year": 2006,
+          "months": [
+            17.58,
+            -20.71,
+            74.91,
+            -36.63,
+            -161.29,
+            127.24,
+            83.49,
+            70.33,
+            135.72,
+            -173.16,
+            205.62,
+            -204.61
+          ],
+          "ytd": 118.49
+        },
+        {
+          "year": 2007,
+          "months": [
+            179.21,
+            1.97,
+            -242.48,
+            -185.81,
+            -158.34,
+            10.46,
+            20.11,
+            88.97,
+            364.01,
+            81.54,
+            18.47,
+            28.67
+          ],
+          "ytd": 206.78
+        },
+        {
+          "year": 2008,
+          "months": [
+            -26.71,
+            45.89,
+            30.04,
+            235.51,
+            4.26,
+            -8.49,
+            73.27,
+            23.1,
+            219.8,
+            129.17,
+            -0.03,
+            236.59
+          ],
+          "ytd": 962.4
+        },
+        {
+          "year": 2009,
+          "months": [
+            135.75,
+            95.73,
+            54.2,
+            -190.26,
+            177.42,
+            -80.04,
+            -36.51,
+            55.98,
+            -96.49,
+            152.77,
+            139.54,
+            -113.27
+          ],
+          "ytd": 294.82
+        },
+        {
+          "year": 2010,
+          "months": [
+            33.81,
+            -189.83,
+            86.34,
+            280.84,
+            -50.39,
+            -72.32,
+            -53.43,
+            187.52,
+            244.51,
+            -15.8,
+            123.59,
+            104.14
+          ],
+          "ytd": 678.98
+        },
+        {
+          "year": 2011,
+          "months": [
+            108.12,
+            -54.13,
+            8.24,
+            -150.51,
+            -62.32,
+            -86.56,
+            221.36,
+            114.43,
+            -136.9,
+            312.62,
+            261.19,
+            -232.4
+          ],
+          "ytd": 303.14
+        },
+        {
+          "year": 2012,
+          "months": [
+            171.63,
+            -184.16,
+            243.7,
+            254.71,
+            -55.05,
+            251,
+            -251.21,
+            -26.17,
+            350.67,
+            -103.6,
+            -79.68,
+            16.18
+          ],
+          "ytd": 588.02
+        },
+        {
+          "year": 2013,
+          "months": [
+            203.55,
+            -245.74,
+            -34.32,
+            -53.36,
+            -167.31,
+            60.52,
+            -127.85,
+            408.08,
+            389.45,
+            362.51,
+            -29.37,
+            -82.84
+          ],
+          "ytd": 683.32
+        },
+        {
+          "year": 2014,
+          "months": [
+            -53,
+            24.56,
+            230.96,
+            155.57,
+            185.14,
+            94.77,
+            64.39,
+            50.03,
+            -47.86,
+            -38.6,
+            360.95,
+            -87.61
+          ],
+          "ytd": 939.3
+        },
+        {
+          "year": 2015,
+          "months": [
+            25.88,
+            -35.9,
+            88.25,
+            141.46,
+            -13.76,
+            -49.67,
+            -98.7,
+            17.55,
+            160.06,
+            356.05,
+            41.91,
+            -19.86
+          ],
+          "ytd": 613.27
+        },
+        {
+          "year": 2016,
+          "months": [
+            -135.74,
+            162.05,
+            176.73,
+            141.68,
+            -113.83,
+            976.25,
+            103.85,
+            72.33,
+            -59.12,
+            -89.75,
+            109.82,
+            -13.98
+          ],
+          "ytd": 1330.29
+        },
+        {
+          "year": 2017,
+          "months": [
+            3.26,
+            -164.95,
+            376.3,
+            180,
+            -271.66,
+            129.92,
+            183.35,
+            -126.67,
+            149.62,
+            47.24,
+            -9.82,
+            -221.42
+          ],
+          "ytd": 275.17
+        },
+        {
+          "year": 2018,
+          "months": [
+            -42.09,
+            289.93,
+            85.47,
+            78.12,
+            -65.19,
+            -240.17,
+            -108.91,
+            -161.68,
+            118.42,
+            390.23,
+            -111.49,
+            205.27
+          ],
+          "ytd": 437.91
+        },
+        {
+          "year": 2019,
+          "months": [
+            87.03,
+            -68.89,
+            -3.16,
+            21.42,
+            154.4,
+            205.18,
+            41,
+            366.83,
+            35.15,
+            -45.39,
+            -62.2,
+            51.7
+          ],
+          "ytd": 783.07
+        },
+        {
+          "year": 2020,
+          "months": [
+            248.28,
+            11.24,
+            141.83,
+            16.75,
+            -57.56,
+            10.22,
+            131.21,
+            236.2,
+            -210.57,
+            -155.57,
+            -198.2,
+            56.26
+          ],
+          "ytd": 230.09
+        },
+        {
+          "year": 2021,
+          "months": [
+            100.17,
+            -203.5,
+            -86.48,
+            33.31,
+            -25.77,
+            -206.08,
+            -105.48,
+            131.1,
+            -164.39,
+            333.21,
+            212.89,
+            -102.58
+          ],
+          "ytd": -83.6
+        },
+        {
+          "year": 2022,
+          "months": [
+            232.47,
+            218.49,
+            26.9,
+            -44.19,
+            84.55,
+            132.5,
+            0.97,
+            -108.13,
+            182.61,
+            131.22,
+            466.44,
+            401.31
+          ],
+          "ytd": 1725.14
+        },
+        {
+          "year": 2023,
+          "months": [
+            144.26,
+            -150.93,
+            119.15,
+            -147.17,
+            192.36,
+            -210.69,
+            59.3,
+            91.36,
+            199.97,
+            168.41,
+            378.1,
+            42.64
+          ],
+          "ytd": 886.76
+        },
+        {
+          "year": 2024,
+          "months": [
+            -39.12,
+            -25.16,
+            356.15,
+            -19.58,
+            24.06,
+            105.03,
+            95.41,
+            43.92,
+            -84.8,
+            -275.72,
+            141.51,
+            -134.61
+          ],
+          "ytd": 187.09
+        },
+        {
+          "year": 2025,
+          "months": [
+            90.52,
+            -80.42,
+            -91.54,
+            92.68,
+            -37,
+            252.95,
+            -49.56,
+            324.72,
+            273.62,
+            126.06,
+            321.75,
+            65.3
+          ],
+          "ytd": 1289.08
+        },
+        {
+          "year": 2026,
+          "months": [
+            105.98,
+            -12.65,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "ytd": 93.33
+        }
+      ]
+    },
+    "myfxbookData": {
+      "gain": 1.68,
+      "absGain": 1.68,
+      "daily": 0.04,
+      "monthly": 1.14,
+      "ddPct": 0.06,
+      "balance": null,
+      "trades": 3,
+      "pips": 14,
+      "pf": 32.54,
+      "sharpe": 0.91,
+      "zScore": 2.47,
+      "zProb": 98.64,
+      "expectancyPips": null,
+      "expectancyUsd": null,
+      "ahpr": 0.56,
+      "ghpr": 0.56,
+      "avgWinPips": null,
+      "avgWinUsd": null,
+      "avgLossPips": -298,
+      "avgLossUsd": -5.32,
+      "lots": 0.04,
+      "commissions": 0.96,
+      "longsWon": {
+        "won": 2,
+        "total": 3,
+        "pct": 66
+      },
+      "shortsWon": {
+        "won": 0,
+        "total": 0,
+        "pct": 0
+      },
+      "bestTradeUsd": 8,
+      "worstTradeUsd": 9,
+      "bestTradePips": null,
+      "worstTradePips": null,
+      "avgTradeLength": "4h 3m",
+      "tradeList": [
+        {
+          "magic": "(Price)",
+          "openDate": "Open Price",
+          "closeDate": "Close Price",
+          "symbol": "Pips",
+          "action": "Net Profit",
+          "lots": null,
+          "openPrice": null,
+          "closePrice": null,
+          "pips": null,
+          "netProfit": null,
+          "duration": null,
+          "gainPct": null,
+          "cumProfit": 0
+        },
+        {
+          "magic": "3117",
+          "openDate": "04.17.2026 15:48",
+          "closeDate": "04.17.2026 19:00",
+          "symbol": "XAUUSD",
+          "action": "Buy",
+          "lots": 0.02,
+          "openPrice": 4,
+          "closePrice": 4,
+          "pips": 2,
+          "netProfit": 54.68,
+          "duration": "3h 11m",
+          "gainPct": 0.54,
+          "cumProfit": 54.68
+        },
+        {
+          "magic": "3117",
+          "openDate": "04.08.2026 22:15",
+          "closeDate": "04.09.2026 03:00",
+          "symbol": "XAUUSD",
+          "action": "Buy",
+          "lots": 0.01,
+          "openPrice": 4,
+          "closePrice": 4,
+          "pips": -298,
+          "netProfit": -5.32,
+          "duration": "4h 44m",
+          "gainPct": -0.05,
+          "cumProfit": 49.36
+        },
+        {
+          "magic": "3117",
+          "openDate": "04.07.2026 22:46",
+          "closeDate": "04.08.2026 03:00",
+          "symbol": "XAUUSD",
+          "action": "Buy",
+          "lots": 0.01,
+          "openPrice": 4,
+          "closePrice": 4,
+          "pips": 11,
+          "netProfit": 118.42,
+          "duration": "4h 13m",
+          "gainPct": 1.18,
+          "cumProfit": 167.78
+        },
+        {
+          "magic": "0",
+          "openDate": "03.25.2026 18:17",
+          "closeDate": "",
+          "symbol": "",
+          "action": "Deposit",
+          "lots": null,
+          "openPrice": null,
+          "closePrice": null,
+          "pips": null,
+          "netProfit": 10,
+          "duration": null,
+          "gainPct": null,
+          "cumProfit": 177.78
+        }
+      ],
+      "winRate": 75,
+      "netProfit": 177.78,
+      "startDate": "03.25.2026 18:17",
+      "endDate": "Close Price"
+    }
+  },
+  {
+    "id": "mouyafa0upq28mv0uja",
+    "name": "Strategy 1.9.16 - Improved 2.1.4(2)",
+    "symbol": "AUDJPY",
+    "symbolFull": "AUDJPY_Data_M1_ESTPlus07",
+    "tf": "H1",
+    "phase": "IS+OOS",
+    "sqxFilter": "PASSED",
+    "source": "csv",
+    "added": "2026-05-07",
+    "notes": "",
+    "sqn": 0.51,
+    "stag": 1712,
+    "zp": 93.19,
+    "is": {
+      "np": 8387.56,
+      "trades": 1377,
+      "pf": 1.21,
+      "sharpe": 0.62,
+      "cagr": 4.19,
+      "stability": 0.85,
+      "dd": 1737.26,
+      "wr": 1.15,
+      "retdd": 4.83,
+      "cagrdd": 0.31,
+      "fitness": 0.8,
+      "exposure": 4.72,
+      "rexp": 0.1
+    },
+    "oos": {
+      "np": 0,
+      "trades": 0,
+      "pf": 0,
+      "sharpe": 0,
+      "cagr": 0,
+      "stability": 0,
+      "dd": 0,
+      "wr": 0,
+      "retdd": 0,
+      "cagrdd": 0,
+      "fitness": 0
+    },
+    "overviewData": {
+      "totalProfit": 8387.56,
+      "cagr": 3.09,
+      "trades": 1377,
+      "sharpe": 0.62,
+      "pf": 1.21,
+      "retdd": 4.83,
+      "winPct": 53.52,
+      "dd": 1737.26,
+      "ddPct": 9.87,
+      "rExp": 0.1,
+      "rExpScore": 6.55,
+      "strQuality": 0.78,
+      "sqn": 0.51,
+      "ahpr": 3.99,
+      "zScore": -1.49,
+      "zProb": 93.19,
+      "stag": 1712,
+      "stagPct": 23.29,
+      "monthlyData": [
+        {
+          "year": 2006,
+          "months": [
+            -327.2,
+            -75.31,
+            159.47,
+            257.67,
+            -147.5,
+            -52.54,
+            -57.12,
+            -102.13,
+            -24.38,
+            -81.34,
+            -261.79,
+            156.53
+          ],
+          "ytd": -555.64
+        },
+        {
+          "year": 2007,
+          "months": [
+            330.61,
+            146.63,
+            157.29,
+            43.08,
+            -310.43,
+            -124.93,
+            -78.51,
+            85.54,
+            286.6,
+            201.29,
+            100.46,
+            -82.9
+          ],
+          "ytd": 754.73
+        },
+        {
+          "year": 2008,
+          "months": [
+            275.49,
+            55.66,
+            -163.04,
+            78.01,
+            163.65,
+            -78.79,
+            -178.25,
+            -11.87,
+            -383.48,
+            -94.86,
+            -46.73,
+            174.35
+          ],
+          "ytd": -209.86
+        },
+        {
+          "year": 2009,
+          "months": [
+            192.33,
+            218.77,
+            -80.49,
+            121.46,
+            158.37,
+            -171.95,
+            224.95,
+            106.59,
+            28.17,
+            307.9,
+            66.05,
+            158.25
+          ],
+          "ytd": 1330.4
+        },
+        {
+          "year": 2010,
+          "months": [
+            172.17,
+            -294.72,
+            -54.4,
+            183.91,
+            31.85,
+            -91.04,
+            313.56,
+            279.41,
+            298.53,
+            -112.32,
+            284.48,
+            153.6
+          ],
+          "ytd": 1165.03
+        },
+        {
+          "year": 2011,
+          "months": [
+            -414.62,
+            163.35,
+            47.86,
+            -41.86,
+            195.97,
+            -68.13,
+            75.58,
+            155.06,
+            -113.73,
+            78.68,
+            -225.72,
+            49.43
+          ],
+          "ytd": -98.13
+        },
+        {
+          "year": 2012,
+          "months": [
+            413.63,
+            510.62,
+            78.37,
+            -62.52,
+            11.89,
+            171.21,
+            50.58,
+            65.71,
+            80.16,
+            7.44,
+            213.72,
+            -113.1
+          ],
+          "ytd": 1427.71
+        },
+        {
+          "year": 2013,
+          "months": [
+            -26,
+            278.87,
+            -138.12,
+            -51.07,
+            -202.03,
+            -44.17,
+            -21.93,
+            234.56,
+            -304.96,
+            296.18,
+            6.37,
+            63.89
+          ],
+          "ytd": 91.59
+        },
+        {
+          "year": 2014,
+          "months": [
+            -214.29,
+            164.1,
+            43.06,
+            -216.45,
+            315.81,
+            44.3,
+            -10.1,
+            119.13,
+            -56.54,
+            66.82,
+            11.88,
+            -118.89
+          ],
+          "ytd": 148.83
+        },
+        {
+          "year": 2015,
+          "months": [
+            71.09,
+            335.89,
+            -80.26,
+            281.18,
+            -100.81,
+            -40.69,
+            121.4,
+            -220.98,
+            256.23,
+            338.04,
+            266.17,
+            -171.75
+          ],
+          "ytd": 1055.51
+        },
+        {
+          "year": 2016,
+          "months": [
+            213.73,
+            -117.47,
+            260.73,
+            221.53,
+            71.3,
+            129.9,
+            300.1,
+            -179.17,
+            -118.97,
+            -37.2,
+            45.6,
+            -29.76
+          ],
+          "ytd": 760.32
+        },
+        {
+          "year": 2017,
+          "months": [
+            -50.5,
+            -53.37,
+            -63.33,
+            -51.17,
+            18.42,
+            317.84,
+            186.49,
+            275.95,
+            98.34,
+            -13.05,
+            -33.73,
+            -11.33
+          ],
+          "ytd": 620.56
+        },
+        {
+          "year": 2018,
+          "months": [
+            50.42,
+            -347.1,
+            170.05,
+            -207.02,
+            113.57,
+            9.55,
+            108.66,
+            -175.43,
+            -304.3,
+            -122.58,
+            31.41,
+            321.17
+          ],
+          "ytd": -351.6
+        },
+        {
+          "year": 2019,
+          "months": [
+            470.58,
+            46.31,
+            17.74,
+            361.73,
+            -61.46,
+            64.82,
+            75.36,
+            -245.45,
+            127.09,
+            242.54,
+            -308.83,
+            234.66
+          ],
+          "ytd": 1025.09
+        },
+        {
+          "year": 2020,
+          "months": [
+            -356.48,
+            -96.08,
+            173.16,
+            258.21,
+            18.12,
+            199.17,
+            81.66,
+            77.68,
+            -355.51,
+            46.79,
+            -17.5,
+            -134.47
+          ],
+          "ytd": -105.25
+        },
+        {
+          "year": 2021,
+          "months": [
+            -76.06,
+            302.35,
+            -370.64,
+            -212.7,
+            -22.31,
+            -60.6,
+            -141.83,
+            298.95,
+            -155.97,
+            149.75,
+            -147.13,
+            199.53
+          ],
+          "ytd": -236.66
+        },
+        {
+          "year": 2022,
+          "months": [
+            -52.24,
+            5.98,
+            -168.8,
+            326.36,
+            -98.33,
+            129.49,
+            27.61,
+            -294.14,
+            -110.99,
+            417.9,
+            -9.8,
+            -136.22
+          ],
+          "ytd": 36.82
+        },
+        {
+          "year": 2023,
+          "months": [
+            23.97,
+            138.42,
+            -285.83,
+            52.31,
+            -68.96,
+            -51.86,
+            162.01,
+            -169.75,
+            -338.5,
+            133.01,
+            -227.68,
+            -130.14
+          ],
+          "ytd": -763
+        },
+        {
+          "year": 2024,
+          "months": [
+            -239.04,
+            110.11,
+            122.73,
+            24.53,
+            251.06,
+            73.03,
+            183.37,
+            -2.74,
+            112.8,
+            281.9,
+            17.6,
+            32.57
+          ],
+          "ytd": 967.92
+        },
+        {
+          "year": 2025,
+          "months": [
+            280.17,
+            -52.9,
+            54.6,
+            349.45,
+            116.07,
+            -22.89,
+            650.72,
+            28.93,
+            -341.09,
+            -157.13,
+            92.69,
+            13.87
+          ],
+          "ytd": 1012.49
+        },
+        {
+          "year": 2026,
+          "months": [
+            329.34,
+            -18.64,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "ytd": 310.7
+        }
+      ]
+    },
+    "myfxbookData": {
+      "gain": 3.68,
+      "absGain": 3.68,
+      "daily": 0.03,
+      "monthly": 1.03,
+      "ddPct": 0,
+      "balance": null,
+      "trades": 4,
+      "pips": 183.8,
+      "pf": null,
+      "sharpe": 2.47,
+      "zScore": 0,
+      "zProb": 0,
+      "expectancyPips": 46,
+      "expectancyUsd": 91.96,
+      "ahpr": 0.91,
+      "ghpr": 0.91,
+      "avgWinPips": 45.95,
+      "avgWinUsd": 91.96,
+      "avgLossPips": null,
+      "avgLossUsd": null,
+      "lots": 1.41,
+      "commissions": 4.99,
+      "longsWon": {
+        "won": 4,
+        "total": 4,
+        "pct": 100
+      },
+      "shortsWon": {
+        "won": 0,
+        "total": 0,
+        "pct": 0
+      },
+      "bestTradeUsd": 6,
+      "worstTradeUsd": 29,
+      "bestTradePips": null,
+      "worstTradePips": null,
+      "avgTradeLength": "14h 42m",
+      "tradeList": [
+        {
+          "magic": "(Price)",
+          "openDate": "Open Price",
+          "closeDate": "Close Price",
+          "symbol": "Pips",
+          "action": "Net Profit",
+          "lots": null,
+          "openPrice": null,
+          "closePrice": null,
+          "pips": null,
+          "netProfit": null,
+          "duration": null,
+          "gainPct": null,
+          "cumProfit": 0
+        },
+        {
+          "magic": "1916",
+          "openDate": "05.05.2026 14:00",
+          "closeDate": "05.06.2026 03:51",
+          "symbol": "AUDJPY",
+          "action": "Buy",
+          "lots": 0.27,
+          "openPrice": 112.985,
+          "closePrice": 113.793,
+          "pips": 80.8,
+          "netProfit": 137.46,
+          "duration": "13h 51m",
+          "gainPct": 1.34,
+          "cumProfit": 137.46
+        },
+        {
+          "magic": "1916",
+          "openDate": "04.28.2026 12:00",
+          "closeDate": "04.29.2026 03:00",
+          "symbol": "AUDJPY",
+          "action": "Buy",
+          "lots": 0.42,
+          "openPrice": 114.477,
+          "closePrice": 114.663,
+          "pips": 18.6,
+          "netProfit": 47.46,
+          "duration": "14h 59m",
+          "gainPct": 0.47,
+          "cumProfit": 184.92
+        },
+        {
+          "magic": "1916",
+          "openDate": "04.13.2026 11:00",
+          "closeDate": "04.14.2026 02:00",
+          "symbol": "AUDJPY",
+          "action": "Buy",
+          "lots": 0.31,
+          "openPrice": 112.63,
+          "closePrice": 113.156,
+          "pips": 52.6,
+          "netProfit": 102.68,
+          "duration": "15h 0m",
+          "gainPct": 1.02,
+          "cumProfit": 287.6
+        },
+        {
+          "magic": "1916",
+          "openDate": "04.06.2026 05:00",
+          "closeDate": "04.06.2026 20:00",
+          "symbol": "AUDJPY",
+          "action": "Buy",
+          "lots": 0.41,
+          "openPrice": 110.109,
+          "closePrice": 110.427,
+          "pips": 31.8,
+          "netProfit": 80.23,
+          "duration": "14h 59m",
+          "gainPct": 0.8,
+          "cumProfit": 367.83
+        },
+        {
+          "magic": "0",
+          "openDate": "01.22.2026 00:27",
+          "closeDate": "",
+          "symbol": "",
+          "action": "Deposit",
+          "lots": null,
+          "openPrice": null,
+          "closePrice": null,
+          "pips": null,
+          "netProfit": 10,
+          "duration": null,
+          "gainPct": null,
+          "cumProfit": 377.83
+        }
+      ],
+      "winRate": 100,
+      "netProfit": 377.83,
+      "startDate": "01.22.2026 00:27",
+      "endDate": "Close Price"
+    }
   }
-]
-</script>
+]</script>
 
 <script>
 // ── DB LOAD ────────────────────────────────────────────────────
@@ -6898,6 +9356,7 @@ document.addEventListener('mousemove', e => {
 updateDbCount();
 render();
 </script>
-</body>
-</html>
 
+
+
+</body></html>
