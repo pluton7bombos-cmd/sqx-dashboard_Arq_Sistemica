@@ -8858,6 +8858,7 @@ function buildOverviewKPIsHTML(ov) {
   const stagColor = ov.stag <= 500 ? '#1a7f4b' : ov.stag <= 1300 ? '#d97706' : '#b91c1c';
   const zpColor = ov.zp <= 88 ? '#1a7f4b' : ov.zp <= 95 ? '#d97706' : '#b91c1c';
 
+  const winPctColor = ov.winPct >= 50 ? '#1a7f4b' : ov.winPct >= 40 ? '#d97706' : '#b91c1c';
   return `
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px">
       <div class="kpi-main" style="border-top:3px solid ${pfColor}">
@@ -8865,12 +8866,12 @@ function buildOverviewKPIsHTML(ov) {
         <div class="kpi-val" style="color:${pfColor}">${ov.pf ? ov.pf.toFixed(2) : '—'}</div>
       </div>
       <div class="kpi-main" style="border-top:3px solid #b91c1c">
-        <div class="kpi-lbl">Drawdown $</div>
-        <div class="kpi-val" style="color:#111318">${ov.dd ? '$'+Math.round(ov.dd).toLocaleString() : '—'}</div>
+        <div class="kpi-lbl">DD %</div>
+        <div class="kpi-val" style="color:#b91c1c">${ov.ddPct != null ? ov.ddPct.toFixed(2)+'%' : '—'}</div>
       </div>
-      <div class="kpi-main" style="border-top:3px solid #1d4ed8">
-        <div class="kpi-lbl"># Trades</div>
-        <div class="kpi-val" style="color:${tradesColor}">${ov.trades || '—'}</div>
+      <div class="kpi-main" style="border-top:3px solid ${winPctColor}">
+        <div class="kpi-lbl">Winning %</div>
+        <div class="kpi-val" style="color:${winPctColor}">${ov.winPct ? ov.winPct.toFixed(1)+'%' : '—'}</div>
       </div>
       <div class="kpi-main" style="border-top:3px solid #d97706">
         <div class="kpi-lbl">Ret/DD Ratio</div>
@@ -8884,7 +8885,7 @@ function buildOverviewKPIsHTML(ov) {
       <div class="kpi-sm"><div class="kpi-sm-lbl">AHPR</div><div class="kpi-sm-val">${ov.ahpr ? ov.ahpr.toFixed(2) : '—'}</div></div>
       <div class="kpi-sm"><div class="kpi-sm-lbl">Z-Score</div><div class="kpi-sm-val">${ov.zScore ? ov.zScore.toFixed(2) : '—'}</div></div>
       <div class="kpi-sm"><div class="kpi-sm-lbl">STR Quality</div><div class="kpi-sm-val">${ov.strQuality ? ov.strQuality.toFixed(2) : '—'}</div></div>
-      <div class="kpi-sm"><div class="kpi-sm-lbl">Win %</div><div class="kpi-sm-val">${ov.winPct ? ov.winPct.toFixed(1)+'%' : '—'}</div></div>
+      <div class="kpi-sm"><div class="kpi-sm-lbl">DD $</div><div class="kpi-sm-val">${ov.dd ? '$'+Math.round(ov.dd).toLocaleString() : '—'}</div></div>
       <div class="kpi-sm"><div class="kpi-sm-lbl">R Expectancy</div><div class="kpi-sm-val">${ov.rExp ? ov.rExp.toFixed(2) : '—'}</div></div>
     </div>`;
 }
@@ -8894,14 +8895,16 @@ function buildMyfxbookBlock(mfx, idx, botId) {
   if (!mfx) return '<div style="color:#9098a8;font-size:12px;padding:4px 0">Sin datos live cargados.</div>';
   const statusColor = mfx.pf >= 1.30 ? '#1a7f4b' : mfx.pf >= 1.10 ? '#d97706' : '#b91c1c';
   const winRate = mfx.winRate !== null ? mfx.winRate + '%' : '—';
+  const winRateColor = mfx.winRate >= 50 ? '#1a7f4b' : mfx.winRate >= 40 ? '#d97706' : '#b91c1c';
+  const gainColor = mfx.gain > 0 ? '#1a7f4b' : mfx.gain < 0 ? '#b91c1c' : '#111318';
   const kpis = `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px">
     <div class="kpi-main" style="border-top:3px solid ${statusColor}"><div class="kpi-lbl">Profit Factor</div><div class="kpi-val" style="color:${statusColor}">${mfx.pf ? mfx.pf.toFixed(2) : '—'}</div></div>
-    <div class="kpi-main" style="border-top:3px solid #b91c1c"><div class="kpi-lbl">Drawdown %</div><div class="kpi-val" style="color:#111318">${mfx.ddPct ? mfx.ddPct.toFixed(2)+'%' : '—'}</div></div>
-    <div class="kpi-main" style="border-top:3px solid #1d4ed8"><div class="kpi-lbl"># Trades</div><div class="kpi-val" style="color:#111318">${mfx.trades || '—'}</div></div>
-    <div class="kpi-main" style="border-top:3px solid #d97706"><div class="kpi-lbl">Win Rate</div><div class="kpi-val" style="color:#111318">${winRate}</div></div>
+    <div class="kpi-main" style="border-top:3px solid #b91c1c"><div class="kpi-lbl">DD %</div><div class="kpi-val" style="color:#b91c1c">${mfx.ddPct ? mfx.ddPct.toFixed(2)+'%' : '—'}</div></div>
+    <div class="kpi-main" style="border-top:3px solid ${winRateColor}"><div class="kpi-lbl">Winning %</div><div class="kpi-val" style="color:${winRateColor}">${winRate}</div></div>
+    <div class="kpi-main" style="border-top:3px solid ${gainColor}"><div class="kpi-lbl">Gain</div><div class="kpi-val" style="color:${gainColor}">${mfx.gain != null ? (mfx.gain >= 0 ? '+' : '')+mfx.gain.toFixed(2)+'%' : '—'}</div></div>
   </div>`;
   const stats = `<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px">
-    ${[['Gain',mfx.gain?'+'+mfx.gain.toFixed(2)+'%':'—'],['Balance',mfx.balance?'$'+Math.round(mfx.balance).toLocaleString():'—'],['Sharpe',mfx.sharpe?mfx.sharpe.toFixed(2):'—'],['Z-Prob',mfx.zProb?mfx.zProb.toFixed(2)+'%':'—'],['Avg Win$',mfx.avgWinUsd?'$'+mfx.avgWinUsd.toFixed(2):'—'],['Avg Loss$',mfx.avgLossUsd?'-$'+Math.abs(mfx.avgLossUsd).toFixed(2):'—']]
+    ${[['# Trades',mfx.trades||'—'],['Balance',mfx.balance?'$'+Math.round(mfx.balance).toLocaleString():'—'],['Sharpe',mfx.sharpe?mfx.sharpe.toFixed(2):'—'],['Z-Prob',mfx.zProb?mfx.zProb.toFixed(2)+'%':'—'],['Avg Win$',mfx.avgWinUsd?'$'+mfx.avgWinUsd.toFixed(2):'—'],['Avg Loss$',mfx.avgLossUsd?'-$'+Math.abs(mfx.avgLossUsd).toFixed(2):'—']]
     .map(([lbl,val]) => `<div class="kpi-sm"><div class="kpi-sm-lbl">${lbl}</div><div class="kpi-sm-val">${val}</div></div>`).join('')}
   </div>`;
   const tradesTable = mfx.tradeList && mfx.tradeList.length > 0 ? `
