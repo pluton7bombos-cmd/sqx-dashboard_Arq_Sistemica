@@ -11181,19 +11181,19 @@ function parseSQXFile(text) {
 function buildPseudocodigoHTML(psc) {
   if (!psc) return '';
   const p = psc.parsed;
-  const rows = [
-    ['🎯 Tipo de entrada', p.entradaTipo],
-    ['📋 Tipo de orden',   p.ordenTipo],
-    ['📈 Indicadores',     p.indicadores],
-    ['🔍 Filtros',         p.filtros],
-    ['🕐 Sesión',          p.sesion],
-    ['🛑 Stop Loss',       p.stopLoss],
-    ['✅ Take Profit',     p.takeProfit],
-    ['💰 Money Mgmt',      p.moneyManagement],
-  ];
+  const na = 'No especificado';
+  const card = (lbl, val) => `<div class="kpi-sm"><div class="kpi-sm-lbl">${lbl}</div><div class="kpi-sm-val" style="font-size:12px;font-weight:600;color:${val===na?'#9098a8':'#111318'};white-space:normal;line-height:1.4">${val}</div></div>`;
   const fname = psc.filename ? `<div style="font-size:11px;color:#9098a8;margin-bottom:8px">📄 ${psc.filename}</div>` : '';
-  const trs = rows.map(([sec,det])=>`<tr style="border-bottom:1px solid #f1f3f5"><td style="padding:8px 10px;font-weight:600;color:#4a5060;font-size:12px;white-space:nowrap;vertical-align:top;width:160px">${sec}</td><td style="padding:8px 10px;color:${det==='No especificado'?'#9098a8':'#111318'};font-size:12px">${det}</td></tr>`).join('');
-  return `${fname}<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;border:1px solid #e0e3e8;border-radius:6px;overflow:hidden"><thead><tr><th style="text-align:left;padding:7px 10px;background:#f1f3f5;border-bottom:1px solid #e0e3e8;font-size:10px;font-weight:700;color:#9098a8;text-transform:uppercase;letter-spacing:0.5px;width:160px">Sección</th><th style="text-align:left;padding:7px 10px;background:#f1f3f5;border-bottom:1px solid #e0e3e8;font-size:10px;font-weight:700;color:#9098a8;text-transform:uppercase;letter-spacing:0.5px">Detalle</th></tr></thead><tbody>${trs}</tbody></table></div>`;
+  return `${fname}<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+    ${card('Entrada', p.entradaTipo)}
+    ${card('Orden', p.ordenTipo)}
+    ${card('Sesión', p.sesion)}
+    ${card('Money Mgmt', p.moneyManagement)}
+    ${card('Stop Loss', p.stopLoss)}
+    ${card('Take Profit', p.takeProfit)}
+    ${card('Indicadores', p.indicadores)}
+    ${card('Filtros', p.filtros)}
+  </div>`;
 }
 
 function loadPseudocodigoInline(botId, idx, input) {
