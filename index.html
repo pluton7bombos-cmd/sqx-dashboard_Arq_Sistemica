@@ -11146,86 +11146,151 @@ document.addEventListener('mousemove', e => {
 
 // ── PSEUDOCÓDIGO POR BOT ────────────────────────────────────────
 function parseSQXFile(text) {
+  const na = 'No especificado';
   const r = {
-    entradaTipo:'No especificado', ordenTipo:'No especificado',
-    indicadores:'No especificado', filtros:'No especificado',
-    sesion:'No especificado', stopLoss:'No especificado',
-    takeProfit:'No especificado', moneyManagement:'No especificado'
+    entradaTipo:na, ordenTipo:na, indicadores:na, filtros:na,
+    sesion:na, stopLoss:na, takeProfit:na, moneyManagement:na,
+    condicionesLong:[], condicionesShort:[]
   };
-  const openLong = /open\s+long/i.test(text), openShort = /open\s+short/i.test(text);
-  const buyOnly = /direction\s*[:=]\s*long/i.test(text)||/buy\s+only/i.test(text);
-  const sellOnly = /direction\s*[:=]\s*short/i.test(text)||/sell\s+only/i.test(text);
-  if ((openLong&&openShort)||/both/i.test(text.match(/direction\s*[:=]\s*(\w+)/i)?.[1]||'')) r.entradaTipo='Both (Buy + Sell)';
-  else if (openLong||buyOnly) r.entradaTipo='Buy (Long)';
-  else if (openShort||sellOnly) r.entradaTipo='Sell (Short)';
-  const orderMatch=text.match(/order\s+type\s*[:=]\s*(\w+)/i)||text.match(/\b(Market|Limit|Stop)\s+order/i);
-  if (orderMatch) r.ordenTipo=orderMatch[1]||orderMatch[2];
-  else if (/at\s+market/i.test(text)) r.ordenTipo='Market';
-  else if (/limit/i.test(text)) r.ordenTipo='Limit';
-  const indPattern=/\b(RSI|EMA|SMA|MACD|ATR|ADX|CCI|Stochastic|Bollinger Bands?|Parabolic SAR|Ichimoku|DEMA|TEMA|WPR|Williams|Momentum|ROC|OBV|MFI|Aroon|AO|AC|Alligator|DeMarker|RVI|OSMA|KAMA|Standard Deviation|Envelopes)\s*\(\s*[^)]+\)/gi;
-  const indMatches=[...new Set([...text.matchAll(indPattern)].map(m=>m[0].replace(/\s+/g,' ')))];
-  if (indMatches.length) r.indicadores=indMatches.slice(0,8).join(' | ');
-  const timeRange=text.match(/LimitTimeRange\s*\(\s*([^)]+)\)/i)||text.match(/time\s+(?:range|filter|from)\s*[:=]?\s*([\d:]+\s*[-–]\s*[\d:]+)/i)||text.match(/session\s*[:=]\s*([^\n]+)/i)||text.match(/(\d{1,2}:\d{2})\s*[-–]\s*(\d{1,2}:\d{2})/);
-  if (timeRange) r.sesion=timeRange[1]?.trim()||`${timeRange[1]} – ${timeRange[2]}`;
-  if (/trailing\s+stop/i.test(text)){const ts=text.match(/trailing\s+stop\s*[:=]?\s*([^\n]+)/i);r.stopLoss='Trailing Stop'+(ts?': '+ts[1].trim():'');}
-  else {const slFixed=text.match(/(?:Fixed\s+)?Stop\s+Loss\s*[:=]?\s*([^\n]+)/i);const slAtr=text.match(/ATR\s*\([^)]+\)\s*\*\s*[\d.]+/i);if(slFixed)r.stopLoss=slFixed[1].trim();else if(slAtr)r.stopLoss='ATR-based: '+slAtr[0];}
-  const tpFixed=text.match(/(?:Fixed\s+)?Take\s+Profit\s*[:=]?\s*([^\n]+)/i);
-  if (tpFixed) r.takeProfit=tpFixed[1].trim();
-  const mmLot=text.match(/(?:Fixed\s+)?lot\s+size\s*[:=]?\s*([^\n]+)/i);const mmRisk=text.match(/risk\s*(?:per\s+trade)?\s*[:=]\s*([^\n]+)/i);const mmPct=text.match(/(\d+(?:\.\d+)?)\s*%\s*(?:per\s+trade|risk)/i);
-  if (mmLot) r.moneyManagement='Fixed lot: '+mmLot[1].trim();else if(mmRisk)r.moneyManagement='Risk: '+mmRisk[1].trim();else if(mmPct)r.moneyManagement='Risk % por trade: '+mmPct[1]+'%';
-  // Condiciones por sección (para el texto explicativo)
-  const extractSection = (src, label) => {
-    const m = src.match(new RegExp(label + '[:\\s]*([\\s\\S]*?)(?=(?:Open\\s+(?:long|short)|Close\\s+|Money|$))', 'i'));
-    if (!m) return [];
-    return [...m[1].matchAll(/condition\s+\d+\s*[:=]?\s*(.+)/gi)].map(x => x[1].trim()).filter(Boolean);
-  };
-  r.condicionesLong  = extractSection(text, 'Open\\s+Long');
-  r.condicionesShort = extractSection(text, 'Open\\s+Short');
-  const allConds = [...new Set([...r.condicionesLong, ...r.condicionesShort])].slice(0,6);
-  if (allConds.length) r.filtros = allConds.join(' | ');
+
+  // 1. Extraer variables declaradas (int/double/bool) para resolver referencias
+  const vars = {};
+  for (const m of text.matchAll(/(?:int|double|bool)\s+(\w+)\s*=\s*([^;\n]+)/gi))
+    vars[m[1].trim()] = m[2].trim();
+  const resolveVars = s => s.replace(/\b([A-Za-z_]\w*)\b/g, k => vars[k] ?? k);
+  const cleanExpr = s => s.replace(/Main\s+chart,?\s*/gi,'').replace(/\s+/g,' ').trim();
+
+  // 2. Señales de entrada nombradas (formato Pseudo Source Code de SQX)
+  const longM  = text.match(/LongEntrySignal\s*=\s*([\s\S]*?);(?:\s*\/\/[^\n]*)?\n/i);
+  const shortM = text.match(/ShortEntrySignal\s*=\s*([\s\S]*?);(?:\s*\/\/[^\n]*)?\n/i);
+  const longExpr  = longM  ? longM[1].trim()  : 'false';
+  const shortExpr = shortM ? shortM[1].trim() : 'false';
+  const hasLong   = longExpr  !== 'false';
+  const hasShort  = shortExpr !== 'false';
+
+  if (hasLong && hasShort) r.entradaTipo = 'Both (Buy + Sell)';
+  else if (hasLong)        r.entradaTipo = 'Buy (Long)';
+  else if (hasShort)       r.entradaTipo = 'Sell (Short)';
+
+  // 3. Separar condiciones unidas por AND respetando paréntesis anidados
+  function splitAnd(expr) {
+    const parts = []; let depth = 0, buf = '';
+    const s = expr.replace(/^\s*\(+|\)+\s*;?\s*$/g,'');
+    for (let i = 0; i < s.length; i++) {
+      if (s[i]==='(') { depth++; buf+=s[i]; }
+      else if (s[i]===')') { depth--; buf+=s[i]; }
+      else if (depth===0 && /^and\b/i.test(s.slice(i))) {
+        const p = buf.trim().replace(/^\(+|\)+$/g,'').trim();
+        if (p.length>3) parts.push(cleanExpr(p));
+        buf=''; i+=2;
+      } else buf+=s[i];
+    }
+    const last = buf.trim().replace(/^\(+|\)+$/g,'').trim();
+    if (last.length>3) parts.push(cleanExpr(last));
+    return parts;
+  }
+
+  r.condicionesLong  = hasLong  ? splitAnd(longExpr)  : [];
+  r.condicionesShort = hasShort ? splitAnd(shortExpr) : [];
+
+  // 4. Tipo de orden
+  const orderM = text.match(/Open\s+(?:Long|Short)\s+order\s+at\s+(\w+)/i);
+  if (orderM) r.ordenTipo = orderM[1];
+
+  // 5. Sesión (LimitSignalsTimeRange)
+  const sessM = text.match(/LimitSignalsTimeRange\s*=\s*true\s*\((\d{2,4})\s*-\s*(\d{2,4})/i);
+  if (sessM) {
+    const fmt = t => `${t.padStart(4,'0').slice(0,2)}:${t.padStart(4,'0').slice(2)}`;
+    r.sesion = `${fmt(sessM[1])} – ${fmt(sessM[2])}`;
+  }
+
+  // 6. Stop Loss (resuelve variables: StopLossCoef1 * ATR(70))
+  const slM = text.match(/Stop\s+Loss\s*=\s*([^;\n]+)/i);
+  if (slM) r.stopLoss = cleanExpr(resolveVars(slM[1]));
+
+  // 7. Trailing Stop
+  const tsM = text.match(/Trailing\s+Stop\s*=\s*([^;\n]+)/i);
+  if (tsM) {
+    const ts = cleanExpr(resolveVars(tsM[1]));
+    r.stopLoss = r.stopLoss !== na ? `${r.stopLoss} + Trailing ${ts}` : `Trailing: ${ts}`;
+  }
+
+  // 8. Take Profit
+  const tpM = text.match(/(?:Take\s+Profit|Profit\s+Target)\s*=\s*([^;\n]+)/i);
+  if (tpM) r.takeProfit = cleanExpr(resolveVars(tpM[1]));
+
+  // 9. Salida por tiempo (Exit After N bars)
+  const exitM = text.match(/Exit\s+After\s+(\w+)\s+bars/i);
+  if (exitM) {
+    const bars = resolveVars(exitM[1]);
+    const exitStr = `Máx. ${bars} barras`;
+    r.takeProfit = r.takeProfit !== na ? `${r.takeProfit} / ${exitStr}` : exitStr;
+  }
+
+  // 10. Money management
+  const mmM = text.match(/(?:Fixed\s+)?lot\s+size\s*[=:]\s*([^\n;]+)/i)
+           || text.match(/risk\s*(?:per\s+trade)?\s*[=:]\s*([^\n;]+)/i);
+  if (mmM) r.moneyManagement = mmM[1].trim();
+
+  // 11. Indicadores desde las señales
+  const sigText = longExpr + ' ' + shortExpr;
+  const indPat = /\b(RSI|EMA|SMA|MACD|ATR|ADX|CCI|Stochastic|Bollinger|ParabolicSAR|Ichimoku|DEMA|TEMA|WPR|Williams|Momentum|ROC|OBV|MFI|Aroon|HighDaily|LowDaily|DeMarker|RVI|OSMA|KAMA|Envelopes)\s*\([^)]+\)/gi;
+  const inds = [...new Set([...sigText.matchAll(indPat)].map(m => cleanExpr(m[0])))];
+  if (inds.length) r.indicadores = inds.slice(0,8).join(' | ');
+
+  const allConds = [...r.condicionesLong, ...r.condicionesShort];
+  if (allConds.length) r.filtros = [...new Set(allConds)].slice(0,6).join(' | ');
+
   return r;
 }
 
 function buildEntradaExplanation(p) {
   const na = 'No especificado';
+  // Limpia notación técnica a texto legible
+  const clean = s => s
+    .replace(/\[1\]/g, ' (barra anterior)')
+    .replace(/\[(\d+)\]/g, (_, n) => ` (hace ${n} barras)`)
+    .replace(/\bfor\s+(\d+)\s+bars\b/gi, 'durante $1 barras consecutivas')
+    .replace(/\bis\s+lower\s+than\b/gi, '<')
+    .replace(/\bis\s+higher\s+than\b/gi, '>')
+    .replace(/\s+/g,' ').trim();
+
   const parts = [];
 
   // Dirección y orden
-  const dir = { 'Both (Buy + Sell)': 'opera en ambas direcciones (compra y venta)', 'Buy (Long)': 'opera solo en largo (compras)', 'Sell (Short)': 'opera solo en corto (ventas)' };
-  const dirText = dir[p.entradaTipo] || null;
-  const ordText = p.ordenTipo !== na ? `ejecutando órdenes a ${p.ordenTipo.toLowerCase()}` : null;
-  if (dirText && ordText) parts.push(`La estrategia ${dirText}, ${ordText}.`);
-  else if (dirText) parts.push(`La estrategia ${dirText}.`);
+  const dirs = { 'Both (Buy + Sell)':'en ambas direcciones (Long y Short)', 'Buy (Long)':'solo en Long (compras)', 'Sell (Short)':'solo en Short (ventas)' };
+  const dirTxt = dirs[p.entradaTipo];
+  const ordTxt = p.ordenTipo !== na ? `, con órdenes a ${p.ordenTipo}` : '';
+  if (dirTxt) parts.push(`Opera ${dirTxt}${ordTxt}.`);
 
-  // Condiciones de entrada Long
-  if (p.condicionesLong && p.condicionesLong.length) {
-    parts.push(`Entra en largo cuando se cumplen simultáneamente: ${p.condicionesLong.map((c,i)=>`(${i+1}) ${c}`).join(', ')}.`);
+  // Condiciones: Long
+  if (p.condicionesLong?.length) {
+    const items = p.condicionesLong.map((c,i)=>`<strong>(${i+1})</strong> ${clean(c)}`).join('<br>');
+    parts.push(`<em>Entrada Long</em> — se dispara cuando se cumplen todas:<br>${items}`);
   }
-  // Condiciones de entrada Short
-  if (p.condicionesShort && p.condicionesShort.length) {
-    parts.push(`Entra en corto cuando se cumplen simultáneamente: ${p.condicionesShort.map((c,i)=>`(${i+1}) ${c}`).join(', ')}.`);
+  // Condiciones: Short
+  if (p.condicionesShort?.length) {
+    const items = p.condicionesShort.map((c,i)=>`<strong>(${i+1})</strong> ${clean(c)}`).join('<br>');
+    parts.push(`<em>Entrada Short</em> — se dispara cuando se cumplen todas:<br>${items}`);
   }
-  // Fallback si no hay condiciones separadas pero sí indicadores
-  if (!p.condicionesLong?.length && !p.condicionesShort?.length && p.indicadores !== na) {
-    parts.push(`La señal de entrada se basa en: ${p.indicadores}.`);
-  }
+  // Fallback
+  if (!p.condicionesLong?.length && !p.condicionesShort?.length && p.indicadores !== na)
+    parts.push(`Señal basada en: ${p.indicadores}.`);
 
   // Sesión
-  if (p.sesion !== na) parts.push(`Solo opera dentro del horario ${p.sesion}.`);
+  if (p.sesion !== na) parts.push(`Horario operativo: ${p.sesion}.`);
 
-  // SL y TP
-  const sl = p.stopLoss !== na ? p.stopLoss : null;
-  const tp = p.takeProfit !== na ? p.takeProfit : null;
-  if (sl && tp) parts.push(`Gestión de riesgo: Stop Loss ${sl} / Take Profit ${tp}.`);
-  else if (sl) parts.push(`Stop Loss: ${sl}.`);
-  else if (tp) parts.push(`Take Profit: ${tp}.`);
+  // Salida
+  const exits = [];
+  if (p.stopLoss !== na)  exits.push(`Stop Loss: ${p.stopLoss}`);
+  if (p.takeProfit !== na) exits.push(`Salida: ${p.takeProfit}`);
+  if (exits.length) parts.push(exits.join(' — '));
 
-  // MM
-  if (p.moneyManagement !== na) parts.push(`Tamaño de posición: ${p.moneyManagement}.`);
+  if (p.moneyManagement !== na) parts.push(`Sizing: ${p.moneyManagement}.`);
 
   return parts.length
-    ? parts.join(' ')
-    : 'No se detectaron condiciones de entrada en el archivo. Verificá que sea un export de texto de SQX.';
+    ? parts.join('<br><br>')
+    : 'No se detectaron condiciones. Verificá que el archivo sea un Pseudo Source Code exportado desde SQX.';
 }
 
 function buildPseudocodigoHTML(psc) {
@@ -11247,8 +11312,8 @@ function buildPseudocodigoHTML(psc) {
     ${card('Filtros', p.filtros)}
   </div>
   <div style="background:#f8f9fa;border:1px solid #e0e3e8;border-left:3px solid #4f46e5;border-radius:6px;padding:12px 14px">
-    <div style="font-size:10px;font-weight:700;color:#9098a8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">¿Por qué entra?</div>
-    <div style="font-size:13px;color:#111318;line-height:1.6">${explanation}</div>
+    <div style="font-size:10px;font-weight:700;color:#9098a8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">¿Por qué entra?</div>
+    <div style="font-size:13px;color:#111318;line-height:1.8">${explanation}</div>
   </div>`;
 }
 
