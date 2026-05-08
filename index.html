@@ -11173,9 +11173,59 @@ function parseSQXFile(text) {
   if (tpFixed) r.takeProfit=tpFixed[1].trim();
   const mmLot=text.match(/(?:Fixed\s+)?lot\s+size\s*[:=]?\s*([^\n]+)/i);const mmRisk=text.match(/risk\s*(?:per\s+trade)?\s*[:=]\s*([^\n]+)/i);const mmPct=text.match(/(\d+(?:\.\d+)?)\s*%\s*(?:per\s+trade|risk)/i);
   if (mmLot) r.moneyManagement='Fixed lot: '+mmLot[1].trim();else if(mmRisk)r.moneyManagement='Risk: '+mmRisk[1].trim();else if(mmPct)r.moneyManagement='Risk % por trade: '+mmPct[1]+'%';
-  const condLines=[...text.matchAll(/condition\s+\d+\s*[:=]?\s*(.+)/gi)].map(m=>m[1].trim());
-  if (condLines.length) r.filtros=[...new Set(condLines)].slice(0,6).join(' | ');
+  // Condiciones por sección (para el texto explicativo)
+  const extractSection = (src, label) => {
+    const m = src.match(new RegExp(label + '[:\\s]*([\\s\\S]*?)(?=(?:Open\\s+(?:long|short)|Close\\s+|Money|$))', 'i'));
+    if (!m) return [];
+    return [...m[1].matchAll(/condition\s+\d+\s*[:=]?\s*(.+)/gi)].map(x => x[1].trim()).filter(Boolean);
+  };
+  r.condicionesLong  = extractSection(text, 'Open\\s+Long');
+  r.condicionesShort = extractSection(text, 'Open\\s+Short');
+  const allConds = [...new Set([...r.condicionesLong, ...r.condicionesShort])].slice(0,6);
+  if (allConds.length) r.filtros = allConds.join(' | ');
   return r;
+}
+
+function buildEntradaExplanation(p) {
+  const na = 'No especificado';
+  const parts = [];
+
+  // Dirección y orden
+  const dir = { 'Both (Buy + Sell)': 'opera en ambas direcciones (compra y venta)', 'Buy (Long)': 'opera solo en largo (compras)', 'Sell (Short)': 'opera solo en corto (ventas)' };
+  const dirText = dir[p.entradaTipo] || null;
+  const ordText = p.ordenTipo !== na ? `ejecutando órdenes a ${p.ordenTipo.toLowerCase()}` : null;
+  if (dirText && ordText) parts.push(`La estrategia ${dirText}, ${ordText}.`);
+  else if (dirText) parts.push(`La estrategia ${dirText}.`);
+
+  // Condiciones de entrada Long
+  if (p.condicionesLong && p.condicionesLong.length) {
+    parts.push(`Entra en largo cuando se cumplen simultáneamente: ${p.condicionesLong.map((c,i)=>`(${i+1}) ${c}`).join(', ')}.`);
+  }
+  // Condiciones de entrada Short
+  if (p.condicionesShort && p.condicionesShort.length) {
+    parts.push(`Entra en corto cuando se cumplen simultáneamente: ${p.condicionesShort.map((c,i)=>`(${i+1}) ${c}`).join(', ')}.`);
+  }
+  // Fallback si no hay condiciones separadas pero sí indicadores
+  if (!p.condicionesLong?.length && !p.condicionesShort?.length && p.indicadores !== na) {
+    parts.push(`La señal de entrada se basa en: ${p.indicadores}.`);
+  }
+
+  // Sesión
+  if (p.sesion !== na) parts.push(`Solo opera dentro del horario ${p.sesion}.`);
+
+  // SL y TP
+  const sl = p.stopLoss !== na ? p.stopLoss : null;
+  const tp = p.takeProfit !== na ? p.takeProfit : null;
+  if (sl && tp) parts.push(`Gestión de riesgo: Stop Loss ${sl} / Take Profit ${tp}.`);
+  else if (sl) parts.push(`Stop Loss: ${sl}.`);
+  else if (tp) parts.push(`Take Profit: ${tp}.`);
+
+  // MM
+  if (p.moneyManagement !== na) parts.push(`Tamaño de posición: ${p.moneyManagement}.`);
+
+  return parts.length
+    ? parts.join(' ')
+    : 'No se detectaron condiciones de entrada en el archivo. Verificá que sea un export de texto de SQX.';
 }
 
 function buildPseudocodigoHTML(psc) {
@@ -11184,7 +11234,9 @@ function buildPseudocodigoHTML(psc) {
   const na = 'No especificado';
   const card = (lbl, val) => `<div class="kpi-sm"><div class="kpi-sm-lbl">${lbl}</div><div class="kpi-sm-val" style="font-size:12px;font-weight:600;color:${val===na?'#9098a8':'#111318'};white-space:normal;line-height:1.4">${val}</div></div>`;
   const fname = psc.filename ? `<div style="font-size:11px;color:#9098a8;margin-bottom:8px">📄 ${psc.filename}</div>` : '';
-  return `${fname}<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+  const explanation = buildEntradaExplanation(p);
+  return `${fname}
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">
     ${card('Entrada', p.entradaTipo)}
     ${card('Orden', p.ordenTipo)}
     ${card('Sesión', p.sesion)}
@@ -11193,6 +11245,10 @@ function buildPseudocodigoHTML(psc) {
     ${card('Take Profit', p.takeProfit)}
     ${card('Indicadores', p.indicadores)}
     ${card('Filtros', p.filtros)}
+  </div>
+  <div style="background:#f8f9fa;border:1px solid #e0e3e8;border-left:3px solid #4f46e5;border-radius:6px;padding:12px 14px">
+    <div style="font-size:10px;font-weight:700;color:#9098a8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">¿Por qué entra?</div>
+    <div style="font-size:13px;color:#111318;line-height:1.6">${explanation}</div>
   </div>`;
 }
 
