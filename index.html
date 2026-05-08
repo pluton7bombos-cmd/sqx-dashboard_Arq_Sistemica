@@ -271,41 +271,6 @@
     </div>
   </div>
 
-  <!-- PSEUDOCÓDIGO SECTION -->
-  <div class="section-card">
-    <div class="section-head" id="psc-head" onclick="togglePseudocodigo()">
-      <span class="section-title">📄 Pseudocódigo SQX</span>
-      <span class="chevron" id="chev-psc">▼</span>
-    </div>
-    <div class="collapse-body" id="psc-body">
-      <div class="form-inner">
-        <div class="btn-row" style="margin-bottom:14px">
-          <label style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:var(--radius);background:var(--accent);border:1px solid var(--accent);color:#fff;font-size:12px;font-weight:500;cursor:pointer">
-            📂 Cargar archivo SQX (.txt)
-            <input type="file" accept=".txt" style="display:none" onchange="loadPseudocodigo(this)">
-          </label>
-          <button onclick="clearPseudocodigo()">Limpiar</button>
-        </div>
-        <div id="psc-preview" style="display:none">
-          <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px" id="psc-filename"></div>
-          <div class="table-scroll">
-            <table style="width:100%;border-collapse:collapse;font-size:13px">
-              <thead>
-                <tr>
-                  <th style="text-align:left;padding:8px 12px;background:var(--bg2);border-bottom:1px solid var(--border);font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;width:180px">Sección</th>
-                  <th style="text-align:left;padding:8px 12px;background:var(--bg2);border-bottom:1px solid var(--border);font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px">Detalle</th>
-                </tr>
-              </thead>
-              <tbody id="psc-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-        <div id="psc-empty" style="color:var(--text3);font-size:13px;padding:8px 0">Cargá un archivo .txt exportado desde StrategyQuant X para ver el pseudocódigo.</div>
-        <div id="psc-err" style="display:none;color:var(--red);font-size:12px;margin-top:8px"></div>
-      </div>
-    </div>
-  </div>
-
   <!-- SUMMARY -->
   <div class="summary-grid" id="sum-grid" style="display: grid;">
     <div class="stat"><div class="stat-lbl">Total bots</div><div class="stat-val" id="s-tot">24</div></div>
@@ -10194,7 +10159,6 @@ try {
 } catch(e) { DB = []; console.warn('DB parse error:', e); }
 
 // localStorage recovery — overrides embedded DB if present (survives browser close)
-let pseudocodigoState = null;
 try {
   const _ls = localStorage.getItem('sqx_dashboard_state');
   if (_ls !== null) {
@@ -10203,7 +10167,6 @@ try {
       DB = _lsParsed; // formato viejo (migración)
     } else if (_lsParsed && typeof _lsParsed === 'object') {
       if (Array.isArray(_lsParsed.db)) DB = _lsParsed.db;
-      if (_lsParsed.pseudocodigo) pseudocodigoState = _lsParsed.pseudocodigo;
     }
   }
 } catch(e) {}
@@ -10284,7 +10247,7 @@ async function saveToGitHub() {
   finally { btn.disabled = false; }
 }
 function setSyncStatus(msg, color) { const el = document.getElementById('sync-status'); el.textContent = msg; el.style.color = color; }
-function markDirty() { dirty = true; document.getElementById('save-notice').style.display = 'block'; updateDbCount(); localStorage.setItem('sqx_dashboard_state', JSON.stringify({db: DB, pseudocodigo: pseudocodigoState})); }
+function markDirty() { dirty = true; document.getElementById('save-notice').style.display = 'block'; updateDbCount(); localStorage.setItem('sqx_dashboard_state', JSON.stringify({db: DB})); }
 function updateDbCount() { document.getElementById('db-count').textContent = DB.length > 0 ? DB.length + ' bots guardados' : ''; }
 
 // ── CSV PARSER ─────────────────────────────────────────────────
@@ -10528,6 +10491,7 @@ function buildFichaHTML(s, idx) {
   const badgeCls = st==='ok'?'badge-ok':st==='warn'?'badge-warn':'badge-fail';
   const ov = s.overviewData;
   const mfx = s.myfxbookData;
+  const psc = s.pseudocodigoData;
 
   // Metrics comparison table
   const metricDefs = [
@@ -10645,6 +10609,24 @@ function buildFichaHTML(s, idx) {
             <button onclick="processMyfxbook('${s.id}',${idx})" style="height:32px;padding:0 16px;border-radius:6px;background:#4f46e5;border:none;color:#fff;font-size:12px;font-weight:500;cursor:pointer">⚡ Parsear y cargar</button>
           </div>
           <div id="mfx-err-${idx}" style="display:none;color:#b91c1c;font-size:12px;margin-top:6px"></div>
+        </div>
+      </details>
+    </div>
+
+    <!-- PSEUDOCÓDIGO -->
+    <div class="ficha-sec-hdr" onclick="toggleFichaSection('psc-${idx}')">
+      <span style="display:flex;align-items:center">📄 Pseudocódigo SQX ${psc ? '<span style="font-size:9px;background:#eaf7f0;color:#1a7f4b;padding:1px 6px;border-radius:8px;border:1px solid #b2dfc8;margin-left:6px">✓ Cargado</span>' : ''}${psc ? `<button onclick="event.stopPropagation();resetPseudocodigoBot('${s.id}',${idx})" style="margin-left:8px;height:22px;padding:0 8px;border-radius:6px;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;font-size:10px;font-weight:500;cursor:pointer">↺ Recargar</button>` : ''}</span><span>▾</span>
+    </div>
+    <div id="psc-${idx}" class="ficha-subsection" style="margin-bottom:1rem">
+      ${psc ? buildPseudocodigoHTML(psc) : ''}
+      <details${psc ? '' : ' open'} style="margin-top:${psc ? '12px' : '0'}">
+        <summary>${psc ? '📂 Reemplazar archivo SQX (.txt)' : '📂 Cargar archivo SQX (.txt)'}</summary>
+        <div style="margin-top:8px">
+          <label style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:6px;background:#4f46e5;border:none;color:#fff;font-size:12px;font-weight:500;cursor:pointer">
+            Seleccionar archivo .txt
+            <input type="file" accept=".txt" style="display:none" onchange="loadPseudocodigoInline('${s.id}',${idx},this)">
+          </label>
+          <div id="psc-err-${idx}" style="display:none;color:#b91c1c;font-size:12px;margin-top:6px"></div>
         </div>
       </details>
     </div>
@@ -11162,137 +11144,88 @@ document.addEventListener('mousemove', e => {
   if (tt && tt.style.display !== 'none') { tt.style.left=(e.clientX+14)+'px'; tt.style.top=(e.clientY-10)+'px'; }
 });
 
-// ── PSEUDOCÓDIGO ───────────────────────────────────────────────
-let pscOpen = false;
-function togglePseudocodigo() { pscOpen=!pscOpen; document.getElementById('psc-body').classList.toggle('open',pscOpen); document.getElementById('chev-psc').classList.toggle('open',pscOpen); document.getElementById('psc-head').classList.toggle('open',pscOpen); }
+// ── PSEUDOCÓDIGO POR BOT ────────────────────────────────────────
+function parseSQXFile(text) {
+  const r = {
+    entradaTipo:'No especificado', ordenTipo:'No especificado',
+    indicadores:'No especificado', filtros:'No especificado',
+    sesion:'No especificado', stopLoss:'No especificado',
+    takeProfit:'No especificado', moneyManagement:'No especificado'
+  };
+  const openLong = /open\s+long/i.test(text), openShort = /open\s+short/i.test(text);
+  const buyOnly = /direction\s*[:=]\s*long/i.test(text)||/buy\s+only/i.test(text);
+  const sellOnly = /direction\s*[:=]\s*short/i.test(text)||/sell\s+only/i.test(text);
+  if ((openLong&&openShort)||/both/i.test(text.match(/direction\s*[:=]\s*(\w+)/i)?.[1]||'')) r.entradaTipo='Both (Buy + Sell)';
+  else if (openLong||buyOnly) r.entradaTipo='Buy (Long)';
+  else if (openShort||sellOnly) r.entradaTipo='Sell (Short)';
+  const orderMatch=text.match(/order\s+type\s*[:=]\s*(\w+)/i)||text.match(/\b(Market|Limit|Stop)\s+order/i);
+  if (orderMatch) r.ordenTipo=orderMatch[1]||orderMatch[2];
+  else if (/at\s+market/i.test(text)) r.ordenTipo='Market';
+  else if (/limit/i.test(text)) r.ordenTipo='Limit';
+  const indPattern=/\b(RSI|EMA|SMA|MACD|ATR|ADX|CCI|Stochastic|Bollinger Bands?|Parabolic SAR|Ichimoku|DEMA|TEMA|WPR|Williams|Momentum|ROC|OBV|MFI|Aroon|AO|AC|Alligator|DeMarker|RVI|OSMA|KAMA|Standard Deviation|Envelopes)\s*\(\s*[^)]+\)/gi;
+  const indMatches=[...new Set([...text.matchAll(indPattern)].map(m=>m[0].replace(/\s+/g,' ')))];
+  if (indMatches.length) r.indicadores=indMatches.slice(0,8).join(' | ');
+  const timeRange=text.match(/LimitTimeRange\s*\(\s*([^)]+)\)/i)||text.match(/time\s+(?:range|filter|from)\s*[:=]?\s*([\d:]+\s*[-–]\s*[\d:]+)/i)||text.match(/session\s*[:=]\s*([^\n]+)/i)||text.match(/(\d{1,2}:\d{2})\s*[-–]\s*(\d{1,2}:\d{2})/);
+  if (timeRange) r.sesion=timeRange[1]?.trim()||`${timeRange[1]} – ${timeRange[2]}`;
+  if (/trailing\s+stop/i.test(text)){const ts=text.match(/trailing\s+stop\s*[:=]?\s*([^\n]+)/i);r.stopLoss='Trailing Stop'+(ts?': '+ts[1].trim():'');}
+  else {const slFixed=text.match(/(?:Fixed\s+)?Stop\s+Loss\s*[:=]?\s*([^\n]+)/i);const slAtr=text.match(/ATR\s*\([^)]+\)\s*\*\s*[\d.]+/i);if(slFixed)r.stopLoss=slFixed[1].trim();else if(slAtr)r.stopLoss='ATR-based: '+slAtr[0];}
+  const tpFixed=text.match(/(?:Fixed\s+)?Take\s+Profit\s*[:=]?\s*([^\n]+)/i);
+  if (tpFixed) r.takeProfit=tpFixed[1].trim();
+  const mmLot=text.match(/(?:Fixed\s+)?lot\s+size\s*[:=]?\s*([^\n]+)/i);const mmRisk=text.match(/risk\s*(?:per\s+trade)?\s*[:=]\s*([^\n]+)/i);const mmPct=text.match(/(\d+(?:\.\d+)?)\s*%\s*(?:per\s+trade|risk)/i);
+  if (mmLot) r.moneyManagement='Fixed lot: '+mmLot[1].trim();else if(mmRisk)r.moneyManagement='Risk: '+mmRisk[1].trim();else if(mmPct)r.moneyManagement='Risk % por trade: '+mmPct[1]+'%';
+  const condLines=[...text.matchAll(/condition\s+\d+\s*[:=]?\s*(.+)/gi)].map(m=>m[1].trim());
+  if (condLines.length) r.filtros=[...new Set(condLines)].slice(0,6).join(' | ');
+  return r;
+}
 
-function loadPseudocodigo(input) {
+function buildPseudocodigoHTML(psc) {
+  if (!psc) return '';
+  const p = psc.parsed;
+  const rows = [
+    ['🎯 Tipo de entrada', p.entradaTipo],
+    ['📋 Tipo de orden',   p.ordenTipo],
+    ['📈 Indicadores',     p.indicadores],
+    ['🔍 Filtros',         p.filtros],
+    ['🕐 Sesión',          p.sesion],
+    ['🛑 Stop Loss',       p.stopLoss],
+    ['✅ Take Profit',     p.takeProfit],
+    ['💰 Money Mgmt',      p.moneyManagement],
+  ];
+  const fname = psc.filename ? `<div style="font-size:11px;color:#9098a8;margin-bottom:8px">📄 ${psc.filename}</div>` : '';
+  const trs = rows.map(([sec,det])=>`<tr style="border-bottom:1px solid #f1f3f5"><td style="padding:8px 10px;font-weight:600;color:#4a5060;font-size:12px;white-space:nowrap;vertical-align:top;width:160px">${sec}</td><td style="padding:8px 10px;color:${det==='No especificado'?'#9098a8':'#111318'};font-size:12px">${det}</td></tr>`).join('');
+  return `${fname}<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;border:1px solid #e0e3e8;border-radius:6px;overflow:hidden"><thead><tr><th style="text-align:left;padding:7px 10px;background:#f1f3f5;border-bottom:1px solid #e0e3e8;font-size:10px;font-weight:700;color:#9098a8;text-transform:uppercase;letter-spacing:0.5px;width:160px">Sección</th><th style="text-align:left;padding:7px 10px;background:#f1f3f5;border-bottom:1px solid #e0e3e8;font-size:10px;font-weight:700;color:#9098a8;text-transform:uppercase;letter-spacing:0.5px">Detalle</th></tr></thead><tbody>${trs}</tbody></table></div>`;
+}
+
+function loadPseudocodigoInline(botId, idx, input) {
   if (!input.files[0]) return;
   const file = input.files[0];
   const reader = new FileReader();
   reader.onload = e => {
     try {
-      const text = e.target.result;
-      const parsed = parseSQXFile(text);
-      pseudocodigoState = { filename: file.name, parsed };
-      renderPseudocodigo(pseudocodigoState);
+      const parsed = parseSQXFile(e.target.result);
+      const bot = DB.find(b => b.id === botId);
+      if (!bot) throw new Error('Bot no encontrado');
+      bot.pseudocodigoData = { filename: file.name, parsed };
       markDirty();
-      document.getElementById('psc-err').style.display = 'none';
+      expandRow(idx);
+      document.getElementById('psc-err-'+idx) && (document.getElementById('psc-err-'+idx).style.display='none');
     } catch(err) {
-      document.getElementById('psc-err').textContent = 'Error al procesar el archivo: ' + err.message;
-      document.getElementById('psc-err').style.display = 'block';
+      const errEl = document.getElementById('psc-err-'+idx);
+      if (errEl) { errEl.textContent = 'Error: '+err.message; errEl.style.display='block'; }
     }
     input.value = '';
   };
   reader.readAsText(file);
 }
 
-function parseSQXFile(text) {
-  const r = {
-    entradaTipo: 'No especificado',
-    ordenTipo: 'No especificado',
-    indicadores: 'No especificado',
-    filtros: 'No especificado',
-    sesion: 'No especificado',
-    stopLoss: 'No especificado',
-    takeProfit: 'No especificado',
-    moneyManagement: 'No especificado'
-  };
-
-  // Dirección de entrada
-  const openLong  = /open\s+long/i.test(text);
-  const openShort = /open\s+short/i.test(text);
-  const buyOnly   = /direction\s*[:=]\s*long/i.test(text) || /buy\s+only/i.test(text);
-  const sellOnly  = /direction\s*[:=]\s*short/i.test(text) || /sell\s+only/i.test(text);
-  if ((openLong && openShort) || /both/i.test(text.match(/direction\s*[:=]\s*(\w+)/i)?.[1]||'')) r.entradaTipo = 'Both (Buy + Sell)';
-  else if (openLong || buyOnly) r.entradaTipo = 'Buy (Long)';
-  else if (openShort || sellOnly) r.entradaTipo = 'Sell (Short)';
-
-  // Tipo de orden
-  const orderMatch = text.match(/order\s+type\s*[:=]\s*(\w+)/i) || text.match(/\b(Market|Limit|Stop)\s+order/i);
-  if (orderMatch) r.ordenTipo = orderMatch[1] || orderMatch[2];
-  else if (/at\s+market/i.test(text)) r.ordenTipo = 'Market';
-  else if (/limit/i.test(text)) r.ordenTipo = 'Limit';
-
-  // Indicadores — busca nombres comunes con paréntesis
-  const indPattern = /\b(RSI|EMA|SMA|MACD|ATR|ADX|CCI|Stochastic|Bollinger Bands?|Parabolic SAR|Ichimoku|DEMA|TEMA|WPR|Williams|Momentum|ROC|OBV|MFI|Aroon|AO|AC|Alligator|DeMarker|RVI|OSMA|KAMA|Standard Deviation|Envelopes)\s*\(\s*[^)]+\)/gi;
-  const indMatches = [...new Set([...text.matchAll(indPattern)].map(m => m[0].replace(/\s+/g,' ')))];
-  if (indMatches.length) r.indicadores = indMatches.slice(0,8).join(' | ');
-
-  // Sesión / horario
-  const timeRange = text.match(/LimitTimeRange\s*\(\s*([^)]+)\)/i) ||
-                    text.match(/time\s+(?:range|filter|from)\s*[:=]?\s*([\d:]+\s*[-–]\s*[\d:]+)/i) ||
-                    text.match(/session\s*[:=]\s*([^\n]+)/i) ||
-                    text.match(/(\d{1,2}:\d{2})\s*[-–]\s*(\d{1,2}:\d{2})/);
-  if (timeRange) r.sesion = timeRange[1]?.trim() || `${timeRange[1]} – ${timeRange[2]}`;
-
-  // Stop Loss
-  if (/trailing\s+stop/i.test(text)) {
-    const ts = text.match(/trailing\s+stop\s*[:=]?\s*([^\n]+)/i);
-    r.stopLoss = 'Trailing Stop' + (ts ? ': ' + ts[1].trim() : '');
-  } else {
-    const slFixed = text.match(/(?:Fixed\s+)?Stop\s+Loss\s*[:=]?\s*([^\n]+)/i);
-    const slAtr   = text.match(/ATR\s*\([^)]+\)\s*\*\s*[\d.]+/i);
-    if (slFixed) r.stopLoss = slFixed[1].trim();
-    else if (slAtr) r.stopLoss = 'ATR-based: ' + slAtr[0];
-  }
-
-  // Take Profit
-  const tpFixed = text.match(/(?:Fixed\s+)?Take\s+Profit\s*[:=]?\s*([^\n]+)/i);
-  if (tpFixed) r.takeProfit = tpFixed[1].trim();
-
-  // Money Management
-  const mmLot  = text.match(/(?:Fixed\s+)?lot\s+size\s*[:=]?\s*([^\n]+)/i);
-  const mmRisk = text.match(/risk\s*(?:per\s+trade)?\s*[:=]\s*([^\n]+)/i);
-  const mmPct  = text.match(/(\d+(?:\.\d+)?)\s*%\s*(?:per\s+trade|risk)/i);
-  if (mmLot) r.moneyManagement = 'Fixed lot: ' + mmLot[1].trim();
-  else if (mmRisk) r.moneyManagement = 'Risk: ' + mmRisk[1].trim();
-  else if (mmPct) r.moneyManagement = 'Risk % por trade: ' + mmPct[1] + '%';
-
-  // Filtros — condiciones de entrada adicionales
-  const condLines = [...text.matchAll(/condition\s+\d+\s*[:=]?\s*(.+)/gi)].map(m => m[1].trim());
-  if (condLines.length) r.filtros = [...new Set(condLines)].slice(0,6).join(' | ');
-
-  return r;
-}
-
-function renderPseudocodigo(state) {
-  if (!state) return;
-  const p = state.parsed;
-  const rows = [
-    ['🎯 Tipo de entrada',   p.entradaTipo],
-    ['📋 Tipo de orden',     p.ordenTipo],
-    ['📈 Indicadores',       p.indicadores],
-    ['🔍 Filtros',           p.filtros],
-    ['🕐 Sesión',            p.sesion],
-    ['🛑 Stop Loss',         p.stopLoss],
-    ['✅ Take Profit',       p.takeProfit],
-    ['💰 Money Management',  p.moneyManagement],
-  ];
-  document.getElementById('psc-filename').textContent = '📄 ' + (state.filename || 'Archivo cargado');
-  document.getElementById('psc-tbody').innerHTML = rows.map(([sec, det]) => `
-    <tr style="border-bottom:1px solid var(--border)">
-      <td style="padding:10px 12px;font-weight:600;color:var(--text2);font-size:12px;white-space:nowrap;vertical-align:top">${sec}</td>
-      <td style="padding:10px 12px;color:${det==='No especificado'?'var(--text3)':'var(--text)'};font-size:12px">${det}</td>
-    </tr>`).join('');
-  document.getElementById('psc-preview').style.display = 'block';
-  document.getElementById('psc-empty').style.display = 'none';
-  if (!pscOpen) togglePseudocodigo();
-}
-
-function clearPseudocodigo() {
-  pseudocodigoState = null;
-  document.getElementById('psc-preview').style.display = 'none';
-  document.getElementById('psc-empty').style.display = 'block';
-  document.getElementById('psc-filename').textContent = '';
-  document.getElementById('psc-err').style.display = 'none';
-  markDirty();
+function resetPseudocodigoBot(botId, idx) {
+  const bot = DB.find(b => b.id === botId);
+  if (bot) { delete bot.pseudocodigoData; markDirty(); expandRow(idx); }
 }
 
 // Init
 updateDbCount();
 render();
-if (pseudocodigoState) renderPseudocodigo(pseudocodigoState);
 </script>
 
 
