@@ -10475,6 +10475,8 @@ function collapseRow(idx) {
 function expandRow(idx) {
   const s = DB[idx]; if (!s) return;
   const dataRow = document.getElementById('datarow-' + idx); if (!dataRow) return;
+  const existing = document.getElementById('expanded-' + idx);
+  if (existing) existing.remove();
   const arrow = document.getElementById('arrow-' + idx);
   if (arrow) arrow.classList.add('open');
   const tr = document.createElement('tr');
@@ -10625,7 +10627,7 @@ function buildFichaHTML(s, idx) {
       <span style="display:flex;align-items:center">📄 Pseudocódigo SQX ${psc ? '<span style="font-size:9px;background:#eaf7f0;color:#1a7f4b;padding:1px 6px;border-radius:8px;border:1px solid #b2dfc8;margin-left:6px">✓ Cargado</span>' : ''}${psc ? `<button onclick="event.stopPropagation();resetPseudocodigoBot('${s.id}',${idx})" style="margin-left:8px;height:22px;padding:0 8px;border-radius:6px;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;font-size:10px;font-weight:500;cursor:pointer">↺ Recargar</button>` : ''}</span><span>▾</span>
     </div>
     <div id="psc-${idx}" class="ficha-subsection" style="margin-bottom:1rem">
-      ${psc ? buildPseudocodigoHTML(psc) : ''}
+      ${psc ? buildPseudocodigoHTML(psc, idx) : ''}
       <details${psc ? '' : ' open'} style="margin-top:${psc ? '12px' : '0'}">
         <summary>${psc ? '📂 Reemplazar archivo SQX (.txt)' : '📂 Cargar archivo SQX (.txt)'}</summary>
         <div style="margin-top:8px">
@@ -11114,11 +11116,26 @@ function hideFE(){document.getElementById('form-err').style.display='none';}
 function alertOk(m){const e=document.getElementById('alert-ok');e.textContent=m;e.style.display='block';document.getElementById('alert-err').style.display='none';setTimeout(()=>e.style.display='none',8000);}
 function alertErr(m){const e=document.getElementById('alert-err');e.textContent=m;e.style.display='block';document.getElementById('alert-ok').style.display='none';}
 
-function exportJSON() {
+async function exportJSON() {
   if (!DB.length){alert('Sin datos.');return;}
+  const filename = `sqx_dashboard_${new Date().toISOString().slice(0,10)}.json`;
+  const blob = new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  if (window.showSaveFilePicker) {
+    try {
+      const fh = await window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+      });
+      const w = await fh.createWritable();
+      await w.write(blob);
+      await w.close();
+      alertOk('✓ Backup guardado correctamente.');
+      return;
+    } catch(e) { if (e.name==='AbortError') return; }
+  }
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}));
-  a.download=`sqx_dashboard_${new Date().toISOString().slice(0,10)}.json`;a.click();
+  a.href=URL.createObjectURL(blob);
+  a.download=filename; a.click();
 }
 function importJSON(input) {
   if (!input.files[0]) return;
@@ -11168,12 +11185,15 @@ function parseSQXFile(text) {
   const cleanExpr = s => s.replace(/Main\s+chart,?\s*/gi,'').replace(/\s+/g,' ').trim();
 
   // 2. Señales de entrada nombradas (formato Pseudo Source Code de SQX)
-  const longM  = text.match(/LongEntrySignal\s*=\s*([\s\S]*?);(?:\s*\/\/[^\n]*)?\n/i);
-  const shortM = text.match(/ShortEntrySignal\s*=\s*([\s\S]*?);(?:\s*\/\/[^\n]*)?\n/i);
+  const longM  = text.match(/LongEntrySignal\s*=\s*([\s\S]*?);/i);
+  const shortM = text.match(/ShortEntrySignal\s*=\s*([\s\S]*?);/i);
   const longExpr  = longM  ? longM[1].trim()  : 'false';
   const shortExpr = shortM ? shortM[1].trim() : 'false';
-  const hasLong   = longExpr  !== 'false';
-  const hasShort  = shortExpr !== 'false';
+  const isFalseExpr = s => /^\(?\s*false(\s+and\s+false)*\s*\)?$/i.test(s.replace(/\s+/g,' ').trim());
+  const hasLongOrder  = /Open\s+Long\s+order/i.test(text);
+  const hasShortOrder = /Open\s+Short\s+order/i.test(text);
+  const hasLong  = hasLongOrder  || (!isFalseExpr(longExpr)  && !hasShortOrder);
+  const hasShort = hasShortOrder || (!isFalseExpr(shortExpr) && !hasLongOrder);
 
   if (hasLong && hasShort) r.entradaTipo = 'Both (Buy + Sell)';
   else if (hasLong)        r.entradaTipo = 'Buy (Long)';
@@ -11300,13 +11320,14 @@ function buildEntradaExplanation(p) {
     : 'No se detectaron condiciones. Verificá que el archivo sea un Pseudo Source Code exportado desde SQX.';
 }
 
-function buildPseudocodigoHTML(psc) {
+function buildPseudocodigoHTML(psc, idx) {
   if (!psc) return '';
   const p = psc.parsed;
   const na = 'No especificado';
   const card = (lbl, val) => `<div class="kpi-sm"><div class="kpi-sm-lbl">${lbl}</div><div class="kpi-sm-val" style="font-size:12px;font-weight:600;color:${val===na?'#9098a8':'#111318'};white-space:normal;line-height:1.4">${val}</div></div>`;
   const fname = psc.filename ? `<div style="font-size:11px;color:#9098a8;margin-bottom:8px">📄 ${psc.filename}</div>` : '';
   const explanation = buildEntradaExplanation(p);
+  const idAttr = idx !== undefined ? ` id="ai-exp-${idx}"` : '';
   return `${fname}
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">
     ${card('Entrada', p.entradaTipo)}
@@ -11318,7 +11339,7 @@ function buildPseudocodigoHTML(psc) {
     ${card('Indicadores', p.indicadores)}
     ${card('Filtros', p.filtros)}
   </div>
-  <div style="background:#f8f9fa;border:1px solid #e0e3e8;border-left:3px solid #4f46e5;border-radius:6px;padding:12px 14px">
+  <div${idAttr} style="background:#f8f9fa;border:1px solid #e0e3e8;border-left:3px solid #4f46e5;border-radius:6px;padding:12px 14px">
     <div style="font-size:10px;font-weight:700;color:#9098a8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">
       ¿Por qué entra?
       ${psc.aiExplanation ? '<span style="font-size:9px;background:#eef2ff;color:#4f46e5;border:1px solid #c7d2fe;padding:1px 7px;border-radius:10px;margin-left:6px;font-weight:600">✦ Claude AI</span>' : ''}
@@ -11385,7 +11406,14 @@ function loadPseudocodigoInline(botId, idx, input) {
         }
         bot.pseudocodigoData.aiLoading = false;
         markDirty();
-        expandRow(idx);
+        const aiEl = document.getElementById('ai-exp-' + idx);
+        if (aiEl) {
+          const psc = bot.pseudocodigoData;
+          const exp = buildEntradaExplanation(psc.parsed);
+          aiEl.innerHTML = `<div style="font-size:10px;font-weight:700;color:#9098a8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">¿Por qué entra?${psc.aiExplanation ? '<span style="font-size:9px;background:#eef2ff;color:#4f46e5;border:1px solid #c7d2fe;padding:1px 7px;border-radius:10px;margin-left:6px;font-weight:600">✦ Claude AI</span>' : ''}</div><div style="font-size:13px;color:#111318;line-height:1.8">${psc.aiExplanation ? psc.aiExplanation.replace(/\n/g,'<br>') : exp}</div>`;
+        } else {
+          expandRow(idx);
+        }
       } else {
         bot.pseudocodigoData.aiLoading = false;
       }
