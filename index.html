@@ -10578,27 +10578,45 @@ function importMyfxbookCSV(csvText) {
       bot.myfxbookData = mfxData;
       matched++;
     } else {
-      // Crear nuevo bot con datos Myfxbook y SQX vacío
-      const firstName = trades[0];
-      const rawName = (firstName.comment || '').replace(/_/g,' ').replace(/\s+/g,' ').trim() || `Magic ${magic}`;
-      DB.push({
-        id:          Date.now().toString(36) + Math.random().toString(36).slice(2),
-        magic:       parseInt(magic),
-        name:        rawName,
-        symbol:      firstName.symbol || '—',
-        tf:          'H1',
-        phase:       '—',
-        sqxFilter:   '—',
-        source:      'myfxbook',
-        added:       new Date().toISOString().slice(0,10),
-        notes:       '',
-        sqn: null, stag: null, zp: null,
-        is:  null,
-        oos: null,
-        overviewData:  null,
-        myfxbookData:  mfxData,
+      // Buscar candidato por nombre: "4.6.4.2(2)" → dígitos "46422" empieza con "4642"
+      // O "1.5.5(5)" → dígitos "1555" == "1555"
+      const magicStr = String(magic);
+      const candidate = DB.find(b => {
+        if (b.magic) return false;
+        return b.name.split(/[\s\-]+/).some(part => {
+          const digits = part.replace(/\D/g, '');
+          return digits === magicStr;
+        });
       });
-      created++;
+
+      if (candidate && confirm(`Magic ${magic} del CSV coincide con el bot:\n"${candidate.name}"\n\n¿Cargar los datos de Myfxbook en ese bot?`)) {
+        candidate.magic = parseInt(magic);
+        candidate.myfxbookData = mfxData;
+        matched++;
+      } else if (!candidate) {
+        // No hay candidato → crear bot nuevo
+        const firstName = trades[0];
+        const rawName = (firstName.comment || '').replace(/_/g,' ').replace(/\s+/g,' ').trim() || `Magic ${magic}`;
+        DB.push({
+          id:          Date.now().toString(36) + Math.random().toString(36).slice(2),
+          magic:       parseInt(magic),
+          name:        rawName,
+          symbol:      firstName.symbol || '—',
+          tf:          'H1',
+          phase:       '—',
+          sqxFilter:   '—',
+          source:      'myfxbook',
+          added:       new Date().toISOString().slice(0,10),
+          notes:       '',
+          sqn: null, stag: null, zp: null,
+          is:  null,
+          oos: null,
+          overviewData:  null,
+          myfxbookData:  mfxData,
+        });
+        created++;
+      }
+      // Si había candidato pero el usuario dijo NO → no hace nada (ignora ese magic)
     }
   });
 
