@@ -15,6 +15,18 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.5}
+  /* ── AUTH SCREEN ── */
+  #auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center}
+  .auth-card{width:360px;padding:2.5rem 2rem;border:1px solid var(--border);border-radius:16px;background:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.08)}
+  .auth-logo{font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}.auth-logo span{color:var(--accent)}
+  .auth-sub{font-size:12px;color:var(--text3);margin-bottom:2rem}
+  .auth-label{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;display:block}
+  .auth-input{width:100%;height:40px;border:1px solid var(--border2);border-radius:var(--radius);padding:0 12px;font-size:14px;color:var(--text);outline:none;transition:border-color 0.15s}
+  .auth-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,0.1)}
+  .auth-btn{width:100%;height:40px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;margin-top:1rem;transition:background 0.15s}
+  .auth-btn:hover{background:#4338ca}
+  .auth-err{color:var(--red);font-size:12px;margin-top:10px;min-height:18px;text-align:center}
+  .auth-hint{font-size:11px;color:var(--text3);text-align:center;margin-top:1.25rem}
   .topbar{background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
   .logo{font-size:16px;font-weight:700;letter-spacing:-0.3px}.logo span{color:var(--accent)}
   .module-tag{font-size:11px;background:var(--accent-light);color:var(--accent);padding:3px 10px;border-radius:20px;border:1px solid #c7d2fe;font-weight:600;margin-left:10px}
@@ -136,6 +148,28 @@
 </head>
 <body>
 
+<!-- AUTH OVERLAY -->
+<div id="auth-overlay">
+  <div class="auth-card">
+    <div class="auth-logo">SQX<span>.</span>Dashboard</div>
+    <div class="auth-sub" id="auth-sub">Arq. Sistémica — Acceso privado</div>
+    <div id="auth-form-setup" style="display:none">
+      <label class="auth-label">Crear contraseña</label>
+      <input class="auth-input" type="password" id="auth-pw1" placeholder="Nueva contraseña" onkeydown="if(event.key==='Enter')authSetup()">
+      <label class="auth-label" style="margin-top:12px">Repetir contraseña</label>
+      <input class="auth-input" type="password" id="auth-pw2" placeholder="Repetir contraseña" onkeydown="if(event.key==='Enter')authSetup()">
+      <button class="auth-btn" onclick="authSetup()">Crear acceso</button>
+    </div>
+    <div id="auth-form-login" style="display:none">
+      <label class="auth-label">Contraseña</label>
+      <input class="auth-input" type="password" id="auth-pw" placeholder="Ingresá tu contraseña" onkeydown="if(event.key==='Enter')authLogin()">
+      <button class="auth-btn" onclick="authLogin()">Ingresar</button>
+    </div>
+    <div class="auth-err" id="auth-err"></div>
+    <div class="auth-hint" id="auth-hint"></div>
+  </div>
+</div>
+
 <div class="topbar">
   <div style="display:flex;align-items:center">
     <div class="logo">SQX<span>.</span>Dashboard</div>
@@ -151,6 +185,8 @@
     <button onclick="exportCSV()">⬇ CSV</button>
     <button onclick="showConfig()">⚙ Config</button>
     <button class="btn-danger" onclick="clearAll()">Limpiar todo</button>
+    <button onclick="authChangePassword()" title="Cambiar contraseña" style="padding:0 10px">🔑</button>
+    <button onclick="authLogout()" title="Cerrar sesión" style="padding:0 10px">⎋ Salir</button>
   </div>
 </div>
 
@@ -10154,6 +10190,73 @@
 ]</script>
 
 <script>
+// ── AUTH ───────────────────────────────────────────────────────
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function authInit() {
+  if (sessionStorage.getItem('sqx_auth') === '1') { authGrant(); return; }
+  const hasHash = !!localStorage.getItem('sqx_pw_hash');
+  if (hasHash) {
+    document.getElementById('auth-form-login').style.display = 'block';
+    document.getElementById('auth-hint').textContent = '';
+    setTimeout(() => document.getElementById('auth-pw').focus(), 50);
+  } else {
+    document.getElementById('auth-form-setup').style.display = 'block';
+    document.getElementById('auth-sub').textContent = 'Primera vez — creá tu contraseña de acceso';
+    setTimeout(() => document.getElementById('auth-pw1').focus(), 50);
+  }
+}
+
+async function authSetup() {
+  const pw1 = document.getElementById('auth-pw1').value;
+  const pw2 = document.getElementById('auth-pw2').value;
+  const err = document.getElementById('auth-err');
+  if (!pw1) { err.textContent = 'Ingresá una contraseña.'; return; }
+  if (pw1.length < 6) { err.textContent = 'Mínimo 6 caracteres.'; return; }
+  if (pw1 !== pw2) { err.textContent = 'Las contraseñas no coinciden.'; return; }
+  localStorage.setItem('sqx_pw_hash', await sha256(pw1));
+  sessionStorage.setItem('sqx_auth', '1');
+  authGrant();
+}
+
+async function authLogin() {
+  const pw = document.getElementById('auth-pw').value;
+  const err = document.getElementById('auth-err');
+  if (!pw) { err.textContent = 'Ingresá tu contraseña.'; return; }
+  const hash = await sha256(pw);
+  if (hash === localStorage.getItem('sqx_pw_hash')) {
+    sessionStorage.setItem('sqx_auth', '1');
+    authGrant();
+  } else {
+    err.textContent = 'Contraseña incorrecta.';
+    document.getElementById('auth-pw').value = '';
+    document.getElementById('auth-pw').focus();
+  }
+}
+
+function authGrant() {
+  document.getElementById('auth-overlay').style.display = 'none';
+}
+
+function authLogout() {
+  sessionStorage.removeItem('sqx_auth');
+  location.reload();
+}
+
+async function authChangePassword() {
+  const pw = prompt('Nueva contraseña (mínimo 6 caracteres):');
+  if (!pw || pw.length < 6) { alert('Contraseña inválida.'); return; }
+  const pw2 = prompt('Repetir nueva contraseña:');
+  if (pw !== pw2) { alert('Las contraseñas no coinciden.'); return; }
+  localStorage.setItem('sqx_pw_hash', await sha256(pw));
+  alert('Contraseña actualizada.');
+}
+
+authInit();
+
 // ── DB LOAD ────────────────────────────────────────────────────
 let DB = [];
 try {
@@ -10384,12 +10487,15 @@ function importMyfxbookCSV(csvText) {
   const normMagic = buildMagicNormalizer(rawMagics);
 
   const tradesByMagic = {};
+  const seenTickets = new Set();
 
   for (let i = 1; i < lines.length; i++) {
     const row = lines[i].split(',');
     const action = get(row, 'Action');
     const ticket = get(row, 'Ticket');
     if (!ticket || action === 'Deposit') continue;
+    if (seenTickets.has(ticket)) continue;
+    seenTickets.add(ticket);
 
     const profit = parseFloat(get(row, 'Profit'));
     const pips   = parseFloat(get(row, 'Pips'));
@@ -10419,24 +10525,38 @@ function importMyfxbookCSV(csvText) {
   Object.entries(tradesByMagic).forEach(([magic, trades]) => {
     trades.sort((a,b) => a.closeDate.localeCompare(b.closeDate));
 
+    // Consolidar trades con mismo openDate (misma entrada escalada)
+    // Normaliza el key: colapsa espacios, quita segundos, toma MM/DD/YYYY HH:MM
+    const normOpenKey = d => d ? d.trim().replace(/\s+/g,' ').slice(0,16) : '';
+    const consolidated = [];
+    const byOpen = {};
+    trades.forEach(t => {
+      const key = normOpenKey(t.openDate);
+      if (!byOpen[key]) { byOpen[key] = []; }
+      byOpen[key].push(t);
+    });
+    // Si hay duplicados en el mismo minuto, queda solo el primero
+    Object.values(byOpen).forEach(group => consolidated.push(group[0]));
+    consolidated.sort((a,b) => a.closeDate.localeCompare(b.closeDate));
+
     // Cumulative profit per bot
     let cum = 0;
-    const tradeList = trades.map(t => { cum += t.netProfit; return {...t, cumProfit: Math.round(cum*100)/100}; });
+    const tradeList = consolidated.map(t => { cum += t.netProfit; return {...t, cumProfit: Math.round(cum*100)/100}; });
 
-    // Metrics
-    const wins   = trades.filter(t => t.netProfit > 0);
-    const losses = trades.filter(t => t.netProfit < 0);
+    // Metrics (sobre trades consolidados)
+    const wins   = consolidated.filter(t => t.netProfit > 0);
+    const losses = consolidated.filter(t => t.netProfit < 0);
     const totalWins   = wins.reduce((s,t) => s+t.netProfit, 0);
     const totalLosses = Math.abs(losses.reduce((s,t) => s+t.netProfit, 0));
     const pf      = totalLosses > 0 ? totalWins/totalLosses : wins.length > 0 ? 999 : 0;
-    const winRate = trades.length > 0 ? wins.length/trades.length*100 : 0;
+    const winRate = consolidated.length > 0 ? wins.length/consolidated.length*100 : 0;
     const avgWin  = wins.length   > 0 ? totalWins/wins.length   : 0;
     const avgLoss = losses.length > 0 ? totalLosses/losses.length : 0;
-    const totalProfit = trades.reduce((s,t) => s+t.netProfit, 0);
+    const totalProfit = consolidated.reduce((s,t) => s+t.netProfit, 0);
 
     // Max drawdown % from equity curve
     let peak = INITIAL_EQUITY, eq = INITIAL_EQUITY, maxDD = 0;
-    trades.forEach(t => { eq += t.netProfit; if (eq > peak) peak = eq; const dd = (peak-eq)/peak*100; if (dd > maxDD) maxDD = dd; });
+    consolidated.forEach(t => { eq += t.netProfit; if (eq > peak) peak = eq; const dd = (peak-eq)/peak*100; if (dd > maxDD) maxDD = dd; });
 
     const mfxData = {
       pf:       Math.round(pf*100)/100,
