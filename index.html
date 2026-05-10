@@ -67,7 +67,8 @@
   .stat-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-bottom:4px}
   .stat-val{font-size:26px;font-weight:700;line-height:1.1;color:var(--text)}
   .stat-val.green{color:var(--green)}.stat-val.amber{color:#d97706}.stat-val.red{color:var(--red)}.stat-val.blue{color:var(--blue)}
-  .table-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+  .table-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:clip}
+  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
   .table-topbar{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:var(--bg2)}
   .t-title{font-size:13px;font-weight:700;color:var(--text)}.t-sub{font-size:11px;color:var(--text3)}
   .view-tabs{display:flex;gap:4px}
@@ -1562,6 +1563,7 @@
   },
   {
     "id": "mot87jsn7ayp189u9qe",
+    "magic": 4914,
     "name": "Strategy 4.9.14 - Improved 1.1.5",
     "symbol": "AUDUSD",
     "symbolFull": "AUDUSD_Data_M1_ESTPlus07",
@@ -8080,6 +8082,7 @@
   },
   {
     "id": "mouxb9hurbn9thy81x",
+    "magic": 3845,
     "name": "Strategy 3.8.4(5) - Improved 5.1.4",
     "symbol": "EURUSD",
     "symbolFull": "EURUSD_M1_ESTPlus07",
@@ -10174,6 +10177,13 @@ try {
   }
 } catch(e) {}
 
+// Migración: inyectar magic numbers por bot ID (resuelve localStorage viejo)
+const MAGIC_BY_BOT_ID = {
+  'mot87jsn7ayp189u9qe': 4914,
+  'mouxb9hurbn9thy81x':  3845,
+};
+DB.forEach(b => { if (b.id && MAGIC_BY_BOT_ID[b.id] && !b.magic) b.magic = MAGIC_BY_BOT_ID[b.id]; });
+
 let dirty = false;
 
 // ── CRITERIOS ──────────────────────────────────────────────────
@@ -10319,14 +10329,162 @@ function processFile(file) {
   const rd = new FileReader();
   rd.onload = e => {
     try {
-      const parsed = parseCSV(e.target.result);
-      let added = 0, skip = 0;
-      parsed.forEach(s => { if (DB.find(x => x.name === s.name)) { skip++; return; } DB.push(s); added++; });
-      markDirty(); render();
-      alertOk(`✓ ${added} bots importados${skip ? ` — ${skip} ya existían, omitidos` : ''}.`);
+      const text = e.target.result;
+      const firstLine = text.split('\n')[0] || '';
+      if (firstLine.includes('Magic Number')) {
+        importMyfxbookCSV(text);
+      } else {
+        const parsed = parseCSV(text);
+        let added = 0, skip = 0;
+        parsed.forEach(s => { if (DB.find(x => x.name === s.name)) { skip++; return; } DB.push(s); added++; });
+        markDirty(); render();
+        alertOk(`✓ ${added} bots importados${skip ? ` — ${skip} ya existían, omitidos` : ''}.`);
+      }
     } catch(err) { alertErr('Error: ' + err.message); }
   };
   rd.readAsText(file, 'UTF-8');
+}
+
+// ── MYFXBOOK CSV IMPORT ────────────────────────────────────────
+const MFX_MAGIC_MAPPER = { 4914115:4914, 2623214:2623, 1555115:1555 };
+
+function buildMagicNormalizer(rawMagics) {
+  // Partir del mapper hardcodeado
+  const map = {...MFX_MAGIC_MAPPER};
+  // Magic "cortos" (≤4 dígitos) presentes en el CSV
+  const shorts = rawMagics.filter(m => String(m).length <= 4);
+  // Si un magic largo empieza con los dígitos de un corto → normalizarlo al corto
+  rawMagics.forEach(m => {
+    if (String(m).length > 4 && !map[m]) {
+      const match = shorts.find(s => String(m).startsWith(String(s)));
+      if (match) map[m] = match;
+    }
+  });
+  return m => map[m] || m;
+}
+
+function importMyfxbookCSV(csvText) {
+  const lines = csvText.split('\n').map(l => l.trim()).filter(l => l);
+  if (lines.length < 2) throw new Error('CSV vacío');
+
+  const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g,'').trim());
+  const col = h => headers.indexOf(h);
+  const get = (row, h) => { const i = col(h); return i >= 0 ? (row[i]||'').replace(/^"|"$/g,'').trim() : ''; };
+
+  const INITIAL_EQUITY = 10000;
+
+  // Primera pasada: recolectar todos los magic numbers para construir el normalizador
+  const rawMagics = [];
+  for (let i = 1; i < lines.length; i++) {
+    const row = lines[i].split(',');
+    if (!get(row,'Ticket') || get(row,'Action') === 'Deposit') continue;
+    const m = parseInt(get(row,'Magic Number')) || 0;
+    if (m && !rawMagics.includes(m)) rawMagics.push(m);
+  }
+  const normMagic = buildMagicNormalizer(rawMagics);
+
+  const tradesByMagic = {};
+
+  for (let i = 1; i < lines.length; i++) {
+    const row = lines[i].split(',');
+    const action = get(row, 'Action');
+    const ticket = get(row, 'Ticket');
+    if (!ticket || action === 'Deposit') continue;
+
+    const profit = parseFloat(get(row, 'Profit'));
+    const pips   = parseFloat(get(row, 'Pips'));
+    const gain   = parseFloat(get(row, 'Gain'));
+    if (isNaN(profit)) continue;
+
+    const magic = normMagic(parseInt(get(row, 'Magic Number')) || 0);
+    if (!tradesByMagic[magic]) tradesByMagic[magic] = [];
+    tradesByMagic[magic].push({
+      magic,
+      openDate:   get(row, 'Open Date'),
+      closeDate:  get(row, 'Close Date'),
+      symbol:     get(row, 'Symbol'),
+      action,
+      lots:       parseFloat(get(row, 'Units/Lots')) || 0,
+      openPrice:  parseFloat(get(row, 'Open Price')) || 0,
+      closePrice: parseFloat(get(row, 'Close Price')) || 0,
+      pips:       isNaN(pips) ? 0 : pips,
+      netProfit:  profit,
+      gainPct:    isNaN(gain) ? 0 : gain,
+      comment:    get(row, 'Comment'),
+    });
+  }
+
+  let matched = 0, created = 0;
+
+  Object.entries(tradesByMagic).forEach(([magic, trades]) => {
+    trades.sort((a,b) => a.closeDate.localeCompare(b.closeDate));
+
+    // Cumulative profit per bot
+    let cum = 0;
+    const tradeList = trades.map(t => { cum += t.netProfit; return {...t, cumProfit: Math.round(cum*100)/100}; });
+
+    // Metrics
+    const wins   = trades.filter(t => t.netProfit > 0);
+    const losses = trades.filter(t => t.netProfit < 0);
+    const totalWins   = wins.reduce((s,t) => s+t.netProfit, 0);
+    const totalLosses = Math.abs(losses.reduce((s,t) => s+t.netProfit, 0));
+    const pf      = totalLosses > 0 ? totalWins/totalLosses : wins.length > 0 ? 999 : 0;
+    const winRate = trades.length > 0 ? wins.length/trades.length*100 : 0;
+    const avgWin  = wins.length   > 0 ? totalWins/wins.length   : 0;
+    const avgLoss = losses.length > 0 ? totalLosses/losses.length : 0;
+    const totalProfit = trades.reduce((s,t) => s+t.netProfit, 0);
+
+    // Max drawdown % from equity curve
+    let peak = INITIAL_EQUITY, eq = INITIAL_EQUITY, maxDD = 0;
+    trades.forEach(t => { eq += t.netProfit; if (eq > peak) peak = eq; const dd = (peak-eq)/peak*100; if (dd > maxDD) maxDD = dd; });
+
+    const mfxData = {
+      pf:       Math.round(pf*100)/100,
+      ddPct:    Math.round(maxDD*100)/100,
+      winRate:  Math.round(winRate*100)/100,
+      gain:     Math.round(totalProfit/INITIAL_EQUITY*10000)/100,
+      trades:   trades.length,
+      balance:  Math.round((INITIAL_EQUITY+totalProfit)*100)/100,
+      sharpe:   null,
+      zProb:    null,
+      avgWinUsd:  Math.round(avgWin*100)/100,
+      avgLossUsd: Math.round(avgLoss*100)/100,
+      totalProfit: Math.round(totalProfit*100)/100,
+      tradeList,
+    };
+
+    const bot = DB.find(b => String(b.magic) === String(magic));
+    if (bot) {
+      bot.myfxbookData = mfxData;
+      matched++;
+    } else {
+      // Crear nuevo bot con datos Myfxbook y SQX vacío
+      const firstName = trades[0];
+      const rawName = (firstName.comment || '').replace(/_/g,' ').replace(/\s+/g,' ').trim() || `Magic ${magic}`;
+      DB.push({
+        id:          Date.now().toString(36) + Math.random().toString(36).slice(2),
+        magic:       parseInt(magic),
+        name:        rawName,
+        symbol:      firstName.symbol || '—',
+        tf:          'H1',
+        phase:       '—',
+        sqxFilter:   '—',
+        source:      'myfxbook',
+        added:       new Date().toISOString().slice(0,10),
+        notes:       '',
+        sqn: null, stag: null, zp: null,
+        is:  null,
+        oos: null,
+        overviewData:  null,
+        myfxbookData:  mfxData,
+      });
+      created++;
+    }
+  });
+
+  markDirty(); render();
+  let msg = `✓ Myfxbook CSV importado — ${matched} actualizado(s), ${created} creado(s).`;
+  alertOk(msg);
 }
 
 // ── VIEW DATA ──────────────────────────────────────────────────
@@ -10486,8 +10644,8 @@ function expandRow(idx) {
   td.innerHTML = buildFichaHTML(s, idx);
   tr.appendChild(td);
   dataRow.insertAdjacentElement('afterend', tr);
-  if (s.overviewData && s.overviewData.monthlyData && s.overviewData.monthlyData.length > 0) {
-    setTimeout(() => renderOverviewChart(s.overviewData.monthlyData, s.myfxbookData, 'ov-chart-' + idx), 50);
+  if ((s.overviewData && s.overviewData.monthlyData && s.overviewData.monthlyData.length > 0) || s.myfxbookData) {
+    setTimeout(() => renderOverviewChart(s.overviewData ? s.overviewData.monthlyData : null, s.myfxbookData, 'ov-chart-' + idx), 50);
   }
 }
 
@@ -10986,10 +11144,14 @@ function renderOverviewChart(monthlyData, mfxData, containerId) {
     });
   }
 
-  // Build live series (chronological: reverse tradeList)
+  // Build live series (siempre ordenado por fecha ascendente)
   let liveSeries = [];
   if (mfxData && mfxData.tradeList && mfxData.tradeList.length > 0) {
-    const trades = [...mfxData.tradeList].reverse();
+    const trades = [...mfxData.tradeList].sort((a, b) => {
+      const da = (a.closeDate || a.openDate || '').replace(/\//g,'-');
+      const db = (b.closeDate || b.openDate || '').replace(/\//g,'-');
+      return da.localeCompare(db);
+    });
     let cum = 0;
     trades.forEach(t => {
       cum += (t.netProfit || 0);
@@ -11436,6 +11598,8 @@ updateDbCount();
 render();
 </script>
 
-
+<div style="margin-top:3rem;padding:2.5rem 2rem;border-top:1px solid var(--border);background:var(--bg2);text-align:center;min-height:100px;display:flex;align-items:center;justify-content:center">
+  <span style="font-size:12px;color:var(--text3);letter-spacing:0.3px">Arquitectura Sistémica — SQX Dashboard</span>
+</div>
 
 </body></html>
