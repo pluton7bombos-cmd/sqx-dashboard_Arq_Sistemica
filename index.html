@@ -144,6 +144,157 @@
     .topbar{padding:0 1rem}
     .criteria-bar{display:grid;grid-template-columns:repeat(3,1fr)}
   }
+
+  /* ══════════════════════════════════════════════════
+     DNA OVERLAP — estilos (prefijados #dna-panel)
+  ══════════════════════════════════════════════════ */
+  #dna-panel .dna-section-title {
+    font-size: 11px; font-weight: 500; color: var(--text3);
+    text-transform: uppercase; letter-spacing: .06em;
+    margin: 1.5rem 0 10px; padding-bottom: 6px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  #dna-panel .dna-stats {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 1.5rem;
+  }
+  @media(max-width:700px){ #dna-panel .dna-stats { grid-template-columns: repeat(3,1fr); } }
+  #dna-panel .dna-stat {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px;
+  }
+  #dna-panel .dna-stat-label { font-size: 10px; color: var(--text3); margin-bottom: 4px; }
+  #dna-panel .dna-stat-val   { font-size: 20px; font-weight: 700; color: var(--text); line-height: 1; }
+  #dna-panel .dna-stat-sub   { font-size: 10px; color: var(--text3); margin-top: 3px; }
+  #dna-panel .dna-bot-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1.5rem;
+  }
+  @media(max-width:700px){ #dna-panel .dna-bot-grid { grid-template-columns: repeat(2,1fr); } }
+  #dna-panel .dna-bot-card {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px;
+  }
+  #dna-panel .dna-bot-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  #dna-panel .dna-bot-id  { font-size: 13px; font-weight: 600; color: var(--text); }
+  #dna-panel .dna-bot-meta { font-size: 10px; color: var(--text3); margin-bottom: 6px; }
+  #dna-panel .dna-chips { display: flex; flex-wrap: wrap; gap: 3px; }
+  #dna-panel .dna-chip {
+    font-size: 9px; padding: 2px 6px; border-radius: 4px;
+    background: var(--bg); border: 1px solid var(--border); color: var(--text2);
+  }
+  #dna-panel .dna-chip-primary { background: var(--green-bg); border-color: var(--green-border); color: var(--green); font-weight: 500; }
+  #dna-panel .dna-chip-short  { background: var(--red-bg); border-color: var(--red-border); color: var(--red); }
+  #dna-panel .dna-heatmap-wrap {
+    overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 1.5rem;
+  }
+  #dna-panel table.dna-hm {
+    width: 100%; border-collapse: collapse; min-width: 900px; font-size: 11px; background: var(--bg);
+  }
+  #dna-panel table.dna-hm th {
+    padding: 8px 6px; font-size: 10px; font-weight: 600; color: var(--text3);
+    text-align: center; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  #dna-panel table.dna-hm th.dna-hm-ind {
+    text-align: left; padding-left: 12px; width: 155px; color: var(--text); font-size: 11px;
+  }
+  #dna-panel table.dna-hm th.dna-hm-bot {
+    writing-mode: vertical-rl; transform: rotate(180deg); height: 90px;
+    vertical-align: bottom; padding-bottom: 6px; font-size: 9px; white-space: nowrap;
+  }
+  #dna-panel table.dna-hm td {
+    border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    text-align: center; padding: 5px 3px;
+  }
+  #dna-panel table.dna-hm td.dna-td-name {
+    text-align: left; padding: 7px 8px 7px 12px;
+    background: var(--bg2) !important; border-right: 1px solid var(--border2); white-space: nowrap;
+  }
+  #dna-panel table.dna-hm td.dna-td-name .dna-fam { font-size: 9px; color: var(--text3); display: block; }
+  #dna-panel table.dna-hm td.dna-td-count { background: var(--bg2) !important; font-weight: 600; border-left: 1px solid var(--border2); }
+  #dna-panel .dna-cell-l {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; font-size: 9px; font-weight: 700;
+    background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); border-radius: 3px;
+  }
+  #dna-panel .dna-cell-s {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; font-size: 9px; font-weight: 700;
+    background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); border-radius: 3px;
+  }
+  #dna-panel .dna-cell-empty { color: var(--border2); font-size: 12px; }
+  #dna-panel .dna-count-pill {
+    display: inline-block; padding: 1px 7px; font-size: 11px; font-weight: 600;
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; color: var(--text);
+  }
+  #dna-panel .dna-count-high { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+  #dna-panel .dna-count-med  { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
+  #dna-panel .dna-rank-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1.5rem;
+  }
+  @media(max-width:600px){ #dna-panel .dna-rank-grid { grid-template-columns: 1fr; } }
+  #dna-panel .dna-rank-card {
+    border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--bg);
+  }
+  #dna-panel .dna-rank-header {
+    padding: 10px 14px; background: var(--bg2); border-bottom: 1px solid var(--border);
+    font-size: 11px; font-weight: 600; color: var(--text2);
+  }
+  #dna-panel .dna-rank-row {
+    padding: 8px 14px; display: grid; grid-template-columns: 22px 1fr 32px 70px;
+    align-items: center; gap: 8px; border-bottom: 1px solid var(--border); font-size: 11px;
+  }
+  #dna-panel .dna-rank-row:last-child { border-bottom: none; }
+  #dna-panel .dna-rank-row:hover { background: var(--bg2); }
+  #dna-panel .dna-rnum { font-size: 10px; font-weight: 600; color: var(--text3); text-align: center; }
+  #dna-panel .dna-rnum-1 { color: #BA7517; }
+  #dna-panel .dna-rnum-2 { color: #888780; }
+  #dna-panel .dna-rnum-3 { color: #9E7354; }
+  #dna-panel .dna-rbar-bg { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+  #dna-panel .dna-rbar    { height: 4px; background: var(--green); border-radius: 2px; }
+  #dna-panel .dna-rtags   { display: flex; gap: 3px; flex-wrap: wrap; margin-top: 2px; }
+  #dna-panel .dna-tag-l   { font-size: 9px; padding: 1px 5px; background: var(--green-bg); color: var(--green); border-radius: 3px; }
+  #dna-panel .dna-tag-s   { font-size: 9px; padding: 1px 5px; background: var(--red-bg); color: var(--red); border-radius: 3px; }
+  #dna-panel .dna-tag-a   { font-size: 9px; padding: 1px 5px; background: var(--blue-bg); color: var(--blue); border-radius: 3px; }
+  #dna-panel .dna-cluster-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem;
+  }
+  @media(max-width:700px){ #dna-panel .dna-cluster-grid { grid-template-columns: 1fr; } }
+  #dna-panel .dna-cluster-card {
+    border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--bg);
+  }
+  #dna-panel .dna-cluster-head {
+    padding: 8px 12px; background: var(--bg2); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  #dna-panel .dna-cluster-name { font-size: 12px; font-weight: 600; color: var(--text); }
+  #dna-panel .dna-cluster-n {
+    font-size: 10px; padding: 1px 6px; background: var(--bg);
+    border: 1px solid var(--border2); border-radius: 10px; color: var(--text3); font-weight: 600;
+  }
+  #dna-panel .dna-cluster-body { padding: 8px 12px; display: flex; flex-direction: column; gap: 5px; }
+  #dna-panel .dna-cluster-key { font-size: 10px; color: var(--text3); margin-bottom: 4px; }
+  #dna-panel .dna-cluster-bot {
+    display: flex; align-items: center; gap: 6px; padding: 5px 8px;
+    background: var(--bg2); border-radius: var(--radius); font-size: 11px;
+  }
+  #dna-panel .dna-cbot-name { font-weight: 600; flex: 1; color: var(--text); }
+  #dna-panel .dna-cbot-meta { font-size: 10px; color: var(--text3); }
+  #dna-panel .dna-alerts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; }
+  #dna-panel .dna-alert {
+    padding: 10px 14px; border-radius: var(--radius); border: 1px solid;
+    display: grid; grid-template-columns: 28px 1fr auto;
+    align-items: start; gap: 10px; font-size: 12px;
+  }
+  #dna-panel .dna-alert-high   { background: var(--red-bg);   border-color: var(--red-border); }
+  #dna-panel .dna-alert-med    { background: var(--amber-bg); border-color: var(--amber-border); }
+  #dna-panel .dna-alert-info   { background: var(--blue-bg);  border-color: #bfdbfe; }
+  #dna-panel .dna-alert-ok     { background: var(--green-bg); border-color: var(--green-border); }
+  #dna-panel .dna-alert-title  { font-weight: 600; margin-bottom: 3px; }
+  #dna-panel .dna-alert-detail { font-size: 11px; color: var(--text2); line-height: 1.5; }
+  #dna-panel .dna-alert-badge  { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+  #dna-panel .badge-high { background: rgba(185,28,28,0.12); color: var(--red); }
+  #dna-panel .badge-med  { background: rgba(146,64,14,0.12); color: var(--amber); }
+  #dna-panel .badge-info { background: var(--blue-bg);       color: var(--blue); }
+  #dna-panel .badge-ok   { background: var(--green-bg);      color: var(--green); }
 </style>
 </head>
 <body>
@@ -185,6 +336,7 @@
     <button onclick="exportCSV()">⬇ CSV</button>
     <button onclick="showConfig()">⚙ Config</button>
     <button class="btn-danger" onclick="clearAll()">Limpiar todo</button>
+    <button onclick="toggleDnaSection()" id="btn-dna" title="DNA Overlap — Análisis de indicadores">🧬 DNA</button>
     <button onclick="authChangePassword()" title="Cambiar contraseña" style="padding:0 10px">🔑</button>
     <button onclick="authLogout()" title="Cerrar sesión" style="padding:0 10px">⎋ Salir</button>
   </div>
@@ -11740,10 +11892,385 @@ function resetPseudocodigoBot(botId, idx) {
   if (bot) { delete bot.pseudocodigoData; markDirty(); expandRow(idx); }
 }
 
+// ════════════════════════════════════════════
+// DNA OVERLAP
+// ════════════════════════════════════════════
+const DNA_BOTS = [
+  { id:'1.6.24',  asset:'XAUUSD', tf:'H1',  dir:'Long',  entry:'Market', stage:'live',
+    inds:['HighDaily','LinReg','LowDaily','ATR'],
+    signal:'Close crosses above HighDaily + LinReg(61) > LowDaily for 3 bars' },
+  { id:'2.6.20',  asset:'XAUUSD', tf:'H1',  dir:'Long',  entry:'Stop',   stage:'incubacion',
+    inds:['ParabolicSAR','LaguerreRSI','HighestInRange','HighDaily','ATR'],
+    signal:'SAR < precio + LaguerreRSI rising + HighestInRange > LowestInRange 8 bars → Stop HighDaily' },
+  { id:'2.6.23',  asset:'AUDUSD', tf:'H1',  dir:'Short', entry:'Market', stage:'live',
+    inds:['HighDaily','Highest','ATR'],
+    signal:'High > HighDaily for 7 bars AND Highest(Open,40) <= Close' },
+  { id:'2.7.19',  asset:'AUDUSD', tf:'H1',  dir:'Short', entry:'Market', stage:'incubacion',
+    inds:['ParabolicSAR','HighDaily','ATR'],
+    signal:'SAR(0.01) <= Low AND SAR(0.02) <= Low AND HighDaily < SAR for 5 bars' },
+  { id:'3.2.23',  asset:'SP500',  tf:'H4',  dir:'Long',  entry:'Market', stage:'live',
+    inds:['Lowest','Fibo','LowDaily','ATR'],
+    signal:'Lowest(30,High) < High for 6 bars AND Fibo(-61.8% semana) < LowDaily for 5 bars' },
+  { id:'3.3.4',   asset:'GBPJPY', tf:'H1',  dir:'Long',  entry:'Market', stage:'live',
+    inds:['ParabolicSAR','Pivots','ATR'],
+    signal:'ParabolicSAR < Pivots(4) for 6 bars' },
+  { id:'1.5.5.5a',asset:'EURUSD', tf:'H1',  dir:'Short', entry:'Market', stage:'live',
+    inds:['HighestInRange','LowestInRange','ATR'],
+    signal:'HighestInRange(19:30-7:30) crosses below LowestInRange(12:30-14:30)' },
+  { id:'1.5.5.5b',asset:'EURUSD', tf:'H1',  dir:'Short', entry:'Market', stage:'live',
+    inds:['HighestInRange','LowestInRange','ATR'],
+    signal:'HighestInRange(19:30-7:30) crosses below LowestInRange(12:30-14:30) [v4]' },
+  { id:'1.1.14',  asset:'GBPJPY', tf:'H1',  dir:'Short', entry:'Stop',   stage:'incubacion',
+    inds:['Fibo','LinReg','Lowest','ATR'],
+    signal:'Fibo(-23.6% día) < Lowest(25,Typical) AND Open < LinReg(40) → Stop' },
+  { id:'1.6.21a', asset:'GBPJPY', tf:'H1',  dir:'Short', entry:'Stop',   stage:'incubacion',
+    inds:['LinReg','EMA','CloseDaily','ATR'],
+    signal:'Close < LinReg(40) AND High < EMA(30) for 3 bars → Stop CloseDaily' },
+  { id:'1.6.21b', asset:'GBPJPY', tf:'H1',  dir:'Short', entry:'Stop',   stage:'incubacion',
+    inds:['LinReg','EMA','CloseDaily','ATR'],
+    signal:'Close < LinReg(40) AND High < EMA(30) for 3 bars → Stop CloseDaily [v2]' },
+  { id:'4.3.26',  asset:'GBPJPY', tf:'H1',  dir:'Short', entry:'Stop',   stage:'incubacion',
+    inds:['SMA','Fibo','LowestInRange','ParabolicSAR','BBRange','ATR'],
+    signal:'Close < SMA(20) AND Fibo(-61.8%) <= LowestInRange → Stop SAR - BBRange' },
+  { id:'4.7.18',  asset:'GBPJPY', tf:'H1',  dir:'Short', entry:'Stop',   stage:'descartado',
+    inds:['EMA','Fibo','LowestInRange','ParabolicSAR','BBRange','ATR'],
+    signal:'Close < EMA(20) AND Fibo(-61.8%) <= LowestInRange → Stop SAR - BBRange' },
+  { id:'4.6.15',  asset:'GBPJPY', tf:'H1',  dir:'Short', entry:'Stop',   stage:'incubacion',
+    inds:['ParabolicSAR','Lowest','HighDaily','Highest','Momentum','LowDaily','ATR'],
+    signal:'SAR > Lowest(5) 9 bars AND HighDaily > Highest(20,High) 9 bars AND Momentum(20)>85 → Stop LowDaily' },
+  { id:'4.5.26',  asset:'GBPJPY', tf:'M30', dir:'Short', entry:'Market', stage:'incubacion',
+    inds:['LWMA','Pivots','HighestInRange'],
+    signal:'LWMA(30) falling AND Pivots(1) < HighestInRange(15:30-20:30) for 6 bars' },
+];
+
+const DNA_IND_FAM = {
+  HighDaily:'Precio Diario', LowDaily:'Precio Diario', CloseDaily:'Precio Diario',
+  HighestInRange:'Rango Horario', LowestInRange:'Rango Horario',
+  ParabolicSAR:'Tendencia', LinReg:'Tendencia',
+  EMA:'Media Móvil', SMA:'Media Móvil', LWMA:'Media Móvil',
+  Fibo:'Fibonacci', Lowest:'Canal Precio', Highest:'Canal Precio',
+  Pivots:'Pivots', LaguerreRSI:'Oscilador', Momentum:'Oscilador',
+  BBRange:'Volatilidad BB', ATR:'Gestión Riesgo',
+};
+
+let dnaInitialized = false;
+
+function dnaInit() {
+  if (dnaInitialized) return;
+  dnaInitialized = true;
+
+  const usage = {};
+  DNA_BOTS.forEach(bot => {
+    bot.inds.forEach(ind => {
+      if (!usage[ind]) usage[ind] = { bots:[], long:0, short:0, assets:new Set() };
+      usage[ind].bots.push(bot);
+      bot.dir === 'Long' ? usage[ind].long++ : usage[ind].short++;
+      usage[ind].assets.add(bot.asset);
+    });
+  });
+  const indList = Object.keys(usage).sort((a,b) => usage[b].bots.length - usage[a].bots.length);
+  const maxN = usage[indList[0]].bots.length;
+
+  // BOT CARDS
+  const grid = document.getElementById('dna-bot-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const stageC = { live:'var(--green)', incubacion:'#d97706', descartado:'var(--red)' };
+  const stageL = { live:'LIVE', incubacion:'INCUB', descartado:'DESCAR' };
+  DNA_BOTS.forEach(bot => {
+    const primary = bot.inds.filter(i => i !== 'ATR').slice(0,2);
+    const rest    = bot.inds.filter(i => !primary.includes(i));
+    const div = document.createElement('div');
+    div.className = 'dna-bot-card';
+    div.innerHTML = `
+      <div class="dna-bot-top">
+        <div class="dna-bot-id">${bot.id}</div>
+        <span style="font-size:9px;font-weight:600;color:${stageC[bot.stage]}">${stageL[bot.stage]}</span>
+      </div>
+      <div class="dna-bot-meta">${bot.asset} · ${bot.tf} · <b style="color:${bot.dir==='Long'?'var(--green)':'var(--red)'}">${bot.dir}</b> · ${bot.entry}</div>
+      <div class="dna-chips">
+        ${primary.map(i=>`<span class="dna-chip dna-chip-primary">${i}</span>`).join('')}
+        ${rest.map(i=>`<span class="dna-chip ${bot.dir==='Short'?'dna-chip-short':''}">${i}</span>`).join('')}
+      </div>
+      <div style="font-size:9px;color:var(--text3);margin-top:5px;line-height:1.4">${bot.signal.substring(0,72)}${bot.signal.length>72?'…':''}</div>`;
+    grid.appendChild(div);
+  });
+
+  // HEATMAP
+  const tbl = document.getElementById('dna-hm-table');
+  if (!tbl) return;
+  let th = '<thead><tr><th class="dna-hm-ind">Indicador / Familia</th>';
+  DNA_BOTS.forEach(b => {
+    const c = b.dir === 'Long' ? 'var(--green)' : 'var(--red)';
+    th += `<th class="dna-hm-bot" style="color:${c}">${b.id}</th>`;
+  });
+  th += '<th style="min-width:48px;background:var(--bg2)">Total</th></tr></thead>';
+  tbl.innerHTML = th;
+  const tbody = document.createElement('tbody');
+  indList.forEach(ind => {
+    const u = usage[ind];
+    const n = u.bots.length;
+    const cc = n >= 6 ? 'dna-count-high' : n >= 3 ? 'dna-count-med' : '';
+    let row = `<tr><td class="dna-td-name">${ind}<span class="dna-fam">${DNA_IND_FAM[ind]||'Otro'}</span></td>`;
+    DNA_BOTS.forEach(bot => {
+      const found = u.bots.find(b => b.id === bot.id);
+      if (found) {
+        const cls = bot.dir === 'Long' ? 'dna-cell-l' : 'dna-cell-s';
+        const sym = bot.dir === 'Long' ? 'L' : 'S';
+        row += `<td><span class="${cls}">${sym}</span></td>`;
+      } else {
+        row += `<td><span class="dna-cell-empty">·</span></td>`;
+      }
+    });
+    row += `<td class="dna-td-count"><span class="dna-count-pill ${cc}">${n}</span></td></tr>`;
+    tbody.innerHTML += row;
+  });
+  tbl.appendChild(tbody);
+
+  // RANKING FRECUENCIA
+  const rf = document.getElementById('dna-rank-freq');
+  if (!rf) return;
+  rf.innerHTML = '';
+  const nc = ['dna-rnum-1','dna-rnum-2','dna-rnum-3'];
+  indList.slice(0,10).forEach((ind,i) => {
+    const u = usage[ind];
+    const pct = Math.round(u.bots.length / maxN * 100);
+    const tags = [
+      u.long  > 0 ? `<span class="dna-tag-l">L:${u.long}</span>` : '',
+      u.short > 0 ? `<span class="dna-tag-s">S:${u.short}</span>` : '',
+      ...[...u.assets].map(a => `<span class="dna-tag-a">${a}</span>`)
+    ].join('');
+    rf.innerHTML += `
+      <div class="dna-rank-row">
+        <div class="dna-rnum ${nc[i]||''}">${i+1}</div>
+        <div>
+          <div style="font-weight:600">${ind} <span style="font-size:10px;color:var(--text3);font-weight:400">· ${DNA_IND_FAM[ind]||'Otro'}</span></div>
+          <div class="dna-rtags">${tags}</div>
+        </div>
+        <div style="font-size:12px;font-weight:600;text-align:right">${u.bots.length}</div>
+        <div class="dna-rbar-bg"><div class="dna-rbar" style="width:${pct}%"></div></div>
+      </div>`;
+  });
+
+  // RANKING DIVERSIDAD
+  const ra = document.getElementById('dna-rank-asset');
+  if (!ra) return;
+  ra.innerHTML = '';
+  const byAsset = [...indList].sort((a,b) => usage[b].assets.size - usage[a].assets.size || usage[b].bots.length - usage[a].bots.length);
+  const maxA = usage[byAsset[0]].assets.size;
+  byAsset.slice(0,10).forEach((ind,i) => {
+    const u = usage[ind];
+    const pct = Math.round(u.assets.size / maxA * 100);
+    const tags = [...u.assets].map(a => `<span class="dna-tag-a">${a}</span>`).join('');
+    ra.innerHTML += `
+      <div class="dna-rank-row">
+        <div class="dna-rnum ${nc[i]||''}">${i+1}</div>
+        <div>
+          <div style="font-weight:600">${ind} <span style="font-size:10px;color:var(--text3);font-weight:400">· ${DNA_IND_FAM[ind]||'Otro'}</span></div>
+          <div class="dna-rtags">${tags}</div>
+        </div>
+        <div style="font-size:12px;font-weight:600;text-align:right">${u.assets.size}</div>
+        <div class="dna-rbar-bg"><div class="dna-rbar" style="width:${pct}%;background:var(--blue)"></div></div>
+      </div>`;
+  });
+
+  // CLUSTERS
+  const clusters = [
+    { name:'Familia HighDaily',    key:'HighDaily / LowDaily',          inds:['HighDaily','LowDaily'] },
+    { name:'Familia ParabolicSAR', key:'ParabolicSAR',                  inds:['ParabolicSAR'] },
+    { name:'Familia LinReg/EMA',   key:'LinReg / EMA / SMA / LWMA',     inds:['LinReg','EMA','SMA','LWMA'] },
+    { name:'Familia Fibonacci',    key:'Fibo (-23.6%, -61.8%)',          inds:['Fibo'] },
+    { name:'Familia Rango Horario',key:'HighestInRange / LowestInRange', inds:['HighestInRange','LowestInRange'] },
+    { name:'Familia Canal Precio', key:'Highest(N) / Lowest(N)',         inds:['Highest','Lowest'] },
+  ];
+  const cg = document.getElementById('dna-clusters');
+  if (!cg) return;
+  cg.innerHTML = '';
+  clusters.forEach(cl => {
+    const bots = DNA_BOTS.filter(b => b.inds.some(i => cl.inds.includes(i)));
+    const botRows = bots.map(b => {
+      const dc = b.dir === 'Long' ? 'var(--green)' : 'var(--red)';
+      return `<div class="dna-cluster-bot">
+        <div class="dna-cbot-name">${b.id}</div>
+        <div class="dna-cbot-meta">${b.asset} ${b.tf}</div>
+        <div style="color:${dc};font-size:10px;font-weight:600;margin-left:auto">${b.dir==='Long'?'▲L':'▼S'}</div>
+      </div>`;
+    }).join('');
+    cg.innerHTML += `
+      <div class="dna-cluster-card">
+        <div class="dna-cluster-head">
+          <div class="dna-cluster-name">${cl.name}</div>
+          <div class="dna-cluster-n">${bots.length}</div>
+        </div>
+        <div class="dna-cluster-body">
+          <div class="dna-cluster-key">${cl.key}</div>
+          ${botRows || '<div style="font-size:10px;color:var(--text3)">Sin bots</div>'}
+        </div>
+      </div>`;
+  });
+
+  // ALERTS
+  const alerts = [
+    { level:'high', icon:'⚠',
+      title:'OVERLAP CRÍTICO — Bot 4.3.26 y Bot 4.7.18 (GBPJPY Short H1)',
+      detail:'Mismo activo · Misma dirección · Mismos indicadores: EMA/SMA(20) + Fibo(-61.8%) + SAR + BBRange(10) + LowestInRange. Bot 4.7.18 ya descartado — decisión correcta.',
+      badge:'ALTO RIESGO' },
+    { level:'high', icon:'⚠',
+      title:'OVERLAP ALTO — Bot 1.6.21a y Bot 1.6.21b (GBPJPY Short H1)',
+      detail:'Lógica idéntica: LinReg(40) + EMA(30). Solo difieren en coeficientes ATR. Mismo Build Edge con distintos Improve Existing — evaluar consolidar en 1 solo bot.',
+      badge:'ALTO RIESGO' },
+    { level:'med', icon:'○',
+      title:'OVERLAP MEDIO — Bot 2.6.23 y Bot 2.7.19 (AUDUSD Short H1)',
+      detail:'Comparten HighDaily + ATR. Difieren en lógica: 2.6.23 usa Highest(Open,40), 2.7.19 usa doble SAR. Señales distintas — overlap parcial aceptable.',
+      badge:'MONITOREAR' },
+    { level:'med', icon:'○',
+      title:'OVERLAP MEDIO — Bot 1.5.5.5a y Bot 1.5.5.5b (EURUSD Short H1)',
+      detail:'Lógica idéntica: HighestInRange + LowestInRange. Difieren solo en ATR Trailing. Usar solo la mejor versión en producción.',
+      badge:'MONITOREAR' },
+    { level:'info', icon:'i',
+      title:'ATR — Indicador universal de gestión de riesgo (13/15 bots)',
+      detail:'ATR aparece en casi todos los bots como coeficiente de SL/TP/TS. NO indica overlap de señal — es gestión de riesgo adaptativa. Frecuencia alta = buena práctica.',
+      badge:'INFORMATIVO' },
+    { level:'info', icon:'i',
+      title:'ParabolicSAR — Alta frecuencia en activos/direcciones distintos (6 bots)',
+      detail:'SAR en GBPJPY Long, XAUUSD Long, GBPJPY Short (4 bots), AUDUSD Short. Diversificación real.',
+      badge:'INFORMATIVO' },
+    { level:'ok', icon:'✓',
+      title:'DIVERSIFICACIÓN — HighDaily en 6 bots cross-activo',
+      detail:'HighDaily en XAUUSD Long, AUDUSD Short, GBPJPY Short. Mismo indicador, activos y direcciones distintos = diversificación real del portfolio.',
+      badge:'SALUDABLE' },
+    { level:'ok', icon:'✓',
+      title:'DIVERSIFICACIÓN — Fibo en activos no correlacionados',
+      detail:'Fibonacci en SP500 H4 Long (3.2.23) y GBPJPY H1 Short (1.1.14, 4.3.26, 4.7.18). Activos no correlacionados, direcciones mixtas.',
+      badge:'SALUDABLE' },
+  ];
+  const al = document.getElementById('dna-alerts');
+  if (!al) return;
+  al.innerHTML = '';
+  alerts.forEach(a => {
+    const titleColor = a.level==='high'?'var(--red)':a.level==='med'?'var(--amber)':a.level==='info'?'var(--blue)':'var(--green)';
+    al.innerHTML += `
+      <div class="dna-alert dna-alert-${a.level}">
+        <div style="font-size:14px;font-weight:600;color:${titleColor};padding-top:1px">${a.icon}</div>
+        <div>
+          <div class="dna-alert-title" style="color:${titleColor}">${a.title}</div>
+          <div class="dna-alert-detail">${a.detail}</div>
+        </div>
+        <div class="dna-alert-badge badge-${a.level}">${a.badge}</div>
+      </div>`;
+  });
+}
+
+function toggleDnaSection() {
+  const card = document.getElementById('dna-section-card');
+  const btn  = document.getElementById('btn-dna');
+  const isVisible = card.style.display !== 'none';
+  if (isVisible) {
+    card.style.display = 'none';
+    btn.classList.remove('btn-primary');
+  } else {
+    card.style.display = 'block';
+    btn.classList.add('btn-primary');
+    dnaInit();
+    setTimeout(() => card.scrollIntoView({ behavior:'smooth', block:'start' }), 50);
+  }
+}
+
+function toggleDnaCollapse() {
+  const body = document.getElementById('dna-collapse');
+  const chev = document.getElementById('dna-chev');
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
 // Init
 updateDbCount();
 render();
 </script>
+
+  <!-- ══════════ DNA OVERLAP SECTION ══════════ -->
+  <div class="section-card" id="dna-section-card" style="display:none;margin-top:1.25rem">
+    <div class="section-head open" onclick="toggleDnaCollapse()">
+      <span class="section-title">🧬 DNA Overlap — Análisis de Indicadores</span>
+      <span class="chevron open" id="dna-chev">▼</span>
+    </div>
+    <div class="collapse-body open" id="dna-collapse">
+      <div style="padding:1.25rem 1.5rem" id="dna-panel">
+
+        <!-- STAT CARDS -->
+        <div class="dna-stats">
+          <div class="dna-stat">
+            <div class="dna-stat-label">Estrategias</div>
+            <div class="dna-stat-val">15</div>
+            <div class="dna-stat-sub">pseudocódigos SQX</div>
+          </div>
+          <div class="dna-stat">
+            <div class="dna-stat-label">Indicadores únicos</div>
+            <div class="dna-stat-val">14</div>
+            <div class="dna-stat-sub">familias distintas</div>
+          </div>
+          <div class="dna-stat">
+            <div class="dna-stat-label">Indicador líder</div>
+            <div class="dna-stat-val" style="font-size:16px;padding-top:2px">ATR</div>
+            <div class="dna-stat-sub">13/15 bots — riesgo</div>
+          </div>
+          <div class="dna-stat">
+            <div class="dna-stat-label">Señal más usada</div>
+            <div class="dna-stat-val" style="font-size:14px;padding-top:4px">HighDaily</div>
+            <div class="dna-stat-sub">6/15 bots — breakout</div>
+          </div>
+          <div class="dna-stat">
+            <div class="dna-stat-label">Alertas críticas</div>
+            <div class="dna-stat-val" style="color:var(--red)">2</div>
+            <div class="dna-stat-sub">overlap alto riesgo</div>
+          </div>
+          <div class="dna-stat">
+            <div class="dna-stat-label">Activos distintos</div>
+            <div class="dna-stat-val">6</div>
+            <div class="dna-stat-sub">diversificación</div>
+          </div>
+        </div>
+
+        <!-- BOT CARDS -->
+        <div class="dna-section-title">Bots — DNA extraído de pseudocódigos SQX</div>
+        <div class="dna-bot-grid" id="dna-bot-grid"></div>
+
+        <!-- HEATMAP -->
+        <div class="dna-section-title">Mapa de Calor — Indicadores × Bots</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+          <span><span class="dna-cell-l" style="display:inline-flex;vertical-align:middle">L</span> Long</span>
+          <span><span class="dna-cell-s" style="display:inline-flex;vertical-align:middle">S</span> Short</span>
+          <span style="color:var(--border2)">· = no usa</span>
+          <span style="margin-left:auto;font-size:10px">Columna derecha = total de bots con ese indicador</span>
+        </div>
+        <div class="dna-heatmap-wrap">
+          <table class="dna-hm" id="dna-hm-table"></table>
+        </div>
+
+        <!-- RANKINGS -->
+        <div class="dna-section-title">Ranking de Indicadores</div>
+        <div class="dna-rank-grid">
+          <div class="dna-rank-card">
+            <div class="dna-rank-header">▲ Por frecuencia total — cuántos bots lo usan</div>
+            <div id="dna-rank-freq"></div>
+          </div>
+          <div class="dna-rank-card">
+            <div class="dna-rank-header">◆ Por diversidad de activos — versatilidad</div>
+            <div id="dna-rank-asset"></div>
+          </div>
+        </div>
+
+        <!-- CLUSTERS -->
+        <div class="dna-section-title">Clusters por DNA — Familias de estrategias</div>
+        <div class="dna-cluster-grid" id="dna-clusters"></div>
+
+        <!-- ALERTS -->
+        <div class="dna-section-title">Alertas de Correlación Estructural</div>
+        <div class="dna-alerts" id="dna-alerts"></div>
+
+      </div>
+    </div>
+  </div>
 
 <div style="margin-top:3rem;padding:2.5rem 2rem;border-top:1px solid var(--border);background:var(--bg2);text-align:center;min-height:100px;display:flex;align-items:center;justify-content:center">
   <span style="font-size:12px;color:var(--text3);letter-spacing:0.3px">Arquitectura Sistémica — SQX Dashboard</span>
