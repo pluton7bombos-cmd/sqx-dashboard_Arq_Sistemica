@@ -12197,48 +12197,90 @@ function dnaInit() {
   if (!al) return;
   al.innerHTML = '';
 
+  // ── DUPLICADOS ──
   if (dups.length === 0) {
-    al.innerHTML = `
+    al.innerHTML += `
       <div class="dna-alert dna-alert-ok">
         <div style="font-size:14px;font-weight:600;color:var(--green);padding-top:1px">✓</div>
-        <div>
-          <div class="dna-alert-title" style="color:var(--green)">Sin duplicados detectados</div>
-          <div class="dna-alert-detail">Todos los pseudocódigos cargados tienen indicadores y/o activos suficientemente distintos.</div>
-        </div>
+        <div><div class="dna-alert-title" style="color:var(--green)">Sin duplicados detectados</div>
+          <div class="dna-alert-detail">Todos los pseudocódigos tienen indicadores y/o activos suficientemente distintos.</div></div>
         <div class="dna-alert-badge badge-ok">SALUDABLE</div>
       </div>`;
   } else {
     dups.forEach(({ a, b, indSim, level, reason, shared }) => {
-      const color  = level === 'high' ? 'var(--red)' : 'var(--amber)';
-      const icon   = level === 'high' ? '⚠' : '○';
-      const badge  = level === 'high' ? 'DUPLICADO' : 'SIMILAR';
-      const sharedStr = shared.length ? shared.join(', ') : '—';
-      const pct = Math.round(indSim * 100);
+      const color = level === 'high' ? 'var(--red)' : 'var(--amber)';
+      const icon  = level === 'high' ? '⚠' : '○';
+      const badge = level === 'high' ? 'DUPLICADO' : 'SIMILAR';
+      const pct   = Math.round(indSim * 100);
       al.innerHTML += `
         <div class="dna-alert dna-alert-${level}">
           <div style="font-size:14px;font-weight:600;color:${color};padding-top:1px">${icon}</div>
           <div style="flex:1">
             <div class="dna-alert-title" style="color:${color}">${a.id} ↔ ${b.id}</div>
-            <div class="dna-alert-detail">${reason}${pct > 0 ? ` · Overlap ${pct}%` : ''} · Indicadores compartidos: <b>${sharedStr || '—'}</b></div>
+            <div class="dna-alert-detail">${reason}${pct > 0 ? ` · Overlap ${pct}%` : ''} · Compartidos: <b>${shared.join(', ') || '—'}</b></div>
           </div>
           <div class="dna-alert-badge badge-${level}">${badge}</div>
         </div>`;
     });
   }
 
-  // Nota informativa sobre ATR
+  // ── ANÁLISIS DINÁMICO DE INDICADORES ──
+  const N = allBots.length;
+  const SIGNAL_SKIP = new Set(['ATR']);
+
+  // ATR (riesgo)
   const atrN = allBots.filter(b => b.inds.includes('ATR')).length;
   if (atrN > 0) {
     al.innerHTML += `
       <div class="dna-alert dna-alert-info">
         <div style="font-size:14px;font-weight:600;color:var(--blue);padding-top:1px">i</div>
-        <div>
-          <div class="dna-alert-title" style="color:var(--blue)">ATR — excluido del cálculo de similitud</div>
-          <div class="dna-alert-detail">Presente en ${atrN}/${allBots.length} bots como coeficiente de SL/TP/TS. Es gestión de riesgo adaptativa, no señal de entrada — no indica overlap real.</div>
-        </div>
-        <div class="dna-alert-badge badge-info">INFORMATIVO</div>
+        <div><div class="dna-alert-title" style="color:var(--blue)">ATR — indicador universal de gestión de riesgo</div>
+          <div class="dna-alert-detail">Presente en ${atrN}/${N} bots como coeficiente de SL/TP/TS. No indica overlap de señal — es riesgo adaptativo. Excluido del cálculo de similitud.</div></div>
+        <div class="dna-alert-badge badge-info">GESTIÓN RIESGO</div>
       </div>`;
   }
+
+  // Top 3 indicadores de señal (sin ATR) con mayor cobertura
+  const signalInds = indList.filter(ind => !SIGNAL_SKIP.has(ind)).slice(0, 3);
+  signalInds.forEach(ind => {
+    const u = usage[ind];
+    const longN  = u.long, shortN = u.short;
+    const assets = [...u.assets].join(', ');
+    const dirStr = longN > 0 && shortN > 0 ? `Long (${longN}) + Short (${shortN})` :
+                   longN > 0 ? `Long (${longN})` : `Short (${shortN})`;
+    const isVersatile = u.assets.size >= 2;
+    const level = isVersatile ? 'ok' : 'info';
+    const badge = isVersatile ? 'DIVERSIFICADO' : 'INFORMATIVO';
+    const icon  = isVersatile ? '✓' : 'i';
+    const color = isVersatile ? 'var(--green)' : 'var(--blue)';
+    al.innerHTML += `
+      <div class="dna-alert dna-alert-${level}">
+        <div style="font-size:14px;font-weight:600;color:${color};padding-top:1px">${icon}</div>
+        <div><div class="dna-alert-title" style="color:${color}">${ind} — ${u.bots.length}/${N} bots · ${DNA_IND_FAM[ind] || 'Otro'}</div>
+          <div class="dna-alert-detail">Activos: ${assets} · Direcciones: ${dirStr}${isVersatile ? ' — diversificación real entre activos.' : '.'}</div></div>
+        <div class="dna-alert-badge badge-${level}">${badge}</div>
+      </div>`;
+  });
+
+  // Tabla resumen de distribución de tipos de entrada
+  const longBots  = allBots.filter(b => b.dir === 'Long').length;
+  const shortBots = allBots.filter(b => b.dir === 'Short').length;
+  const bothBots  = allBots.filter(b => b.dir === 'Both').length;
+  const mktBots   = allBots.filter(b => b.entry === 'Market').length;
+  const stopBots  = allBots.filter(b => b.entry === 'Stop').length;
+  const assets    = [...new Set(allBots.map(b => b.asset).filter(a => a !== '—'))];
+  al.innerHTML += `
+    <div class="dna-alert dna-alert-info" style="flex-direction:column;align-items:flex-start;gap:8px">
+      <div style="font-weight:700;font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px">Resumen del portfolio analizado</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%">
+        <div style="font-size:11px"><span style="color:var(--green);font-weight:700">▲ Long:</span> ${longBots} bots</div>
+        <div style="font-size:11px"><span style="color:var(--red);font-weight:700">▼ Short:</span> ${shortBots} bots</div>
+        <div style="font-size:11px"><span style="color:var(--text3);font-weight:700">↕ Both:</span> ${bothBots} bots</div>
+        <div style="font-size:11px"><span style="font-weight:600">Market:</span> ${mktBots}</div>
+        <div style="font-size:11px"><span style="font-weight:600">Stop:</span> ${stopBots}</div>
+        <div style="font-size:11px"><span style="font-weight:600">Activos:</span> ${assets.join(', ')}</div>
+      </div>
+    </div>`;
 }
 
 function toggleDnaSection() {
@@ -12345,7 +12387,7 @@ render();
         <div class="dna-cluster-grid" id="dna-clusters"></div>
 
         <!-- ALERTS -->
-        <div class="dna-section-title">Alertas de Correlación Estructural</div>
+        <div class="dna-section-title">Análisis — duplicados, indicadores dominantes y distribución</div>
         <div class="dna-alerts" id="dna-alerts"></div>
 
       </div>
