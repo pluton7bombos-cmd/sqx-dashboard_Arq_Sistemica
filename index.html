@@ -12292,6 +12292,76 @@ function dnaInit() {
         <div style="font-size:11px"><span style="font-weight:600">Activos:</span> ${assets.join(', ')}</div>
       </div>
     </div>`;
+
+  // TABLA RESUMEN VISUAL — todos los indicadores
+  const st = document.getElementById('overlap-summary-table');
+  if (!st) return;
+  if (!indList.length) {
+    st.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:8px 0">Sin indicadores detectados. Cargá pseudocódigos en los bots para ver el análisis.</div>';
+    return;
+  }
+  const maxBotsN = usage[indList[0]].bots.length;
+  let thtml = `
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:1rem">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border)">
+          <th style="text-align:left;padding:7px 10px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Indicador</th>
+          <th style="text-align:left;padding:7px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Familia</th>
+          <th style="text-align:center;padding:7px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Bots</th>
+          <th style="padding:7px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;min-width:120px">Presencia</th>
+          <th style="text-align:center;padding:7px 8px;color:var(--green);font-size:10px;font-weight:700">▲ L</th>
+          <th style="text-align:center;padding:7px 8px;color:var(--red);font-size:10px;font-weight:700">▼ S</th>
+          <th style="text-align:left;padding:7px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Activos</th>
+          <th style="text-align:center;padding:7px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Diversidad</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+  indList.forEach((ind, idx) => {
+    const u = usage[ind];
+    const n = u.bots.length;
+    const pct = Math.round(n / maxBotsN * 100);
+    const isRisk = ind === 'ATR';
+    const divScore = u.assets.size;
+    // Concentración: qué tan concentrado está en un solo activo/dirección
+    const maxInAsset = Math.max(...[...u.assets].map(a => u.bots.filter(b => b.asset === a).length));
+    const concLevel = (!isRisk && maxInAsset >= 4) ? 'high' : (!isRisk && maxInAsset >= 3) ? 'med' : 'ok';
+    const concColor = concLevel === 'high' ? 'var(--red)' : concLevel === 'med' ? 'var(--amber)' : 'var(--green)';
+    const concLabel = concLevel === 'high' ? 'CONCENTRADO' : concLevel === 'med' ? 'MONIT.' : 'OK';
+    const rowBg = idx % 2 === 0 ? 'transparent' : 'var(--bg2)';
+    const barColor = isRisk ? 'var(--text3)' : concLevel === 'high' ? 'var(--red)' : 'var(--green)';
+    const assetChips = [...u.assets].map(a =>
+      `<span style="font-size:9px;padding:1px 5px;background:var(--blue-bg);color:var(--blue);border-radius:3px;white-space:nowrap">${a}</span>`
+    ).join(' ');
+
+    thtml += `
+      <tr style="border-bottom:1px solid var(--border2);background:${rowBg}">
+        <td style="padding:7px 10px;font-weight:600;color:${isRisk ? 'var(--text3)' : 'var(--text)'};white-space:nowrap">
+          ${ind}${isRisk ? ' <span style="font-size:9px;font-weight:400;color:var(--text3)">(riesgo)</span>' : ''}
+        </td>
+        <td style="padding:7px 8px;color:var(--text3);font-size:11px">${DNA_IND_FAM[ind] || 'Otro'}</td>
+        <td style="padding:7px 8px;text-align:center;font-weight:700;font-size:14px">${n}</td>
+        <td style="padding:7px 8px">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="flex:1;height:7px;background:var(--bg3);border-radius:4px;min-width:70px;overflow:hidden">
+              <div style="height:7px;background:${barColor};border-radius:4px;width:${pct}%;transition:width 0.3s"></div>
+            </div>
+            <span style="font-size:10px;color:var(--text3);min-width:32px;text-align:right">${n}/${allBots.length}</span>
+          </div>
+        </td>
+        <td style="padding:7px 8px;text-align:center;color:var(--green);font-weight:700">${u.long || '<span style="color:var(--border2)">·</span>'}</td>
+        <td style="padding:7px 8px;text-align:center;color:var(--red);font-weight:700">${u.short || '<span style="color:var(--border2)">·</span>'}</td>
+        <td style="padding:7px 8px;display:flex;flex-wrap:wrap;gap:3px;align-items:center">${assetChips}</td>
+        <td style="padding:7px 8px;text-align:center;white-space:nowrap">
+          <span style="color:${concColor};font-weight:700;font-size:11px">●</span>
+          <span style="font-size:9px;font-weight:600;color:${concColor};margin-left:2px">${concLabel}</span>
+        </td>
+      </tr>`;
+  });
+
+  thtml += '</tbody></table></div>';
+  st.innerHTML = thtml;
 }
 
 function toggleDnaSection() {
@@ -12400,6 +12470,10 @@ render();
         <!-- ALERTS -->
         <div class="dna-section-title">Análisis — duplicados, indicadores dominantes y distribución</div>
         <div class="dna-alerts" id="dna-alerts"></div>
+
+        <!-- TABLA RESUMEN VISUAL -->
+        <div class="dna-section-title" style="margin-top:1.5rem">Tabla resumen — todos los indicadores detectados</div>
+        <div id="overlap-summary-table"></div>
 
       </div>
     </div>
