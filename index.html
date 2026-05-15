@@ -336,7 +336,7 @@
     <button onclick="exportCSV()">⬇ CSV</button>
     <button onclick="showConfig()">⚙ Config</button>
     <button class="btn-danger" onclick="clearAll()">Limpiar todo</button>
-    <button onclick="toggleDnaSection()" id="btn-dna" title="DNA Overlap — Análisis de indicadores">🧬 DNA</button>
+    <button onclick="toggleDnaSection()" id="btn-dna" title="Overlap de Indicadores — Similitudes entre pseudocódigos">📊 Overlap</button>
     <button onclick="authChangePassword()" title="Cambiar contraseña" style="padding:0 10px">🔑</button>
     <button onclick="authLogout()" title="Cerrar sesión" style="padding:0 10px">⎋ Salir</button>
   </div>
@@ -11854,6 +11854,7 @@ function loadPseudocodigoInline(botId, idx, input) {
       if (!bot) throw new Error('Bot no encontrado');
       bot.pseudocodigoData = { filename: file.name, parsed, aiExplanation: null, aiLoading: true };
       markDirty();
+      if (document.getElementById('overlap-section-card').style.display !== 'none') dnaInit();
       expandRow(idx);
       const errEl = document.getElementById('psc-err-'+idx);
       if (errEl) errEl.style.display = 'none';
@@ -11889,7 +11890,12 @@ function loadPseudocodigoInline(botId, idx, input) {
 
 function resetPseudocodigoBot(botId, idx) {
   const bot = DB.find(b => b.id === botId);
-  if (bot) { delete bot.pseudocodigoData; markDirty(); expandRow(idx); }
+  if (bot) {
+    delete bot.pseudocodigoData;
+    markDirty();
+    expandRow(idx);
+    if (document.getElementById('overlap-section-card').style.display !== 'none') dnaInit();
+  }
 }
 
 // ════════════════════════════════════════════
@@ -11953,14 +11959,32 @@ const DNA_IND_FAM = {
   BBRange:'Volatilidad BB', ATR:'Gestión Riesgo',
 };
 
-let dnaInitialized = false;
+function buildDnaBots() {
+  const na = 'No especificado';
+  const existingIds = new Set(DNA_BOTS.map(b => b.id));
+  const dynBots = DB.filter(b => b.pseudocodigoData?.parsed)
+    .map(b => {
+      const p = b.pseudocodigoData.parsed;
+      const indsRaw = p.indicadores !== na ? p.indicadores.split(' | ') : [];
+      const inds = [...new Set(indsRaw.map(s => (s.match(/^([A-Za-z]+)/) || [])[1]).filter(Boolean))];
+      const dir = p.entradaTipo === 'Sell (Short)' ? 'Short' :
+                  p.entradaTipo === 'Both (Buy + Sell)' ? 'Both' : 'Long';
+      const entry = p.ordenTipo !== na ? p.ordenTipo : 'Market';
+      const ph = (b.phase || '').toLowerCase();
+      const stage = ph === 'live' ? 'live' : ph === 'descartado' ? 'descartado' : 'incubacion';
+      const allConds = [...(p.condicionesLong || []), ...(p.condicionesShort || [])];
+      const signal = allConds.slice(0, 3).join(' AND ') || b.name;
+      return { id: b.name, asset: b.symbol || '—', tf: b.tf || '—', dir, entry, stage, inds, signal };
+    })
+    .filter(b => !existingIds.has(b.id));
+  return [...DNA_BOTS, ...dynBots];
+}
 
 function dnaInit() {
-  if (dnaInitialized) return;
-  dnaInitialized = true;
+  const allBots = buildDnaBots();
 
   const usage = {};
-  DNA_BOTS.forEach(bot => {
+  allBots.forEach(bot => {
     bot.inds.forEach(ind => {
       if (!usage[ind]) usage[ind] = { bots:[], long:0, short:0, assets:new Set() };
       usage[ind].bots.push(bot);
@@ -11969,7 +11993,23 @@ function dnaInit() {
     });
   });
   const indList = Object.keys(usage).sort((a,b) => usage[b].bots.length - usage[a].bots.length);
-  const maxN = usage[indList[0]].bots.length;
+  const maxN = indList.length ? usage[indList[0]].bots.length : 1;
+
+  // STATS DINÁMICAS
+  const leaderInd = indList[0] || '—';
+  const leaderN = indList.length ? usage[leaderInd].bots.length : 0;
+  const nonAtrList = indList.filter(i => i !== 'ATR');
+  const signalInd = nonAtrList[0] || '—';
+  const signalN = nonAtrList.length ? usage[signalInd].bots.length : 0;
+  const uniqueAssets = new Set(allBots.map(b => b.asset)).size;
+  const el = id => document.getElementById(id);
+  if (el('dna-stat-n'))          el('dna-stat-n').textContent = allBots.length;
+  if (el('dna-stat-inds'))       el('dna-stat-inds').textContent = indList.length;
+  if (el('dna-stat-leader'))     el('dna-stat-leader').textContent = leaderInd;
+  if (el('dna-stat-leader-sub')) el('dna-stat-leader-sub').textContent = `${leaderN}/${allBots.length} bots`;
+  if (el('dna-stat-signal'))     el('dna-stat-signal').textContent = signalInd;
+  if (el('dna-stat-signal-sub')) el('dna-stat-signal-sub').textContent = `${signalN}/${allBots.length} bots`;
+  if (el('dna-stat-assets'))     el('dna-stat-assets').textContent = uniqueAssets;
 
   // BOT CARDS
   const grid = document.getElementById('dna-bot-grid');
@@ -11977,7 +12017,7 @@ function dnaInit() {
   grid.innerHTML = '';
   const stageC = { live:'var(--green)', incubacion:'#d97706', descartado:'var(--red)' };
   const stageL = { live:'LIVE', incubacion:'INCUB', descartado:'DESCAR' };
-  DNA_BOTS.forEach(bot => {
+  allBots.forEach(bot => {
     const primary = bot.inds.filter(i => i !== 'ATR').slice(0,2);
     const rest    = bot.inds.filter(i => !primary.includes(i));
     const div = document.createElement('div');
@@ -12000,7 +12040,7 @@ function dnaInit() {
   const tbl = document.getElementById('dna-hm-table');
   if (!tbl) return;
   let th = '<thead><tr><th class="dna-hm-ind">Indicador / Familia</th>';
-  DNA_BOTS.forEach(b => {
+  allBots.forEach(b => {
     const c = b.dir === 'Long' ? 'var(--green)' : 'var(--red)';
     th += `<th class="dna-hm-bot" style="color:${c}">${b.id}</th>`;
   });
@@ -12012,7 +12052,7 @@ function dnaInit() {
     const n = u.bots.length;
     const cc = n >= 6 ? 'dna-count-high' : n >= 3 ? 'dna-count-med' : '';
     let row = `<tr><td class="dna-td-name">${ind}<span class="dna-fam">${DNA_IND_FAM[ind]||'Otro'}</span></td>`;
-    DNA_BOTS.forEach(bot => {
+    allBots.forEach(bot => {
       const found = u.bots.find(b => b.id === bot.id);
       if (found) {
         const cls = bot.dir === 'Long' ? 'dna-cell-l' : 'dna-cell-s';
@@ -12087,7 +12127,7 @@ function dnaInit() {
   if (!cg) return;
   cg.innerHTML = '';
   clusters.forEach(cl => {
-    const bots = DNA_BOTS.filter(b => b.inds.some(i => cl.inds.includes(i)));
+    const bots = allBots.filter(b => b.inds.some(i => cl.inds.includes(i)));
     const botRows = bots.map(b => {
       const dc = b.dir === 'Long' ? 'var(--green)' : 'var(--red)';
       return `<div class="dna-cluster-bot">
@@ -12162,7 +12202,7 @@ function dnaInit() {
 }
 
 function toggleDnaSection() {
-  const card = document.getElementById('dna-section-card');
+  const card = document.getElementById('overlap-section-card');
   const btn  = document.getElementById('btn-dna');
   const isVisible = card.style.display !== 'none';
   if (isVisible) {
@@ -12188,10 +12228,10 @@ updateDbCount();
 render();
 </script>
 
-  <!-- ══════════ DNA OVERLAP SECTION ══════════ -->
-  <div class="section-card" id="dna-section-card" style="display:none;margin-top:1.25rem">
+  <!-- ══════════ OVERLAP DE INDICADORES ══════════ -->
+  <div class="section-card" id="overlap-section-card" style="display:none;margin-top:1.25rem">
     <div class="section-head open" onclick="toggleDnaCollapse()">
-      <span class="section-title">🧬 DNA Overlap — Análisis de Indicadores</span>
+      <span class="section-title">📊 Overlap de Indicadores — Similitudes entre Pseudocódigos</span>
       <span class="chevron open" id="dna-chev">▼</span>
     </div>
     <div class="collapse-body open" id="dna-collapse">
@@ -12201,23 +12241,23 @@ render();
         <div class="dna-stats">
           <div class="dna-stat">
             <div class="dna-stat-label">Estrategias</div>
-            <div class="dna-stat-val">15</div>
+            <div class="dna-stat-val" id="dna-stat-n">—</div>
             <div class="dna-stat-sub">pseudocódigos SQX</div>
           </div>
           <div class="dna-stat">
             <div class="dna-stat-label">Indicadores únicos</div>
-            <div class="dna-stat-val">14</div>
+            <div class="dna-stat-val" id="dna-stat-inds">—</div>
             <div class="dna-stat-sub">familias distintas</div>
           </div>
           <div class="dna-stat">
             <div class="dna-stat-label">Indicador líder</div>
-            <div class="dna-stat-val" style="font-size:16px;padding-top:2px">ATR</div>
-            <div class="dna-stat-sub">13/15 bots — riesgo</div>
+            <div class="dna-stat-val" id="dna-stat-leader" style="font-size:16px;padding-top:2px">—</div>
+            <div class="dna-stat-sub" id="dna-stat-leader-sub">—</div>
           </div>
           <div class="dna-stat">
             <div class="dna-stat-label">Señal más usada</div>
-            <div class="dna-stat-val" style="font-size:14px;padding-top:4px">HighDaily</div>
-            <div class="dna-stat-sub">6/15 bots — breakout</div>
+            <div class="dna-stat-val" id="dna-stat-signal" style="font-size:14px;padding-top:4px">—</div>
+            <div class="dna-stat-sub" id="dna-stat-signal-sub">—</div>
           </div>
           <div class="dna-stat">
             <div class="dna-stat-label">Alertas críticas</div>
@@ -12226,17 +12266,17 @@ render();
           </div>
           <div class="dna-stat">
             <div class="dna-stat-label">Activos distintos</div>
-            <div class="dna-stat-val">6</div>
+            <div class="dna-stat-val" id="dna-stat-assets">—</div>
             <div class="dna-stat-sub">diversificación</div>
           </div>
         </div>
 
         <!-- BOT CARDS -->
-        <div class="dna-section-title">Bots — DNA extraído de pseudocódigos SQX</div>
+        <div class="dna-section-title">Bots con pseudocódigo cargado — indicadores y tipo de entrada</div>
         <div class="dna-bot-grid" id="dna-bot-grid"></div>
 
         <!-- HEATMAP -->
-        <div class="dna-section-title">Mapa de Calor — Indicadores × Bots</div>
+        <div class="dna-section-title">Mapa de Similitudes — Indicadores × Bots</div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:8px;display:flex;gap:14px;flex-wrap:wrap;align-items:center">
           <span><span class="dna-cell-l" style="display:inline-flex;vertical-align:middle">L</span> Long</span>
           <span><span class="dna-cell-s" style="display:inline-flex;vertical-align:middle">S</span> Short</span>
@@ -12248,7 +12288,7 @@ render();
         </div>
 
         <!-- RANKINGS -->
-        <div class="dna-section-title">Ranking de Indicadores</div>
+        <div class="dna-section-title">Ranking de Indicadores — cuáles se repiten más entre estrategias</div>
         <div class="dna-rank-grid">
           <div class="dna-rank-card">
             <div class="dna-rank-header">▲ Por frecuencia total — cuántos bots lo usan</div>
@@ -12261,7 +12301,7 @@ render();
         </div>
 
         <!-- CLUSTERS -->
-        <div class="dna-section-title">Clusters por DNA — Familias de estrategias</div>
+        <div class="dna-section-title">Familias de estrategias — bots que comparten indicadores clave</div>
         <div class="dna-cluster-grid" id="dna-clusters"></div>
 
         <!-- ALERTS -->
