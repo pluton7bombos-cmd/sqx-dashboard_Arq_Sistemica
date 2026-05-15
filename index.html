@@ -11720,11 +11720,20 @@ function parseSQXFile(text) {
            || text.match(/risk\s*(?:per\s+trade)?\s*[=:]\s*([^\n;]+)/i);
   if (mmM) r.moneyManagement = mmM[1].trim();
 
-  // 11. Indicadores desde las señales
-  const sigText = longExpr + ' ' + shortExpr;
-  const indPat = /\b(RSI|EMA|SMA|MACD|ATR|ADX|CCI|Stochastic|Bollinger|ParabolicSAR|Ichimoku|DEMA|TEMA|WPR|Williams|Momentum|ROC|OBV|MFI|Aroon|HighDaily|LowDaily|DeMarker|RVI|OSMA|KAMA|Envelopes)\s*\([^)]+\)/gi;
-  const inds = [...new Set([...sigText.matchAll(indPat)].map(m => cleanExpr(m[0])))];
-  if (inds.length) r.indicadores = inds.slice(0,8).join(' | ');
+  // 11. Indicadores — busca en todo el texto con patrón amplio (CamelCase + paréntesis)
+  const IND_SKIP = /^(Open|Close|High|Low|Volume|True|False|And|Or|Not|Main|Exit|Enter|Signal|Order|Trade|Stop|Limit|Market|Long|Short|Buy|Sell|GetValue|SetValue|Print|Log|Alert|Return|If|Then|Else|End|Begin|Var|Int|Double|Bool|String)$/i;
+  const indPat = /\b([A-Z][A-Za-z]{2,})\s*\([^)]{1,120}\)/g;
+  const indNames = [...new Set(
+    [...text.matchAll(indPat)]
+      .map(m => m[1])
+      .filter(name => !IND_SKIP.test(name))
+  )];
+  if (indNames.length) {
+    r.indicadores = indNames.slice(0, 10).map(name => {
+      const call = text.match(new RegExp(`\\b${name}\\s*\\([^)]+\\)`, 'i'));
+      return call ? cleanExpr(call[0]) : name;
+    }).join(' | ');
+  }
 
   const allConds = [...r.condicionesLong, ...r.condicionesShort];
   if (allConds.length) r.filtros = [...new Set(allConds)].slice(0,6).join(' | ');
@@ -12068,6 +12077,7 @@ function dnaInit() {
       <div class="dna-chips">
         ${primary.map(i=>`<span class="dna-chip dna-chip-primary">${i}</span>`).join('')}
         ${rest.map(i=>`<span class="dna-chip ${bot.dir==='Short'?'dna-chip-short':''}">${i}</span>`).join('')}
+        ${bot.inds.length === 0 ? '<span class="dna-chip" style="background:#fff3cd;border-color:#ffc107;color:#856404">⚠ sin indicadores</span>' : ''}
       </div>
       <div style="font-size:9px;color:var(--text3);margin-top:5px;line-height:1.4">${bot.signal.substring(0,72)}${bot.signal.length>72?'…':''}</div>`;
     grid.appendChild(div);
@@ -12134,7 +12144,8 @@ function dnaInit() {
   if (!ra) return;
   ra.innerHTML = '';
   const byAsset = [...indList].sort((a,b) => usage[b].assets.size - usage[a].assets.size || usage[b].bots.length - usage[a].bots.length);
-  const maxA = usage[byAsset[0]].assets.size;
+  if (!byAsset.length) return;
+  const maxA = usage[byAsset[0]].assets.size || 1;
   byAsset.slice(0,10).forEach((ind,i) => {
     const u = usage[ind];
     const pct = Math.round(u.assets.size / maxA * 100);
