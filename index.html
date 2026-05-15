@@ -11961,7 +11961,8 @@ const DNA_IND_FAM = {
 
 function buildDnaBots() {
   const na = 'No especificado';
-  const existingIds = new Set(DNA_BOTS.map(b => b.id));
+  const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const hardcodedNorms = DNA_BOTS.map(b => norm(b.id));
   const dynBots = DB.filter(b => b.pseudocodigoData?.parsed)
     .map(b => {
       const p = b.pseudocodigoData.parsed;
@@ -11976,8 +11977,44 @@ function buildDnaBots() {
       const signal = allConds.slice(0, 3).join(' AND ') || b.name;
       return { id: b.name, asset: b.symbol || '—', tf: b.tf || '—', dir, entry, stage, inds, signal };
     })
-    .filter(b => !existingIds.has(b.id));
+    .filter(b => {
+      const bn = norm(b.id);
+      // Skip if fuzzy-matches any hardcoded bot (substring in either direction, min 3 chars)
+      return !hardcodedNorms.some(hn => hn.length >= 3 && (bn.includes(hn) || hn.includes(bn)));
+    });
   return [...DNA_BOTS, ...dynBots];
+}
+
+function findOverlapDuplicates(allBots) {
+  const SKIP = new Set(['ATR']); // universal, no discrimina señal
+  const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const pairs = [];
+  for (let i = 0; i < allBots.length; i++) {
+    for (let j = i + 1; j < allBots.length; j++) {
+      const a = allBots[i], b = allBots[j];
+      if (a.asset === '—' || b.asset === '—') continue;
+      // Similitud de nombre
+      const na = norm(a.id), nb = norm(b.id);
+      const nameSim = na.length >= 3 && nb.length >= 3 &&
+                      (na.includes(nb) || nb.includes(na) || (na.slice(0,4) === nb.slice(0,4) && na.length > 4));
+      // Jaccard de indicadores (sin ATR)
+      const setA = new Set(a.inds.filter(i => !SKIP.has(i)));
+      const setB = new Set(b.inds.filter(i => !SKIP.has(i)));
+      const shared = [...setA].filter(x => setB.has(x));
+      const union = new Set([...setA, ...setB]).size;
+      const indSim = union > 0 ? shared.length / union : 0;
+      const sameAsset = a.asset === b.asset;
+      const sameDir   = a.dir   === b.dir;
+      if (nameSim && sameAsset) {
+        pairs.push({ a, b, indSim, level: 'high',
+          reason: `Nombres muy similares + mismo activo (${a.asset})`, shared });
+      } else if (indSim >= 0.8 && sameAsset && sameDir) {
+        pairs.push({ a, b, indSim, level: indSim >= 0.95 ? 'high' : 'med',
+          reason: `Indicadores ${Math.round(indSim * 100)}% idénticos · ${a.asset} · ${a.dir}`, shared });
+      }
+    }
+  }
+  return pairs.sort((x, y) => y.indSim - x.indSim);
 }
 
 function dnaInit() {
@@ -12149,56 +12186,59 @@ function dnaInit() {
       </div>`;
   });
 
-  // ALERTS
-  const alerts = [
-    { level:'high', icon:'⚠',
-      title:'OVERLAP CRÍTICO — Bot 4.3.26 y Bot 4.7.18 (GBPJPY Short H1)',
-      detail:'Mismo activo · Misma dirección · Mismos indicadores: EMA/SMA(20) + Fibo(-61.8%) + SAR + BBRange(10) + LowestInRange. Bot 4.7.18 ya descartado — decisión correcta.',
-      badge:'ALTO RIESGO' },
-    { level:'high', icon:'⚠',
-      title:'OVERLAP ALTO — Bot 1.6.21a y Bot 1.6.21b (GBPJPY Short H1)',
-      detail:'Lógica idéntica: LinReg(40) + EMA(30). Solo difieren en coeficientes ATR. Mismo Build Edge con distintos Improve Existing — evaluar consolidar en 1 solo bot.',
-      badge:'ALTO RIESGO' },
-    { level:'med', icon:'○',
-      title:'OVERLAP MEDIO — Bot 2.6.23 y Bot 2.7.19 (AUDUSD Short H1)',
-      detail:'Comparten HighDaily + ATR. Difieren en lógica: 2.6.23 usa Highest(Open,40), 2.7.19 usa doble SAR. Señales distintas — overlap parcial aceptable.',
-      badge:'MONITOREAR' },
-    { level:'med', icon:'○',
-      title:'OVERLAP MEDIO — Bot 1.5.5.5a y Bot 1.5.5.5b (EURUSD Short H1)',
-      detail:'Lógica idéntica: HighestInRange + LowestInRange. Difieren solo en ATR Trailing. Usar solo la mejor versión en producción.',
-      badge:'MONITOREAR' },
-    { level:'info', icon:'i',
-      title:'ATR — Indicador universal de gestión de riesgo (13/15 bots)',
-      detail:'ATR aparece en casi todos los bots como coeficiente de SL/TP/TS. NO indica overlap de señal — es gestión de riesgo adaptativa. Frecuencia alta = buena práctica.',
-      badge:'INFORMATIVO' },
-    { level:'info', icon:'i',
-      title:'ParabolicSAR — Alta frecuencia en activos/direcciones distintos (6 bots)',
-      detail:'SAR en GBPJPY Long, XAUUSD Long, GBPJPY Short (4 bots), AUDUSD Short. Diversificación real.',
-      badge:'INFORMATIVO' },
-    { level:'ok', icon:'✓',
-      title:'DIVERSIFICACIÓN — HighDaily en 6 bots cross-activo',
-      detail:'HighDaily en XAUUSD Long, AUDUSD Short, GBPJPY Short. Mismo indicador, activos y direcciones distintos = diversificación real del portfolio.',
-      badge:'SALUDABLE' },
-    { level:'ok', icon:'✓',
-      title:'DIVERSIFICACIÓN — Fibo en activos no correlacionados',
-      detail:'Fibonacci en SP500 H4 Long (3.2.23) y GBPJPY H1 Short (1.1.14, 4.3.26, 4.7.18). Activos no correlacionados, direcciones mixtas.',
-      badge:'SALUDABLE' },
-  ];
+  // ALERTS — detección dinámica de duplicados
+  const dups = findOverlapDuplicates(allBots);
+  const highDups = dups.filter(d => d.level === 'high').length;
+  if (el('dna-stat-dups')) el('dna-stat-dups').textContent = dups.length || '0';
+  if (el('dna-stat-dups-sub')) el('dna-stat-dups-sub').textContent =
+    highDups > 0 ? `${highDups} crítico${highDups > 1 ? 's' : ''}, ${dups.length - highDups} medio${dups.length - highDups !== 1 ? 's' : ''}` : `${dups.length} medio${dups.length !== 1 ? 's' : ''}`;
+
   const al = document.getElementById('dna-alerts');
   if (!al) return;
   al.innerHTML = '';
-  alerts.forEach(a => {
-    const titleColor = a.level==='high'?'var(--red)':a.level==='med'?'var(--amber)':a.level==='info'?'var(--blue)':'var(--green)';
-    al.innerHTML += `
-      <div class="dna-alert dna-alert-${a.level}">
-        <div style="font-size:14px;font-weight:600;color:${titleColor};padding-top:1px">${a.icon}</div>
+
+  if (dups.length === 0) {
+    al.innerHTML = `
+      <div class="dna-alert dna-alert-ok">
+        <div style="font-size:14px;font-weight:600;color:var(--green);padding-top:1px">✓</div>
         <div>
-          <div class="dna-alert-title" style="color:${titleColor}">${a.title}</div>
-          <div class="dna-alert-detail">${a.detail}</div>
+          <div class="dna-alert-title" style="color:var(--green)">Sin duplicados detectados</div>
+          <div class="dna-alert-detail">Todos los pseudocódigos cargados tienen indicadores y/o activos suficientemente distintos.</div>
         </div>
-        <div class="dna-alert-badge badge-${a.level}">${a.badge}</div>
+        <div class="dna-alert-badge badge-ok">SALUDABLE</div>
       </div>`;
-  });
+  } else {
+    dups.forEach(({ a, b, indSim, level, reason, shared }) => {
+      const color  = level === 'high' ? 'var(--red)' : 'var(--amber)';
+      const icon   = level === 'high' ? '⚠' : '○';
+      const badge  = level === 'high' ? 'DUPLICADO' : 'SIMILAR';
+      const sharedStr = shared.length ? shared.join(', ') : '—';
+      const pct = Math.round(indSim * 100);
+      al.innerHTML += `
+        <div class="dna-alert dna-alert-${level}">
+          <div style="font-size:14px;font-weight:600;color:${color};padding-top:1px">${icon}</div>
+          <div style="flex:1">
+            <div class="dna-alert-title" style="color:${color}">${a.id} ↔ ${b.id}</div>
+            <div class="dna-alert-detail">${reason}${pct > 0 ? ` · Overlap ${pct}%` : ''} · Indicadores compartidos: <b>${sharedStr || '—'}</b></div>
+          </div>
+          <div class="dna-alert-badge badge-${level}">${badge}</div>
+        </div>`;
+    });
+  }
+
+  // Nota informativa sobre ATR
+  const atrN = allBots.filter(b => b.inds.includes('ATR')).length;
+  if (atrN > 0) {
+    al.innerHTML += `
+      <div class="dna-alert dna-alert-info">
+        <div style="font-size:14px;font-weight:600;color:var(--blue);padding-top:1px">i</div>
+        <div>
+          <div class="dna-alert-title" style="color:var(--blue)">ATR — excluido del cálculo de similitud</div>
+          <div class="dna-alert-detail">Presente en ${atrN}/${allBots.length} bots como coeficiente de SL/TP/TS. Es gestión de riesgo adaptativa, no señal de entrada — no indica overlap real.</div>
+        </div>
+        <div class="dna-alert-badge badge-info">INFORMATIVO</div>
+      </div>`;
+  }
 }
 
 function toggleDnaSection() {
@@ -12260,9 +12300,9 @@ render();
             <div class="dna-stat-sub" id="dna-stat-signal-sub">—</div>
           </div>
           <div class="dna-stat">
-            <div class="dna-stat-label">Alertas críticas</div>
-            <div class="dna-stat-val" style="color:var(--red)">2</div>
-            <div class="dna-stat-sub">overlap alto riesgo</div>
+            <div class="dna-stat-label">Duplicados detectados</div>
+            <div class="dna-stat-val" id="dna-stat-dups" style="color:var(--red)">—</div>
+            <div class="dna-stat-sub" id="dna-stat-dups-sub">overlap alto riesgo</div>
           </div>
           <div class="dna-stat">
             <div class="dna-stat-label">Activos distintos</div>
