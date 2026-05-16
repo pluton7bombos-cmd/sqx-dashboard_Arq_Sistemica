@@ -10832,7 +10832,7 @@ function processFile(file) {
 }
 
 // ── MYFXBOOK CSV IMPORT ────────────────────────────────────────
-const MFX_MAGIC_MAPPER = { 4914115:4914, 2623214:2623, 1555115:1555 };
+const MFX_MAGIC_MAPPER = { 4914115:4914, 2623214:2623, 1555115:1555, 2719115:2719 };
 
 // Extrae el código numérico principal de un nombre de estrategia SQX.
 // "Strategy 2.6.23 - Improved 2.1.4" → "2623"  (solo X.Y.Z, ignora Improved y paréntesis)
@@ -10845,14 +10845,22 @@ function nameToMagicDigits(name) {
 
 function buildMagicNormalizer(rawMagics) {
   const map = {...MFX_MAGIC_MAPPER};
-  // Magics cortos del CSV + magics ya conocidos en DB (para actualizaciones semanales)
-  // NO incluir derivados de nombres: causaría colisión entre bots de la misma familia
-  // (ej. 1555415 y 1555155 ambos derivarían "1555" y se normalizarían igual)
   const dbMagics = DB.filter(b => b.magic).map(b => Number(b.magic)).filter(Boolean);
-  // Ordenar de mayor a menor longitud para que el match específico gane al genérico
+  // Códigos derivados de nombre para bots SIN magic asignado — solo si son ÚNICOS
+  // (evita colisión de familia: "1555415" y "1555155" ambos derivan "1555")
+  const codeCounts = {};
+  DB.filter(b => !b.magic).forEach(b => {
+    const c = nameToMagicDigits(b.name);
+    if (c) codeCounts[c] = (codeCounts[c] || 0) + 1;
+  });
+  const uniqueNameCodes = Object.entries(codeCounts)
+    .filter(([, n]) => n === 1)
+    .map(([c]) => Number(c))
+    .filter(Boolean);
   const shorts = [...new Set([
     ...rawMagics.filter(m => String(m).length <= 4),
     ...dbMagics,
+    ...uniqueNameCodes,
   ])].sort((a, b) => String(b).length - String(a).length);
   rawMagics.forEach(m => {
     if (String(m).length > 4 && !map[m]) {
@@ -10861,6 +10869,28 @@ function buildMagicNormalizer(rawMagics) {
     }
   });
   return m => map[m] || m;
+}
+
+// Fusiona bots huérfanos de source='myfxbook' con sus pares SQX (por código X.Y.Z).
+// Llamar tras carga de DB y tras cada importación CSV para limpiar duplicados previos.
+function repairDuplicateBots() {
+  let merged = 0;
+  const mfxOrphans = DB.filter(b => b.source === 'myfxbook' && b.magic);
+  mfxOrphans.forEach(orphan => {
+    const magicStr = String(orphan.magic);
+    const target = DB.find(b =>
+      b !== orphan &&
+      b.source !== 'myfxbook' &&
+      (String(b.magic) === magicStr || nameToMagicDigits(b.name) === magicStr)
+    );
+    if (target) {
+      if (orphan.myfxbookData) target.myfxbookData = orphan.myfxbookData;
+      if (!target.magic) target.magic = orphan.magic;
+      DB.splice(DB.indexOf(orphan), 1);
+      merged++;
+    }
+  });
+  return merged;
 }
 
 function importMyfxbookCSV(csvText) {
@@ -11046,8 +11076,9 @@ function importMyfxbookCSV(csvText) {
     }
   });
 
+  const repaired = repairDuplicateBots();
   markDirty(); render();
-  let msg = `✓ Myfxbook CSV importado — ${matched} actualizado(s), ${created} creado(s).`;
+  let msg = `✓ Myfxbook CSV importado — ${matched} actualizado(s), ${created} creado(s)${repaired ? `, ${repaired} duplicado(s) reparado(s)` : ''}.`;
   alertOk(msg);
 }
 
@@ -12747,7 +12778,8 @@ function toggleDnaCollapse() {
   chev.classList.toggle('open');
 }
 
-// Init
+// Init — repair stale myfxbook duplicates from localStorage before first render
+repairDuplicateBots();
 updateDbCount();
 render();
 
