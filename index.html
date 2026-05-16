@@ -11057,8 +11057,9 @@ function importMyfxbookCSV(csvText) {
       // 2. Comment → Strategy Name (vínculo principal SQX ↔ Myfxbook)
       // El comment puede estar truncado, por eso se usa startsWith en lugar de igualdad exacta.
       // Se verifica que solo haya 1 candidato antes de asignar para evitar falsos positivos.
+      // Se incluyen bots con magic distinto al actual para corregir asignaciones previas erróneas.
       const commentMatches = repComment.length >= 8 ? DB.filter(b => {
-        if (b.magic) return false;
+        if (b.magic && parseInt(b.magic) === parseInt(magic)) return false; // ya manejado por step 1
         const bn = normSep(b.name);
         return bn === repComment || bn.startsWith(repComment + ' ') || bn.startsWith(repComment);
       }) : [];
