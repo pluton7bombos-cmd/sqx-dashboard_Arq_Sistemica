@@ -11022,25 +11022,41 @@ function importMyfxbookCSV(csvText) {
         // 3. Name-based match — auto-asigna sin dialog cuando el match es determinístico
         const magicStr = String(magic);
         let candidate = null;
+        let esAmbiguo = false; // familia de bots con mismo código base
 
         // 3a: full-digits exacto (ej. "1555415" === "1555415") → family-safe
         const aMatch = DB.find(b => !b.magic && b.name.replace(/\D/g,'') === magicStr);
         if (aMatch) { candidate = aMatch; }
 
         if (!candidate) {
-          // 3b: código X.Y.Z exacto (ej. "2623" === "2623")
+          // 3b: código X.Y.Z — acepta exacto O long-variant (magicStr empieza con el código)
           // Solo si hay UN único candidato para evitar colisiones de familia
-          const bMatches = DB.filter(b => !b.magic && nameToMagicDigits(b.name) === magicStr);
+          const bMatches = DB.filter(b => {
+            if (b.magic) return false;
+            const code = nameToMagicDigits(b.name);
+            if (!code || code.length < 3) return false;
+            // exacto: "2719"==="2719", o variante larga: "2719115".startsWith("2719")
+            return magicStr === code || magicStr.startsWith(code);
+          });
           if (bMatches.length === 1) {
             candidate = bMatches[0];
           } else if (bMatches.length > 1) {
-            // 3c: código + variante X.Y.Z(N) → ej. "31152" para "3.1.15(2)"
-            const cMatch = bMatches.find(b => {
-              const mv = b.name.match(/\b(\d+)\.(\d+)\.(\d+)\((\d+)\)/);
-              return mv ? (mv[1] + mv[2] + mv[3] + mv[4]) === magicStr : false;
-            });
-            if (cMatch) candidate = cMatch;
-            // Sin resolución → no asignar (el usuario puede usar el parser inline del bot)
+            // 3c: preferir match exacto dentro de los candidatos
+            const exact = bMatches.find(b => nameToMagicDigits(b.name) === magicStr);
+            if (exact) { candidate = exact; }
+            else {
+              // 3d: desempate por variante X.Y.Z(N) → ej. "1555415" para "1.5.5(5) - Improved 4.1.5"
+              const cMatch = bMatches.find(b => {
+                const mv = b.name.match(/\b(\d+)\.(\d+)\.(\d+)\((\d+)\)/);
+                return mv ? magicStr.startsWith(mv[1]+mv[2]+mv[3]+mv[4]) : false;
+              });
+              if (cMatch) { candidate = cMatch; }
+              else {
+                // Familia ambigua → NO crear bot nuevo, esperar que el usuario asigne magic manualmente
+                esAmbiguo = true;
+                console.warn('[MFX] Familia ambigua, no se asigna:', magicStr, bMatches.map(b=>b.name));
+              }
+            }
           }
         }
 
@@ -11049,8 +11065,8 @@ function importMyfxbookCSV(csvText) {
           candidate.magic = parseInt(magic);
           candidate.myfxbookData = mfxData;
           matched++;
-        } else {
-          // Sin match → crear bot nuevo (magic desconocido en el CSV)
+        } else if (!esAmbiguo) {
+          // Sin match y no es ambiguo → crear bot nuevo (magic desconocido en el CSV)
           const firstName = trades[0];
           const rawName = (firstName.comment || '').replace(/_/g,' ').replace(/\s+/g,' ').trim() || `Magic ${magic}`;
           DB.push({
@@ -11078,8 +11094,16 @@ function importMyfxbookCSV(csvText) {
 
   const repaired = repairDuplicateBots();
   markDirty(); render();
-  let msg = `✓ Myfxbook CSV importado — ${matched} actualizado(s), ${created} creado(s)${repaired ? `, ${repaired} duplicado(s) reparado(s)` : ''}.`;
+  const botCreados = DB.filter(b => b.source === 'myfxbook').map(b => `  • Magic ${b.magic} → "${b.name}"`).join('\n');
+  let msg = `✓ Myfxbook CSV importado\n  Actualizados: ${matched} | Nuevos: ${created} | Reparados: ${repaired}`;
+  if (created > 0) msg += `\n\n⚠ Bots sin match (creados nuevos):\n${botCreados}\n\nSi ya existen en el databank, revisá que sus nombres tengan el formato X.Y.Z correcto.`;
   alertOk(msg);
+  // Log detallado en consola para diagnóstico
+  console.group('[MFX Import]');
+  console.log('Magics en CSV:', Object.keys(tradesByMagic).join(', '));
+  console.log('Actualizados:', matched, '| Creados:', created, '| Reparados:', repaired);
+  DB.forEach(b => { if (b.myfxbookData) console.log(`  ✓ Bot "${b.name}" (magic ${b.magic}) — PF ${b.myfxbookData.pf}`); });
+  console.groupEnd();
 }
 
 // ── VIEW DATA ──────────────────────────────────────────────────
