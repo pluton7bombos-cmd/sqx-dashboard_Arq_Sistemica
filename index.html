@@ -10896,8 +10896,8 @@ function buildMagicNormalizer(rawMagics) {
 function repairDuplicateBots() {
   let merged = 0;
   const normSep = s => (s||'').toLowerCase()
-    .replace(/\bwfm\b/gi, '')
     .replace(/[_.\-\(\)\s]+/g, ' ')
+    .replace(/\bwfm\b/gi, '')
     .replace(/\s+/g, ' ')
     .trim();
   const mfxOrphans = DB.filter(b => b.source === 'myfxbook' && b.magic);
@@ -11038,8 +11038,8 @@ function importMyfxbookCSV(csvText) {
     // paréntesis) en espacio, elimina prefijo WFM, colapsa espacios. Cubre el caso donde
     // el EA de MT5 convierte "Strategy 1.5.5(5) - Improved 4.1.4" → "strategy_1_5_5_5_Improved_4_1_"
     const normSep = s => (s||'').toLowerCase()
-      .replace(/\bwfm\b/gi, '')
       .replace(/[_.\-\(\)\s]+/g, ' ')
+      .replace(/\bwfm\b/gi, '')
       .replace(/\s+/g, ' ')
       .trim();
 
