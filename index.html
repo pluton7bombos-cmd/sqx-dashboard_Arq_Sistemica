@@ -10832,7 +10832,7 @@ function processFile(file) {
 }
 
 // ── MYFXBOOK CSV IMPORT ────────────────────────────────────────
-const MFX_MAGIC_MAPPER = { 4914115:4914, 2623214:2623, 1555115:1555, 2719115:2719 };
+const MFX_MAGIC_MAPPER = { 4914115:4914, 2623214:2623, 1555115:1555, 2719115:2719, 1916214:1916 };
 
 // Extrae el código numérico principal de un nombre de estrategia SQX (solo primer X.Y.Z).
 // "Strategy 2.6.23 - Improved 2.1.4" → "2623"
@@ -10843,36 +10843,41 @@ function nameToMagicDigits(name) {
 }
 
 // Devuelve todos los candidatos de magic que puede generar un nombre SQX.
-// "Strategy 2.6.23 - Improved 2.1.4" → ["2623", "2623214"]  (código solo + código+improved)
-// Cubre el caso donde MT5 concatena ambos códigos sin puntos como magic number.
+// "Strategy 2.7.19(1) - Improved 1.1.7" → ["27191","2719","27191117","2719117"]
+// Incluye versiones con y sin variante (N) para cubrir ambos formatos MT5.
 function nameToMagicCandidates(name) {
   const all = [...name.matchAll(/\b(\d+)\.(\d+)\.(\d+)(?:\((\d+)\))?/g)];
   if (!all.length) return [name.replace(/\D/g,'')];
-  const codes = all.map(m => m[1]+m[2]+m[3]+(m[4]||''));
-  const candidates = [codes[0]]; // código estrategia solo
-  if (codes.length >= 2) candidates.push(codes[0]+codes[1]); // estrategia+improved
-  if (codes.length >= 3) candidates.push(codes.slice(0,3).join('')); // tres códigos
-  return [...new Set(candidates)];
+  const full  = m => m[1]+m[2]+m[3]+(m[4]||''); // con variante: "27191"
+  const short = m => m[1]+m[2]+m[3];             // sin variante: "2719"
+  const s = all[0], imp = all[1];
+  const c = [full(s), short(s)]; // estrategia sola: con y sin variante
+  if (imp) {
+    c.push(full(s)+full(imp));   // estrategia(var)+improved(var): "27191117"
+    c.push(short(s)+full(imp));  // estrategia+improved(var):      "2719117"
+    c.push(full(s)+short(imp));  // estrategia(var)+improved:      "27191117" (si imp sin var, igual)
+    c.push(short(s)+short(imp)); // estrategia+improved:           "2719117"
+  }
+  return [...new Set(c)].filter(Boolean);
 }
 
 function buildMagicNormalizer(rawMagics) {
   const map = {...MFX_MAGIC_MAPPER};
   const dbMagics = DB.filter(b => b.magic).map(b => Number(b.magic)).filter(Boolean);
   // Códigos derivados de nombre para bots SIN magic asignado — solo si son ÚNICOS
-  // Todos los candidatos únicos derivados de nombres (código solo y código+improved)
-  // Si dos bots generan el mismo candidato, se excluye (colisión de familia)
+  // Códigos cortos únicos derivados de nombres (solo X.Y.Z, sin Improved)
+  // Solo los únicos para evitar colisión de familia (ej. dos bots con "3.1.18(1)")
   const codeCounts = {};
   DB.filter(b => !b.magic).forEach(b => {
-    nameToMagicCandidates(b.name).forEach(c => {
-      codeCounts[c] = (codeCounts[c] || 0) + 1;
-    });
+    const c = nameToMagicDigits(b.name);
+    if (c) codeCounts[c] = (codeCounts[c] || 0) + 1;
   });
   const uniqueNameCodes = Object.entries(codeCounts)
     .filter(([, n]) => n === 1)
     .map(([c]) => Number(c))
     .filter(Boolean);
   const shorts = [...new Set([
-    ...rawMagics.filter(m => String(m).length <= 7), // incluye magics de hasta 7 dígitos como short
+    ...rawMagics.filter(m => String(m).length <= 4), // solo magics cortos del CSV (≤4 dígitos)
     ...dbMagics,
     ...uniqueNameCodes,
   ])].sort((a, b) => String(b).length - String(a).length);
@@ -11053,21 +11058,16 @@ function importMyfxbookCSV(csvText) {
           if (bMatches.length === 1) {
             candidate = bMatches[0];
           } else if (bMatches.length > 1) {
-            // 3c: preferir match exacto dentro de los candidatos
-            const exact = bMatches.find(b => nameToMagicDigits(b.name) === magicStr);
-            if (exact) { candidate = exact; }
-            else {
-              // 3d: desempate por variante X.Y.Z(N) → ej. "1555415" para "1.5.5(5) - Improved 4.1.5"
-              const cMatch = bMatches.find(b => {
-                const mv = b.name.match(/\b(\d+)\.(\d+)\.(\d+)\((\d+)\)/);
-                return mv ? magicStr.startsWith(mv[1]+mv[2]+mv[3]+mv[4]) : false;
-              });
-              if (cMatch) { candidate = cMatch; }
-              else {
-                // Familia ambigua → NO crear bot nuevo, esperar que el usuario asigne magic manualmente
-                esAmbiguo = true;
-                console.warn('[MFX] Familia ambigua, no se asigna:', magicStr, bMatches.map(b=>b.name));
-              }
+            // 3c: desempate por match exacto en nameToMagicCandidates
+            // "31181514" matchea exactamente ["31181","31181514"] del bot "3.1.18(1)-Improved 5.1.4"
+            // pero NO a ["31181","31181516"] del bot "3.1.18(1)-Improved 5.1.6"
+            const exactMatches = bMatches.filter(b => nameToMagicCandidates(b.name).includes(magicStr));
+            if (exactMatches.length === 1) {
+              candidate = exactMatches[0];
+            } else {
+              // Familia ambigua → NO crear bot nuevo, el usuario debe asignar magic manualmente una vez
+              esAmbiguo = true;
+              console.warn('[MFX] Familia ambigua, asigná magic manualmente:', magicStr, bMatches.map(b=>b.name));
             }
           }
         }
