@@ -10989,24 +10989,38 @@ function importMyfxbookCSV(csvText) {
         prefixBot.myfxbookData = mfxData;
         matched++;
       } else {
-        // 3. Name-based match (para bots sin magic aún)
-        // Paso 3a: todos los dígitos del nombre (distingue bots de la misma familia)
-        //   "Strategy 1.5.5(5) - Improved 4.1.5" → "1555415" = magic "1555415" ✓
-        //   "Strategy 1.5.5(5) - Improved 1.1.5" → "1555115" ≠ "1555415"        ✓
-        // Paso 3b: solo X.Y.Z (para cuando el magic es solo el código base)
-        //   "Strategy 2.6.23 - Improved 2.1.4"  → "2623"    = magic "2623"      ✓
+        // 3. Name-based match — auto-asigna sin dialog cuando el match es determinístico
         const magicStr = String(magic);
-        let candidate = DB.find(b => !b.magic && b.name.replace(/\D/g,'') === magicStr);
+        let candidate = null;
+
+        // 3a: full-digits exacto (ej. "1555415" === "1555415") → family-safe
+        const aMatch = DB.find(b => !b.magic && b.name.replace(/\D/g,'') === magicStr);
+        if (aMatch) { candidate = aMatch; }
+
         if (!candidate) {
-          candidate = DB.find(b => !b.magic && nameToMagicDigits(b.name) === magicStr);
+          // 3b: código X.Y.Z exacto (ej. "2623" === "2623")
+          // Solo si hay UN único candidato para evitar colisiones de familia
+          const bMatches = DB.filter(b => !b.magic && nameToMagicDigits(b.name) === magicStr);
+          if (bMatches.length === 1) {
+            candidate = bMatches[0];
+          } else if (bMatches.length > 1) {
+            // 3c: código + variante X.Y.Z(N) → ej. "31152" para "3.1.15(2)"
+            const cMatch = bMatches.find(b => {
+              const mv = b.name.match(/\b(\d+)\.(\d+)\.(\d+)\((\d+)\)/);
+              return mv ? (mv[1] + mv[2] + mv[3] + mv[4]) === magicStr : false;
+            });
+            if (cMatch) candidate = cMatch;
+            // Sin resolución → no asignar (el usuario puede usar el parser inline del bot)
+          }
         }
 
-        if (candidate && confirm(`Magic ${magic} del CSV coincide con el bot:\n"${candidate.name}"\n\n¿Cargar los datos de Myfxbook en ese bot?`)) {
+        if (candidate) {
+          // Match determinístico: asignar sin dialog
           candidate.magic = parseInt(magic);
           candidate.myfxbookData = mfxData;
           matched++;
-        } else if (!candidate) {
-          // Sin candidato → crear bot nuevo
+        } else {
+          // Sin match → crear bot nuevo (magic desconocido en el CSV)
           const firstName = trades[0];
           const rawName = (firstName.comment || '').replace(/_/g,' ').replace(/\s+/g,' ').trim() || `Magic ${magic}`;
           DB.push({
@@ -11028,7 +11042,6 @@ function importMyfxbookCSV(csvText) {
           });
           created++;
         }
-        // Si había candidato pero el usuario dijo NO → ignora ese magic
       }
     }
   });
