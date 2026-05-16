@@ -10956,47 +10956,61 @@ function importMyfxbookCSV(csvText) {
       tradeList,
     };
 
+    if (!magic || magic === "0") return; // ignorar entradas sin magic válido
+
+    // 1. Exact match por magic number
     const bot = DB.find(b => String(b.magic) === String(magic));
     if (bot) {
       bot.myfxbookData = mfxData;
       matched++;
     } else {
-      // Buscar candidato por nombre: "4.6.4.2(2)" → dígitos "46422" empieza con "4642"
-      // O "1.5.5(5)" → dígitos "1555" == "1555"
-      const magicStr = String(magic);
-      const candidate = DB.find(b => {
-        if (b.magic) return false;
-        return b.name.replace(/\D/g, '') === magicStr;
+      // 2. Prefix match: maneja variaciones de formato (ej. 2719 vs 271900, 4914 vs 4914115)
+      const prefixBot = DB.find(b => {
+        if (!b.magic) return false;
+        const bm = String(b.magic);
+        const cm = String(magic);
+        return cm.startsWith(bm) || bm.startsWith(cm);
       });
-
-      if (candidate && confirm(`Magic ${magic} del CSV coincide con el bot:\n"${candidate.name}"\n\n¿Cargar los datos de Myfxbook en ese bot?`)) {
-        candidate.magic = parseInt(magic);
-        candidate.myfxbookData = mfxData;
+      if (prefixBot) {
+        prefixBot.myfxbookData = mfxData;
         matched++;
-      } else if (!candidate) {
-        // No hay candidato → crear bot nuevo
-        const firstName = trades[0];
-        const rawName = (firstName.comment || '').replace(/_/g,' ').replace(/\s+/g,' ').trim() || `Magic ${magic}`;
-        DB.push({
-          id:          Date.now().toString(36) + Math.random().toString(36).slice(2),
-          magic:       parseInt(magic),
-          name:        rawName,
-          symbol:      firstName.symbol || '—',
-          tf:          'H1',
-          phase:       '—',
-          sqxFilter:   '—',
-          source:      'myfxbook',
-          added:       new Date().toISOString().slice(0,10),
-          notes:       '',
-          sqn: null, stag: null, zp: null,
-          is:  null,
-          oos: null,
-          overviewData:  null,
-          myfxbookData:  mfxData,
+      } else {
+        // 3. Name-digits match: para bots sin magic asignado aún
+        const magicStr = String(magic);
+        const candidate = DB.find(b => {
+          if (b.magic) return false;
+          return b.name.replace(/\D/g, '') === magicStr;
         });
-        created++;
+
+        if (candidate && confirm(`Magic ${magic} del CSV coincide con el bot:\n"${candidate.name}"\n\n¿Cargar los datos de Myfxbook en ese bot?`)) {
+          candidate.magic = parseInt(magic);
+          candidate.myfxbookData = mfxData;
+          matched++;
+        } else if (!candidate) {
+          // Sin candidato → crear bot nuevo
+          const firstName = trades[0];
+          const rawName = (firstName.comment || '').replace(/_/g,' ').replace(/\s+/g,' ').trim() || `Magic ${magic}`;
+          DB.push({
+            id:          Date.now().toString(36) + Math.random().toString(36).slice(2),
+            magic:       parseInt(magic),
+            name:        rawName,
+            symbol:      firstName.symbol || '—',
+            tf:          'H1',
+            phase:       '—',
+            sqxFilter:   '—',
+            source:      'myfxbook',
+            added:       new Date().toISOString().slice(0,10),
+            notes:       '',
+            sqn: null, stag: null, zp: null,
+            is:  null,
+            oos: null,
+            overviewData:  null,
+            myfxbookData:  mfxData,
+          });
+          created++;
+        }
+        // Si había candidato pero el usuario dijo NO → ignora ese magic
       }
-      // Si había candidato pero el usuario dijo NO → no hace nada (ignora ese magic)
     }
   });
 
@@ -12726,25 +12740,34 @@ render();
 
   function wrGetBots() {
     let bots = [];
-    if (typeof mergedBots !== "undefined" && Array.isArray(mergedBots) && mergedBots.length > 0) {
-      bots = mergedBots.map(b => ({
-        magic:           b.magic || b.id || "—",
-        symbol:          b.symbol || b.par || "—",
-        pf_sqx:          parseFloat(b.pf_sqx || b.sqx?.pf || 0),
-        pf_live:         parseFloat(b.pf_live || b.live?.pf || 0),
-        dd_live:         parseFloat(b.dd_live || b.live?.dd || 0),
-        wr:              parseFloat(b.live?.wr || b.wr || 0),
-        ganancia_semana: parseFloat(b.live?.ganancia || b.ganancia || 0),
+    if (typeof DB === "undefined" || !Array.isArray(DB)) return bots;
+    DB.filter(b => b.myfxbookData).forEach(b => {
+      const mfx = b.myfxbookData;
+      const pf_live = mfx.pf      || 0;
+      const dd_live = mfx.ddPct   || 0;
+      const wr      = mfx.winRate || 0;
+      // ganancia de la última semana (trades de los últimos 7 días)
+      const now = Date.now();
+      const weekMs = 7 * 24 * 60 * 60 * 1000;
+      const weekGain = (mfx.tradeList || [])
+        .filter(t => {
+          const d = t.closeDate ? new Date(t.closeDate).getTime() : 0;
+          return (now - d) <= weekMs;
+        })
+        .reduce((s, t) => s + (t.netProfit || 0), 0);
+      const gain = Math.round(weekGain * 100) / 100;
+      bots.push({
+        magic:           b.magic   || "—",
+        symbol:          b.symbol  || "—",
+        pf_live,
+        dd_live,
+        wr,
+        ganancia_semana: gain,
         dpf:             b.dpf !== undefined ? b.dpf : null,
-        estado:          b.estado || "—",
-        score:           wrCalcScore(
-                           b.pf_live || b.live?.pf,
-                           b.live?.wr || b.wr,
-                           b.dd_live  || b.live?.dd,
-                           b.live?.ganancia || b.ganancia
-                         ),
-      }));
-    }
+        estado:          b.estado || b.phase || "—",
+        score:           wrCalcScore(pf_live, wr, dd_live, gain),
+      });
+    });
     return bots;
   }
 
