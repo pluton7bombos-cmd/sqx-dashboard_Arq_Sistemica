@@ -295,6 +295,178 @@
   #dna-panel .badge-med  { background: rgba(146,64,14,0.12); color: var(--amber); }
   #dna-panel .badge-info { background: var(--blue-bg);       color: var(--blue); }
   #dna-panel .badge-ok   { background: var(--green-bg);      color: var(--green); }
+
+/* ══════════════════════════════════════
+   WEEKLY BOT RANKING MODULE
+   ══════════════════════════════════════ */
+#weekly-ranking-panel {
+  background: var(--surface, #111318);
+  border: 1px solid var(--border, #1e2230);
+  border-radius: 4px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+}
+#weekly-ranking-panel .wr-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--surface2, #1a1d24);
+  border-bottom: 1px solid var(--border, #1e2230);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+#weekly-ranking-panel .wr-title {
+  font-family: var(--font-display, "Bebas Neue", sans-serif);
+  font-size: 20px;
+  letter-spacing: 3px;
+  color: var(--yellow, #ffd740);
+}
+.wr-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.wr-week-btn {
+  background: var(--surface2, #1a1d24);
+  border: 1px solid var(--border, #1e2230);
+  color: var(--muted, #4a5068);
+  padding: 4px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  transition: all 0.15s;
+}
+.wr-week-btn:hover { border-color: var(--yellow, #ffd740); color: var(--yellow, #ffd740); }
+.wr-week-label {
+  font-size: 11px;
+  color: var(--text, #e0e4f0);
+  min-width: 130px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+.wr-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  background: rgba(255,215,64,0.1);
+  border: 1px solid rgba(255,215,64,0.3);
+  color: var(--yellow, #ffd740);
+  letter-spacing: 1px;
+}
+.wr-snapshot-btn {
+  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 2px;
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.25);
+  color: var(--accent, #00d4ff);
+  cursor: pointer;
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 1px;
+  transition: all 0.15s;
+}
+.wr-snapshot-btn:hover { background: rgba(0,212,255,0.15); }
+#weekly-ranking-panel .wr-table-wrap { overflow-x: auto; }
+#weekly-ranking-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+#weekly-ranking-panel th {
+  padding: 9px 14px;
+  text-align: left;
+  color: var(--muted, #4a5068);
+  font-size: 10px;
+  letter-spacing: 2px;
+  border-bottom: 1px solid var(--border, #1e2230);
+  font-weight: 400;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+#weekly-ranking-panel th:hover { color: var(--yellow, #ffd740); }
+#weekly-ranking-panel tr.wr-row {
+  border-bottom: 1px solid var(--border, #1e2230);
+  transition: background 0.15s;
+}
+#weekly-ranking-panel tr.wr-row:hover { background: rgba(255,215,64,0.03); }
+#weekly-ranking-panel td { padding: 9px 14px; vertical-align: middle; }
+.wr-pos {
+  font-family: var(--font-display, "Bebas Neue", sans-serif);
+  font-size: 20px;
+  line-height: 1;
+  color: var(--muted, #4a5068);
+  width: 40px;
+}
+.wr-pos.p1 { color: var(--yellow, #ffd740); text-shadow: 0 0 12px rgba(255,215,64,0.5); }
+.wr-pos.p2 { color: #aab0cc; }
+.wr-pos.p3 { color: #c49a5e; }
+.wr-magic { font-size: 11px; color: var(--muted, #4a5068); }
+.wr-symbol { font-weight: 700; font-size: 13px; }
+.wr-pf-good { color: var(--green, #00e676); font-weight: 600; }
+.wr-pf-mid  { color: var(--yellow, #ffd740); font-weight: 600; }
+.wr-pf-bad  { color: var(--red, #ff4444); font-weight: 600; }
+.wr-gain-pos { color: var(--green, #00e676); font-weight: 600; }
+.wr-gain-neg { color: var(--red, #ff4444); font-weight: 600; }
+.wr-delta {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.wr-delta-g { background: rgba(0,230,118,0.12); color: var(--green, #00e676); border: 1px solid rgba(0,230,118,0.25); }
+.wr-delta-y { background: rgba(255,215,64,0.12); color: var(--yellow, #ffd740); border: 1px solid rgba(255,215,64,0.25); }
+.wr-delta-r { background: rgba(255,68,68,0.12); color: var(--red, #ff4444); border: 1px solid rgba(255,68,68,0.25); }
+.wr-score-bar-wrap { display: flex; align-items: center; gap: 8px; min-width: 120px; }
+.wr-score-num { font-weight: 700; font-size: 13px; color: var(--accent, #00d4ff); min-width: 40px; }
+.wr-score-bar-bg {
+  flex: 1;
+  height: 4px;
+  background: var(--border, #1e2230);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.wr-score-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent, #00d4ff), var(--yellow, #ffd740));
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+.wr-history-wrap {
+  padding: 8px 16px;
+  border-top: 1px solid var(--border, #1e2230);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--muted, #4a5068);
+  flex-wrap: wrap;
+}
+.wr-history-select {
+  background: var(--surface2, #1a1d24);
+  border: 1px solid var(--border, #1e2230);
+  color: var(--text, #e0e4f0);
+  padding: 3px 8px;
+  border-radius: 2px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  cursor: pointer;
+}
+.wr-footer-note {
+  padding: 8px 16px 12px;
+  font-size: 10px;
+  color: var(--muted, #4a5068);
+  letter-spacing: 0.5px;
+  border-top: 1px solid var(--border, #1e2230);
+}
+.wr-empty {
+  padding: 32px;
+  text-align: center;
+  color: var(--muted, #4a5068);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+/* fin WEEKLY RANKING CSS */
 </style>
 </head>
 <body>
@@ -498,6 +670,53 @@
       <button class="fbtn" onclick="setF('passed',this)">SQX PASSED</button>
     </div>
     <div class="table-scroll">
+
+<!-- ══════════════════════════════════════
+     WEEKLY BOT RANKING PANEL
+     ══════════════════════════════════════ -->
+<div id="weekly-ranking-panel">
+  <div class="wr-header">
+    <span class="wr-title">&#127942; RANKING SEMANAL DE BOTS</span>
+    <div class="wr-controls">
+      <button class="wr-week-btn" onclick="wrChangeWeek(-1)">&#9664; ANTERIOR</button>
+      <span class="wr-week-label" id="wr-week-label">&#8212;</span>
+      <button class="wr-week-btn" onclick="wrChangeWeek(1)">SIGUIENTE &#9654;</button>
+      <select class="wr-history-select" id="wr-history-select" onchange="wrLoadSnapshot(this.value)">
+        <option value="">&#128197; Historial de semanas...</option>
+      </select>
+      <button class="wr-snapshot-btn" onclick="wrSaveSnapshot()" title="Guardar snapshot de esta semana">
+        &#128190; GUARDAR SEMANA
+      </button>
+      <span class="wr-badge" id="wr-current-badge">SEMANA ACTUAL</span>
+    </div>
+  </div>
+  <div class="wr-table-wrap">
+    <table id="wr-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th onclick="wrSort('symbol')">SIMBOLO</th>
+          <th>MAGIC</th>
+          <th onclick="wrSort('pf_live')">PF LIVE &#8597;</th>
+          <th onclick="wrSort('dd_live')">DD % &#8597;</th>
+          <th onclick="wrSort('wr')">WIN RATE &#8597;</th>
+          <th onclick="wrSort('ganancia_semana')">GANANCIA SEM &#8597;</th>
+          <th onclick="wrSort('dpf')">&#916;PF &#8597;</th>
+          <th onclick="wrSort('score')">SCORE &#8597;</th>
+          <th>ESTADO</th>
+        </tr>
+      </thead>
+      <tbody id="wr-tbody">
+        <tr><td colspan="10" class="wr-empty">Carga los CSVs para ver el ranking semanal</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="wr-footer-note">
+    SCORE = (PF_Live&#215;40) + (WR&#215;20) + (1/DD&#215;20) + (Ganancia&#215;20) &#8212; Actualiza al cargar CSV Myfxbook
+  </div>
+</div>
+<!-- fin WEEKLY RANKING PANEL -->
+
       <table>
         <thead>
           <tr>
@@ -12485,6 +12704,209 @@ function toggleDnaCollapse() {
 // Init
 updateDbCount();
 render();
+
+/* ══════════════════════════════════════
+   WEEKLY RANKING — logica completa
+   ══════════════════════════════════════ */
+(function() {
+  const WR_STORAGE_KEY = "arq_sistemica_weekly_ranking";
+  const WR_SCORE_WEIGHTS = { pf: 40, wr: 20, dd: 20, gain: 20 };
+  let wrCurrentWeekOffset = 0;
+  let wrSortCol = "score";
+  let wrSortDir = -1;
+  let wrViewingSnapshot = null;
+
+  function wrCalcScore(pf, wr, dd, gain) {
+    const s_pf   = (pf  || 0) * WR_SCORE_WEIGHTS.pf;
+    const s_wr   = ((wr || 0) / 100) * WR_SCORE_WEIGHTS.wr;
+    const s_dd   = (dd  || 0) > 0 ? (1 / dd) * WR_SCORE_WEIGHTS.dd : 0;
+    const s_gain = Math.min(Math.max((gain || 0) / 10, 0), WR_SCORE_WEIGHTS.gain);
+    return +((s_pf + s_wr + s_dd + s_gain).toFixed(1));
+  }
+
+  function wrGetBots() {
+    let bots = [];
+    if (typeof mergedBots !== "undefined" && Array.isArray(mergedBots) && mergedBots.length > 0) {
+      bots = mergedBots.map(b => ({
+        magic:           b.magic || b.id || "—",
+        symbol:          b.symbol || b.par || "—",
+        pf_sqx:          parseFloat(b.pf_sqx || b.sqx?.pf || 0),
+        pf_live:         parseFloat(b.pf_live || b.live?.pf || 0),
+        dd_live:         parseFloat(b.dd_live || b.live?.dd || 0),
+        wr:              parseFloat(b.live?.wr || b.wr || 0),
+        ganancia_semana: parseFloat(b.live?.ganancia || b.ganancia || 0),
+        dpf:             b.dpf !== undefined ? b.dpf : null,
+        estado:          b.estado || "—",
+        score:           wrCalcScore(
+                           b.pf_live || b.live?.pf,
+                           b.live?.wr || b.wr,
+                           b.dd_live  || b.live?.dd,
+                           b.live?.ganancia || b.ganancia
+                         ),
+      }));
+    }
+    return bots;
+  }
+
+  function wrWeekRange(offset) {
+    const now = new Date();
+    now.setDate(now.getDate() + offset * 7);
+    const dow = now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    const fmt = d => d.toLocaleDateString("es-AR", {day:"2-digit", month:"2-digit", year:"numeric"});
+    return { start: fmt(monday), end: fmt(sunday), key: monday.toISOString().slice(0,10) };
+  }
+
+  function wrRender(bots) {
+    const tbody = document.getElementById("wr-tbody");
+    if (!tbody) return;
+    if (!bots || bots.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="10" class="wr-empty">Sin datos — carga los CSVs del dashboard</td></tr>';
+      return;
+    }
+    const sorted = [...bots].sort((a, b) => {
+      const va = a[wrSortCol] ?? 0;
+      const vb = b[wrSortCol] ?? 0;
+      if (typeof va === "string") return wrSortDir * va.localeCompare(vb);
+      return wrSortDir * (va - vb);
+    });
+    const maxScore = Math.max(...sorted.map(b => b.score), 1);
+    tbody.innerHTML = sorted.map((b, i) => {
+      const pos = i + 1;
+      const posClass = pos === 1 ? "p1" : pos === 2 ? "p2" : pos === 3 ? "p3" : "";
+      const pfClass = b.pf_live >= 1.30 ? "wr-pf-good" : b.pf_live >= 1.15 ? "wr-pf-mid" : "wr-pf-bad";
+      const gainClass = b.ganancia_semana >= 0 ? "wr-gain-pos" : "wr-gain-neg";
+      const gainStr = b.ganancia_semana >= 0
+        ? "+$" + b.ganancia_semana.toFixed(2)
+        : "-$" + Math.abs(b.ganancia_semana).toFixed(2);
+      let dpfStr = "—";
+      if (b.dpf !== null && b.dpf !== undefined) {
+        const sign = b.dpf > 0 ? "+" : "";
+        const dpfClass = Math.abs(b.dpf) <= 0.15 ? "wr-delta-g" : Math.abs(b.dpf) <= 0.30 ? "wr-delta-y" : "wr-delta-r";
+        dpfStr = '<span class="wr-delta ' + dpfClass + '">' + sign + b.dpf + '</span>';
+      }
+      const estadoColors = { GREEN:"var(--green,#00e676)", YELLOW:"var(--yellow,#ffd740)", RED:"var(--red,#ff4444)" };
+      const estadoColor = estadoColors[b.estado] || "var(--muted,#4a5068)";
+      const barPct = Math.round((b.score / maxScore) * 100);
+      return '<tr class="wr-row">' +
+        '<td><span class="wr-pos ' + posClass + '">#' + pos + '</span></td>' +
+        '<td class="wr-symbol">' + b.symbol + '</td>' +
+        '<td class="wr-magic">' + b.magic + '</td>' +
+        '<td class="' + pfClass + '">' + (b.pf_live ? b.pf_live.toFixed(2) : "—") + '</td>' +
+        '<td>' + (b.dd_live ? b.dd_live.toFixed(2) + "%" : "—") + '</td>' +
+        '<td>' + (b.wr ? b.wr.toFixed(1) + "%" : "—") + '</td>' +
+        '<td class="' + gainClass + '">' + gainStr + '</td>' +
+        '<td>' + dpfStr + '</td>' +
+        '<td><div class="wr-score-bar-wrap"><span class="wr-score-num">' + b.score + '</span>' +
+          '<div class="wr-score-bar-bg"><div class="wr-score-bar-fill" style="width:' + barPct + '%"></div></div></div></td>' +
+        '<td style="color:' + estadoColor + ';font-size:11px;font-weight:700;letter-spacing:1px">' + b.estado + '</td>' +
+        '</tr>';
+    }).join("");
+  }
+
+  function wrUpdateLabel() {
+    const label = document.getElementById("wr-week-label");
+    const badge = document.getElementById("wr-current-badge");
+    if (!label) return;
+    const range = wrWeekRange(wrCurrentWeekOffset);
+    label.textContent = range.start + " — " + range.end;
+    if (badge) badge.textContent = wrCurrentWeekOffset === 0 ? "SEMANA ACTUAL" : "OFFSET " + (wrCurrentWeekOffset > 0 ? "+" : "") + wrCurrentWeekOffset;
+  }
+
+  window.wrSaveSnapshot = function() {
+    const bots = wrGetBots();
+    if (bots.length === 0) { alert("No hay datos de bots cargados."); return; }
+    const range = wrWeekRange(0);
+    let history = JSON.parse(localStorage.getItem(WR_STORAGE_KEY) || "{}");
+    history[range.key] = { label: range.start + " → " + range.end, bots, savedAt: new Date().toISOString() };
+    localStorage.setItem(WR_STORAGE_KEY, JSON.stringify(history));
+    wrRefreshHistorySelect();
+    alert("✅ Snapshot guardado: " + range.start + " → " + range.end);
+  };
+
+  window.wrLoadSnapshot = function(key) {
+    if (!key) { wrViewingSnapshot = null; wrRender(wrGetBots()); wrUpdateLabel(); return; }
+    const history = JSON.parse(localStorage.getItem(WR_STORAGE_KEY) || "{}");
+    const snap = history[key];
+    if (!snap) return;
+    wrViewingSnapshot = key;
+    const badge = document.getElementById("wr-current-badge");
+    if (badge) badge.textContent = "SNAPSHOT: " + snap.label;
+    const label = document.getElementById("wr-week-label");
+    if (label) label.textContent = snap.label;
+    wrRender(snap.bots);
+  };
+
+  function wrRefreshHistorySelect() {
+    const sel = document.getElementById("wr-history-select");
+    if (!sel) return;
+    const history = JSON.parse(localStorage.getItem(WR_STORAGE_KEY) || "{}");
+    const keys = Object.keys(history).sort().reverse();
+    sel.innerHTML = '<option value="">&#128197; Historial de semanas...</option>';
+    keys.forEach(k => {
+      const opt = document.createElement("option");
+      opt.value = k;
+      opt.textContent = history[k].label;
+      sel.appendChild(opt);
+    });
+  }
+
+  window.wrSort = function(col) {
+    if (wrSortCol === col) wrSortDir *= -1;
+    else { wrSortCol = col; wrSortDir = -1; }
+    const bots = wrViewingSnapshot
+      ? (JSON.parse(localStorage.getItem(WR_STORAGE_KEY) || "{}")[wrViewingSnapshot]?.bots || [])
+      : wrGetBots();
+    wrRender(bots);
+  };
+
+  window.wrChangeWeek = function(dir) {
+    wrCurrentWeekOffset += dir;
+    wrUpdateLabel();
+    const range = wrWeekRange(wrCurrentWeekOffset);
+    const history = JSON.parse(localStorage.getItem(WR_STORAGE_KEY) || "{}");
+    if (history[range.key]) {
+      wrLoadSnapshot(range.key);
+      const sel = document.getElementById("wr-history-select");
+      if (sel) sel.value = range.key;
+    } else {
+      wrViewingSnapshot = null;
+      wrRender(wrCurrentWeekOffset === 0 ? wrGetBots() : []);
+    }
+  };
+
+  window.wrRefresh = function() {
+    if (wrViewingSnapshot) return;
+    wrRender(wrGetBots());
+    wrUpdateLabel();
+    wrRefreshHistorySelect();
+  };
+
+  const _originalRender = typeof render === "function" ? render : null;
+  if (_originalRender) {
+    window._wrOriginalRender = _originalRender;
+    window.render = function() {
+      _originalRender.apply(this, arguments);
+      setTimeout(wrRefresh, 100);
+    };
+  }
+
+  function wrInit() {
+    wrUpdateLabel();
+    wrRefreshHistorySelect();
+    const bots = wrGetBots();
+    if (bots.length > 0) wrRender(bots);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", wrInit);
+  } else {
+    wrInit();
+  }
+})(); /* fin Weekly Ranking module */
 </script>
 
   <!-- ══════════ OVERLAP DE INDICADORES ══════════ -->
