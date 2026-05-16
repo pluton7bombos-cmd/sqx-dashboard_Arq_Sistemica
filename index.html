@@ -10895,17 +10895,24 @@ function buildMagicNormalizer(rawMagics) {
 // Llamar tras carga de DB y tras cada importación CSV para limpiar duplicados previos.
 function repairDuplicateBots() {
   let merged = 0;
-  const normName = s => (s||'').toLowerCase().replace(/_/g,' ').replace(/\s+/g,' ').trim();
+  const normSep = s => (s||'').toLowerCase()
+    .replace(/\bwfm\b/gi, '')
+    .replace(/[_.\-\(\)\s]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   const mfxOrphans = DB.filter(b => b.source === 'myfxbook' && b.magic);
   mfxOrphans.forEach(orphan => {
     const magicStr = String(orphan.magic);
-    // orphan.name fue construido desde el campo Comment, que === Strategy Name en SQX
-    const orphanNameNorm = normName(orphan.name);
+    // orphan.name viene del campo Comment de MT5, que puede ser truncado/reformateado de Strategy Name
+    const orphanNorm = normSep(orphan.name);
     const target = DB.find(b => {
       if (b === orphan || b.source === 'myfxbook') return false;
       if (b.magic && String(b.magic) === magicStr) return true;
-      // Vínculo semántico principal: comment (orphan.name) === strategy name (b.name)
-      if (orphanNameNorm && normName(b.name) === orphanNameNorm) return true;
+      // Vínculo semántico: comment normalizado coincide o es prefijo del strategy name
+      if (orphanNorm && orphanNorm.length >= 8) {
+        const bn = normSep(b.name);
+        if (bn === orphanNorm || bn.startsWith(orphanNorm + ' ') || bn.startsWith(orphanNorm)) return true;
+      }
       return nameToMagicCandidates(b.name).some(c => c === magicStr || magicStr.startsWith(c));
     });
     if (target) {
@@ -11027,13 +11034,18 @@ function importMyfxbookCSV(csvText) {
 
     if (!magic || magic === "0") return; // ignorar entradas sin magic válido
 
-    // Normalización: lowercase, guiones bajos → espacio, colapsar espacios
-    const normName = s => (s||'').toLowerCase().replace(/_/g,' ').replace(/\s+/g,' ').trim();
+    // Normalización robusta: unifica TODOS los separadores (puntos, guiones, guiones bajos,
+    // paréntesis) en espacio, elimina prefijo WFM, colapsa espacios. Cubre el caso donde
+    // el EA de MT5 convierte "Strategy 1.5.5(5) - Improved 4.1.4" → "strategy_1_5_5_5_Improved_4_1_"
+    const normSep = s => (s||'').toLowerCase()
+      .replace(/\bwfm\b/gi, '')
+      .replace(/[_.\-\(\)\s]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
 
     // Extraer comment representativo del grupo (el más frecuente entre todos los trades)
-    // Comment en myfxbook === Strategy Name en SQX: es el identificador semántico definitivo
     const commentFreq = {};
-    trades.forEach(t => { const c = normName(t.comment); if (c) commentFreq[c] = (commentFreq[c]||0)+1; });
+    trades.forEach(t => { const c = normSep(t.comment); if (c) commentFreq[c] = (commentFreq[c]||0)+1; });
     const repComment = Object.entries(commentFreq).sort((a,b) => b[1]-a[1])[0]?.[0] || '';
 
     // 1. Exact match por magic number (bots con magic ya asignado)
@@ -11042,12 +11054,17 @@ function importMyfxbookCSV(csvText) {
       bot.myfxbookData = mfxData;
       matched++;
     } else {
-      // 2. Comment → Strategy Name (match exacto — vínculo principal SQX ↔ Myfxbook)
-      // El campo Comment de myfxbook contiene exactamente el Strategy Name del databank SQX.
-      // Al encontrar el bot se guarda el magic para que futuros imports lo resuelvan por paso 1.
-      const commentBot = repComment ? DB.find(b => normName(b.name) === repComment) : null;
+      // 2. Comment → Strategy Name (vínculo principal SQX ↔ Myfxbook)
+      // El comment puede estar truncado, por eso se usa startsWith en lugar de igualdad exacta.
+      // Se verifica que solo haya 1 candidato antes de asignar para evitar falsos positivos.
+      const commentMatches = repComment.length >= 8 ? DB.filter(b => {
+        if (b.magic) return false;
+        const bn = normSep(b.name);
+        return bn === repComment || bn.startsWith(repComment + ' ') || bn.startsWith(repComment);
+      }) : [];
+      const commentBot = commentMatches.length === 1 ? commentMatches[0] : null;
       if (commentBot) {
-        if (!commentBot.magic) commentBot.magic = parseInt(magic);
+        commentBot.magic = parseInt(magic);
         commentBot.myfxbookData = mfxData;
         matched++;
       } else {
