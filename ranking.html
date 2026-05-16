@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ranking Live — SQX Dashboard</title>
+<style>
+  :root {
+    --bg:#ffffff;--bg2:#f8f9fa;--bg3:#f1f3f5;--border:#e0e3e8;--border2:#c8cdd5;
+    --text:#111318;--text2:#4a5060;--text3:#9098a8;
+    --green:#1a7f4b;--green-bg:#eaf7f0;--green-border:#b2dfc8;
+    --red:#b91c1c;--red-bg:#fef2f2;--red-border:#fcc;
+    --amber:#92400e;--amber-bg:#fffbeb;--amber-border:#fde68a;
+    --blue:#1d4ed8;--blue-bg:#eff6ff;
+    --accent:#4f46e5;--accent-light:#eef2ff;
+    --radius:6px;--radius-lg:10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+  .logo span { color: var(--accent); }
+  .module-tag {
+    font-size: 11px;
+    background: var(--accent-light);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid #c7d2fe;
+    font-weight: 600;
+    margin-left: 10px;
+  }
+  .topbar-right { display: flex; gap: 8px; align-items: center; }
+  .sync-info { font-size: 11px; color: var(--text3); margin-right: 4px; }
+  .t-btn {
+    height: 32px; padding: 0 14px;
+    border-radius: var(--radius); font-size: 12px; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--border2);
+    background: var(--bg); color: var(--text2);
+    transition: all 0.12s;
+  }
+  .t-btn:hover { background: var(--bg3); color: var(--text); border-color: #adb5bd; }
+  .t-btn-accent { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .t-btn-accent:hover { background: #4338ca; color: #fff; border-color: #4338ca; }
+
+  /* ── PANTALLA SIN DATOS ── */
+  #no-data-screen {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+  }
+  .no-data-card {
+    width: 420px; padding: 2.5rem 2rem;
+    border: 1px solid var(--border); border-radius: 16px;
+    background: #fff; box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    text-align: center;
+  }
+  .no-data-icon { font-size: 40px; margin-bottom: 1rem; }
+  .no-data-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  .no-data-sub { font-size: 13px; color: var(--text3); line-height: 1.6; margin-bottom: 1.5rem; }
+  .no-data-steps {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1rem 1.25rem;
+    text-align: left; margin-bottom: 1.5rem;
+  }
+  .no-data-steps p { font-size: 12px; color: var(--text2); margin-bottom: 6px; display: flex; gap: 8px; align-items: flex-start; }
+  .no-data-steps p:last-child { margin-bottom: 0; }
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 18px; height: 18px;
+    background: var(--accent); color: #fff;
+    border-radius: 50%; font-size: 10px; font-weight: 700; margin-top: 1px;
+  }
+  .nd-btn {
+    height: 40px; padding: 0 20px;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: var(--radius);
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .nd-btn:hover { background: #4338ca; }
+
+  /* ── MAIN ── */
+  .main { padding: 1.5rem 2rem; max-width: 1400px; margin: 0 auto; }
+
+  /* ── PANEL ── */
+  #ranking-panel {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .wr-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap; gap: 10px;
+  }
+  .wr-title {
+    font-size: 13px; font-weight: 700;
+    color: var(--text); letter-spacing: 0.3px;
+  }
+  .wr-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .wr-week-btn {
+    height: 28px; padding: 0 12px;
+    background: var(--bg); border: 1px solid var(--border2);
+    color: var(--text2); border-radius: var(--radius);
+    cursor: pointer; font-size: 11px; font-weight: 500;
+    transition: all 0.12s;
+  }
+  .wr-week-btn:hover { background: var(--bg3); color: var(--text); border-color: #adb5bd; }
+  .wr-week-label {
+    font-size: 12px; color: var(--text2);
+    min-width: 160px; text-align: center;
+  }
+  .wr-badge {
+    font-size: 11px; padding: 3px 10px; border-radius: 20px;
+    background: var(--accent-light); border: 1px solid #c7d2fe;
+    color: var(--accent); font-weight: 600;
+  }
+  .wr-snapshot-btn {
+    height: 28px; padding: 0 12px; border-radius: var(--radius);
+    background: var(--green-bg); border: 1px solid var(--green-border);
+    color: var(--green); cursor: pointer; font-size: 11px;
+    font-weight: 600; transition: all 0.12s;
+  }
+  .wr-snapshot-btn:hover { background: #d1f5e4; }
+  .wr-history-select {
+    height: 28px; background: var(--bg); border: 1px solid var(--border2);
+    color: var(--text); padding: 0 10px; border-radius: var(--radius);
+    font-size: 12px; cursor: pointer;
+  }
+
+  /* ── TABLA ── */
+  .wr-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th {
+    padding: 8px 12px; text-align: left;
+    color: var(--text3); font-size: 10px; letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 700; white-space: nowrap; text-transform: uppercase;
+    cursor: pointer; user-select: none;
+    background: var(--bg2);
+  }
+  thead th:hover { color: var(--text2); background: var(--bg3); }
+  tr.wr-row { border-bottom: 1px solid var(--border); transition: background 0.12s; }
+  tr.wr-row:hover { background: var(--bg2); }
+  td { padding: 9px 12px; vertical-align: middle; }
+
+  /* posiciones */
+  .wr-pos { font-size: 18px; line-height: 1; font-weight: 800; width: 36px; display: inline-block; color: var(--text3); }
+  .wr-pos.p1 { color: #d97706; }
+  .wr-pos.p2 { color: #6b7280; }
+  .wr-pos.p3 { color: #9e6540; }
+
+  /* celdas */
+  .wr-symbol { font-weight: 700; font-size: 13px; color: var(--text); }
+  .wr-name   { font-size: 11px; color: var(--text3); max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wr-magic  { font-size: 11px; color: var(--text3); }
+  .wr-pf-good { color: var(--green); font-weight: 600; }
+  .wr-pf-mid  { color: #d97706;      font-weight: 600; }
+  .wr-pf-bad  { color: var(--red);   font-weight: 600; }
+  .wr-gain-pos { color: var(--green); font-weight: 600; }
+  .wr-gain-neg { color: var(--red);   font-weight: 600; }
+  .wr-delta { display: inline-block; padding: 2px 7px; border-radius: var(--radius); font-size: 11px; font-weight: 600; }
+  .wr-delta-g { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .wr-delta-y { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .wr-delta-r { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
+  .wr-score-bar-wrap { display: flex; align-items: center; gap: 8px; min-width: 120px; }
+  .wr-score-num { font-weight: 700; font-size: 13px; color: var(--accent); min-width: 40px; }
+  .wr-score-bar-bg { flex: 1; height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .wr-score-bar-fill {
+    height: 100%; border-radius: 3px;
+    background: var(--accent);
+    transition: width 0.6s ease;
+  }
+
+  /* footer */
+  .wr-footer-note {
+    padding: 10px 16px 12px;
+    font-size: 11px; color: var(--text3);
+    border-top: 1px solid var(--border);
+  }
+  .wr-empty {
+    padding: 40px; text-align: center;
+    color: var(--text3); font-size: 12px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 3rem; padding: 2rem;
+    border-top: 1px solid var(--border);
+    background: var(--bg2); text-align: center;
+  }
+  .footer span { font-size: 12px; color: var(--text3); letter-spacing: 0.3px; }
+</style>
+</head>
+<body>
+
+<!-- ── PANTALLA SIN DATOS ── -->
+<div id="no-data-screen" style="display:none">
+  <div class="no-data-card">
+    <div class="no-data-icon">🏆</div>
+    <div class="no-data-title">Sin datos live</div>
+    <div class="no-data-sub">Esta página recibe los datos desde el dashboard.<br>Seguí estos pasos:</div>
+    <div class="no-data-steps">
+      <p><span class="step-num">1</span> Abrí <strong>index.html</strong> e iniciá sesión</p>
+      <p><span class="step-num">2</span> Cargá los CSVs de Myfxbook en el dashboard</p>
+      <p><span class="step-num">3</span> Hacé clic en <strong>📊 Overlap</strong> de la barra superior</p>
+      <p><span class="step-num">4</span> En la página Overlap, hacé clic en <strong>🏆 Ranking Live</strong></p>
+    </div>
+    <button class="nd-btn" onclick="window.location.href='index.html'">IR AL DASHBOARD</button>
+  </div>
+</div>
+
+<!-- ── APP PRINCIPAL ── -->
+<div id="app" style="display:none">
+
+  <div class="topbar">
+    <div style="display:flex;align-items:center">
+      <span class="logo">SQX<span>Dashboard</span></span>
+      <span class="module-tag">🏆 RANKING LIVE</span>
+    </div>
+    <div class="topbar-right">
+      <span class="sync-info" id="sync-info"></span>
+      <button class="t-btn t-btn-accent" onclick="refreshData()">↺ ACTUALIZAR</button>
+      <button class="t-btn" onclick="window.close()">← VOLVER</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div id="ranking-panel">
+
+      <div class="wr-header">
+        <span class="wr-title">🏆 Ranking Semanal de Bots — Myfxbook Live</span>
+        <div class="wr-controls">
+          <button class="wr-week-btn" onclick="wrChangeWeek(-1)">◀ ANTERIOR</button>
+          <span class="wr-week-label" id="wr-week-label">—</span>
+          <button class="wr-week-btn" onclick="wrChangeWeek(1)">SIGUIENTE ▶</button>
+          <select class="wr-history-select" id="wr-history-select" onchange="wrLoadSnapshot(this.value)">
+            <option value="">📅 Historial de semanas...</option>
+          </select>
+          <button class="wr-snapshot-btn" onclick="wrSaveSnapshot()">💾 GUARDAR SEMANA</button>
+          <span class="wr-badge" id="wr-current-badge">SEMANA ACTUAL</span>
+        </div>
+      </div>
+
+      <div class="wr-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th onclick="wrSort('name')">ESTRATEGIA</th>
+              <th onclick="wrSort('symbol')">SÍMBOLO</th>
+              <th>MAGIC</th>
+              <th onclick="wrSort('pf_live')">PF LIVE ↕</th>
+              <th onclick="wrSort('dd_live')">DD % ↕</th>
+              <th onclick="wrSort('wr')">WIN RATE ↕</th>
+              <th onclick="wrSort('ganancia_semana')">GANANCIA SEM ↕</th>
+              <th onclick="wrSort('dpf')">ΔPF ↕</th>
+              <th onclick="wrSort('score')">SCORE ↕</th>
+              <th>ESTADO</th>
+            </tr>
+          </thead>
+          <tbody id="wr-tbody">
+            <tr><td colspan="11" class="wr-empty">Cargando datos...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="wr-footer-note">
+        SCORE = (PF_Live×40) + (WinRate×20) + (1/DD×20) + (Ganancia×20) — Semana actual calculada desde los trades del CSV Myfxbook
+      </div>
+
+    </div><!-- /ranking-panel -->
+  </div><!-- /main -->
+
+  <div class="footer">
+    <span>Arquitectura Sistémica — SQX Dashboard · Ranking Semanal Live</span>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ════════════════════════════════════════════
+// CONSTANTES
+// ════════════════════════════════════════════
+const WR_STORAGE_KEY  = 'arq_sistemica_weekly_ranking'; // compartido con index.html
+const STORAGE_KEY_BOTS = 'sqx_ranking_bots';
+const STORAGE_KEY_TS   = 'sqx_overlap_ts';
+const WR_SCORE_WEIGHTS = { pf: 40, wr: 20, dd: 20, gain: 20 };
+
+let RANKING_SOURCE = []; // bots cargados desde localStorage
+let wrCurrentWeekOffset = 0;
+let wrSortCol = 'score';
+let wrSortDir = -1;
+let wrViewingSnapshot = null;
+
+// ════════════════════════════════════════════
+// CÁLCULOS
+// ════════════════════════════════════════════
+function wrCalcScore(pf, wr, dd, gain) {
+  const s_pf   = (pf  || 0) * WR_SCORE_WEIGHTS.pf;
+  const s_wr   = ((wr || 0) / 100) * WR_SCORE_WEIGHTS.wr;
+  const s_dd   = (dd  || 0) > 0 ? (1 / dd) * WR_SCORE_WEIGHTS.dd : 0;
+  const s_gain = Math.min(Math.max((gain || 0) / 10, 0), WR_SCORE_WEIGHTS.gain);
+  return +((s_pf + s_wr + s_dd + s_gain).toFixed(1));
+}
+
+function wrGetBots(weekOffset) {
+  const offset = weekOffset !== undefined ? weekOffset : wrCurrentWeekOffset;
+  const now = new Date();
+  now.setDate(now.getDate() + offset * 7);
+  const dow = now.getDay();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
+  monday.setHours(0, 0, 0, 0);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  sunday.setHours(23, 59, 59, 999);
+
+  return RANKING_SOURCE.map(b => {
+    const mfx = b.mfx || {};
+    const pf_live = mfx.pf    || 0;
+    const dd_live = mfx.ddPct || 0;
+    const wr      = mfx.winRate || 0;
+
+    const weekGain = (mfx.tradeList || [])
+      .filter(t => {
+        const d = t.closeDate ? new Date(t.closeDate).getTime() : 0;
+        return d >= monday.getTime() && d <= sunday.getTime();
+      })
+      .reduce((s, t) => s + (t.netProfit || 0), 0);
+    const gain = Math.round(weekGain * 100) / 100;
+
+    return {
+      name:            b.name   || '—',
+      magic:           b.magic  || '—',
+      symbol:          b.symbol || '—',
+      pf_live,
+      dd_live,
+      wr,
+      ganancia_semana: gain,
+      dpf:             b.dpf !== null && b.dpf !== undefined ? b.dpf : null,
+      estado:          b.estado || '—',
+      score:           wrCalcScore(pf_live, wr, dd_live, gain),
+    };
+  });
+}
+
+// ════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════
+function wrRender(bots) {
+  const tbody = document.getElementById('wr-tbody');
+  if (!tbody) return;
+  if (!bots || bots.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="11" class="wr-empty">SIN DATOS — carga los CSVs desde el dashboard</td></tr>';
+    return;
+  }
+  const sorted = [...bots].sort((a, b) => {
+    const va = a[wrSortCol] ?? 0;
+    const vb = b[wrSortCol] ?? 0;
+    if (typeof va === 'string') return wrSortDir * va.localeCompare(vb);
+    return wrSortDir * (va - vb);
+  });
+  const maxScore = Math.max(...sorted.map(b => b.score), 1);
+  tbody.innerHTML = sorted.map((b, i) => {
+    const pos      = i + 1;
+    const posClass = pos === 1 ? 'p1' : pos === 2 ? 'p2' : pos === 3 ? 'p3' : '';
+    const pfClass  = b.pf_live >= 1.30 ? 'wr-pf-good' : b.pf_live >= 1.15 ? 'wr-pf-mid' : 'wr-pf-bad';
+    const gainCls  = b.ganancia_semana >= 0 ? 'wr-gain-pos' : 'wr-gain-neg';
+    const gainStr  = b.ganancia_semana >= 0
+      ? '+$' + b.ganancia_semana.toFixed(2)
+      : '-$' + Math.abs(b.ganancia_semana).toFixed(2);
+    let dpfStr = '—';
+    if (b.dpf !== null && b.dpf !== undefined) {
+      const sign    = b.dpf > 0 ? '+' : '';
+      const dpfCls  = Math.abs(b.dpf) <= 0.15 ? 'wr-delta-g' : Math.abs(b.dpf) <= 0.30 ? 'wr-delta-y' : 'wr-delta-r';
+      dpfStr = `<span class="wr-delta ${dpfCls}">${sign}${b.dpf}</span>`;
+    }
+    const estadoColors = { GREEN:'#00e676', YELLOW:'#ffd740', RED:'#ff4444', live:'#00e676', incubacion:'#ffd740', descartado:'#ff4444' };
+    const estadoColor = estadoColors[b.estado] || '#4a5068';
+    const barPct = Math.round((b.score / maxScore) * 100);
+    return `<tr class="wr-row">
+      <td><span class="wr-pos ${posClass}">#${pos}</span></td>
+      <td><div class="wr-name" title="${b.name}">${b.name}</div></td>
+      <td class="wr-symbol">${b.symbol}</td>
+      <td class="wr-magic">${b.magic}</td>
+      <td class="${pfClass}">${b.pf_live ? b.pf_live.toFixed(2) : '—'}</td>
+      <td>${b.dd_live ? b.dd_live.toFixed(2) + '%' : '—'}</td>
+      <td>${b.wr ? b.wr.toFixed(1) + '%' : '—'}</td>
+      <td class="${gainCls}">${gainStr}</td>
+      <td>${dpfStr}</td>
+      <td><div class="wr-score-bar-wrap"><span class="wr-score-num">${b.score}</span>
+        <div class="wr-score-bar-bg"><div class="wr-score-bar-fill" style="width:${barPct}%"></div></div></div></td>
+      <td style="color:${estadoColor};font-size:11px;font-weight:700;letter-spacing:1px">${b.estado}</td>
+    </tr>`;
+  }).join('');
+}
+
+function wrWeekRange(offset) {
+  const now = new Date();
+  now.setDate(now.getDate() + offset * 7);
+  const dow = now.getDay();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  const fmt = d => d.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric' });
+  return { start: fmt(monday), end: fmt(sunday), key: monday.toISOString().slice(0, 10) };
+}
+
+function wrUpdateLabel() {
+  const label = document.getElementById('wr-week-label');
+  const badge = document.getElementById('wr-current-badge');
+  if (!label) return;
+  const range = wrWeekRange(wrCurrentWeekOffset);
+  label.textContent = range.start + ' — ' + range.end;
+  if (badge) badge.textContent = wrCurrentWeekOffset === 0 ? 'SEMANA ACTUAL' : 'OFFSET ' + (wrCurrentWeekOffset > 0 ? '+' : '') + wrCurrentWeekOffset;
+}
+
+function wrRefreshHistorySelect() {
+  const sel = document.getElementById('wr-history-select');
+  if (!sel) return;
+  const history = JSON.parse(localStorage.getItem(WR_STORAGE_KEY) || '{}');
+  const keys = Object.keys(history).sort().reverse();
+  sel.innerHTML = '<option value="">📅 Historial de semanas...</option>';
+  keys.forEach(k => {
+    const opt = document.createElement('option');
+    opt.value = k;
+    opt.textContent = history[k].label;
+    sel.appendChild(opt);
+  });
+}
+
+// ════════════════════════════════════════════
+// ACCIONES PÚBLICAS
+// ════════════════════════════════════════════
+function wrSort(col) {
+  if (wrSortCol === col) wrSortDir *= -1;
+  else { wrSortCol = col; wrSortDir = -1; }
+  const bots = wrViewingSnapshot
+    ? (JSON.parse(localStorage.getItem(WR_STORAGE_KEY) || '{}')[wrViewingSnapshot]?.bots || [])
+    : wrGetBots();
+  wrRender(bots);
+}
+
+function wrChangeWeek(dir) {
+  wrCurrentWeekOffset += dir;
+  wrUpdateLabel();
+  const range = wrWeekRange(wrCurrentWeekOffset);
+  const history = JSON.parse(localStorage.getItem(WR_STORAGE_KEY) || '{}');
+  if (history[range.key]) {
+    wrLoadSnapshot(range.key);
+    const sel = document.getElementById('wr-history-select');
+    if (sel) sel.value = range.key;
+  } else {
+    wrViewingSnapshot = null;
+    wrRender(wrCurrentWeekOffset === 0 ? wrGetBots() : []);
+  }
+}
+
+function wrLoadSnapshot(key) {
+  if (!key) { wrViewingSnapshot = null; wrRender(wrGetBots()); wrUpdateLabel(); return; }
+  const history = JSON.parse(localStorage.getItem(WR_STORAGE_KEY) || '{}');
+  const snap = history[key];
+  if (!snap) return;
+  wrViewingSnapshot = key;
+  const badge = document.getElementById('wr-current-badge');
+  if (badge) badge.textContent = 'SNAPSHOT: ' + snap.label;
+  const label = document.getElementById('wr-week-label');
+  if (label) label.textContent = snap.label;
+  wrRender(snap.bots);
+}
+
+function wrSaveSnapshot() {
+  const bots = wrGetBots(0);
+  if (!bots.length) { alert('No hay datos de bots cargados.'); return; }
+  const range = wrWeekRange(0);
+  const history = JSON.parse(localStorage.getItem(WR_STORAGE_KEY) || '{}');
+  history[range.key] = { label: range.start + ' → ' + range.end, bots, savedAt: new Date().toISOString() };
+  localStorage.setItem(WR_STORAGE_KEY, JSON.stringify(history));
+  wrRefreshHistorySelect();
+  alert('✅ Snapshot guardado: ' + range.start + ' → ' + range.end);
+}
+
+function refreshData() {
+  const botsRaw = localStorage.getItem(STORAGE_KEY_BOTS);
+  if (!botsRaw) { alert('Sin datos. Abrí el Ranking desde el botón del Dashboard.'); return; }
+  try {
+    RANKING_SOURCE = JSON.parse(botsRaw);
+    wrViewingSnapshot = null;
+    wrCurrentWeekOffset = 0;
+    wrUpdateLabel();
+    wrRender(wrGetBots());
+  } catch(e) { alert('Error al leer datos del localStorage.'); }
+}
+
+// ════════════════════════════════════════════
+// INICIALIZACIÓN
+// ════════════════════════════════════════════
+(function init() {
+  const botsRaw = localStorage.getItem(STORAGE_KEY_BOTS);
+  const ts      = localStorage.getItem(STORAGE_KEY_TS);
+
+  if (!botsRaw) {
+    document.getElementById('no-data-screen').style.display = 'flex';
+    return;
+  }
+
+  let bots;
+  try {
+    bots = JSON.parse(botsRaw);
+    if (!Array.isArray(bots)) throw new Error('not array');
+  } catch(e) {
+    document.getElementById('no-data-screen').style.display = 'flex';
+    return;
+  }
+
+  RANKING_SOURCE = bots;
+  document.getElementById('no-data-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  if (ts) {
+    const d  = new Date(parseInt(ts, 10));
+    const hh = d.getHours().toString().padStart(2, '0');
+    const mm = d.getMinutes().toString().padStart(2, '0');
+    const el = document.getElementById('sync-info');
+    if (el) el.textContent = 'Datos sincronizados a las ' + hh + ':' + mm;
+  }
+
+  wrUpdateLabel();
+  wrRefreshHistorySelect();
+  wrRender(wrGetBots());
+})();
+</script>
+</body>
+</html>

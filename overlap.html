@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overlap de Indicadores — SQX Dashboard</title>
+<style>
+  :root {
+    --bg:#ffffff;--bg2:#f8f9fa;--bg3:#f1f3f5;--border:#e0e3e8;--border2:#c8cdd5;
+    --text:#111318;--text2:#4a5060;--text3:#9098a8;
+    --green:#1a7f4b;--green-bg:#eaf7f0;--green-border:#b2dfc8;
+    --red:#b91c1c;--red-bg:#fef2f2;--red-border:#fcc;
+    --amber:#92400e;--amber-bg:#fffbeb;--amber-border:#fde68a;
+    --blue:#1d4ed8;--blue-bg:#eff6ff;
+    --accent:#4f46e5;--accent-light:#eef2ff;
+    --radius:6px;--radius-lg:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.5}
+
+  /* ── TOPBAR ── */
+  .topbar{background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+  .logo{font-size:16px;font-weight:700;letter-spacing:-0.3px}.logo span{color:var(--accent)}
+  .module-tag{font-size:11px;background:var(--accent-light);color:var(--accent);padding:3px 10px;border-radius:20px;border:1px solid #c7d2fe;font-weight:600;margin-left:10px}
+  .topbar-right{display:flex;gap:8px;align-items:center}
+  .sync-info{font-size:11px;color:var(--text3);margin-right:4px}
+  .main{padding:1.5rem 2rem;max-width:1500px;margin:0 auto}
+  button{height:32px;padding:0 14px;border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:var(--bg);color:var(--text2);transition:all 0.12s}
+  button:hover{background:var(--bg3);color:var(--text);border-color:#adb5bd}
+  .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn-primary:hover{background:#4338ca;color:#fff;border-color:#4338ca}
+
+  /* ── PANTALLA SIN DATOS ── */
+  #no-data-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999}
+  .no-data-card{width:420px;padding:2.5rem 2rem;border:1px solid var(--border);border-radius:16px;background:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.08);text-align:center}
+  .no-data-icon{font-size:40px;margin-bottom:1rem}
+  .no-data-title{font-size:18px;font-weight:700;margin-bottom:8px;color:var(--text)}
+  .no-data-sub{font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:1.5rem}
+  .no-data-steps{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;text-align:left;margin-bottom:1.5rem}
+  .no-data-steps p{font-size:12px;color:var(--text2);margin-bottom:6px;display:flex;gap:8px;align-items:flex-start}
+  .no-data-steps p:last-child{margin-bottom:0}
+  .step-num{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;background:var(--accent);color:#fff;border-radius:50%;font-size:10px;font-weight:700;margin-top:1px}
+
+  /* ══════════════════════════════════════════════════
+     DNA OVERLAP — estilos (prefijados #dna-panel)
+  ══════════════════════════════════════════════════ */
+  #dna-panel .dna-section-title {
+    font-size: 11px; font-weight: 500; color: var(--text3);
+    text-transform: uppercase; letter-spacing: .06em;
+    margin: 1.5rem 0 10px; padding-bottom: 6px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  #dna-panel .dna-stats {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 1.5rem;
+  }
+  @media(max-width:700px){ #dna-panel .dna-stats { grid-template-columns: repeat(3,1fr); } }
+  #dna-panel .dna-stat {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px;
+  }
+  #dna-panel .dna-stat-label { font-size: 10px; color: var(--text3); margin-bottom: 4px; }
+  #dna-panel .dna-stat-val   { font-size: 20px; font-weight: 700; color: var(--text); line-height: 1; }
+  #dna-panel .dna-stat-sub   { font-size: 10px; color: var(--text3); margin-top: 3px; }
+  #dna-panel .dna-bot-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1.5rem;
+  }
+  @media(max-width:700px){ #dna-panel .dna-bot-grid { grid-template-columns: repeat(2,1fr); } }
+  #dna-panel .dna-bot-card {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px;
+  }
+  #dna-panel .dna-bot-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  #dna-panel .dna-bot-id  { font-size: 13px; font-weight: 600; color: var(--text); }
+  #dna-panel .dna-bot-meta { font-size: 10px; color: var(--text3); margin-bottom: 6px; }
+  #dna-panel .dna-chips { display: flex; flex-wrap: wrap; gap: 3px; }
+  #dna-panel .dna-chip {
+    font-size: 9px; padding: 2px 6px; border-radius: 4px;
+    background: var(--bg); border: 1px solid var(--border); color: var(--text2);
+  }
+  #dna-panel .dna-chip-primary { background: var(--green-bg); border-color: var(--green-border); color: var(--green); font-weight: 500; }
+  #dna-panel .dna-chip-short  { background: var(--red-bg); border-color: var(--red-border); color: var(--red); }
+  #dna-panel .dna-heatmap-wrap {
+    overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 1.5rem;
+  }
+  #dna-panel table.dna-hm {
+    width: 100%; border-collapse: collapse; min-width: 900px; font-size: 11px; background: var(--bg);
+  }
+  #dna-panel table.dna-hm th {
+    padding: 8px 6px; font-size: 10px; font-weight: 600; color: var(--text3);
+    text-align: center; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  #dna-panel table.dna-hm th.dna-hm-ind {
+    text-align: left; padding-left: 12px; width: 155px; color: var(--text); font-size: 11px;
+  }
+  #dna-panel table.dna-hm th.dna-hm-bot {
+    writing-mode: vertical-rl; transform: rotate(180deg); height: 90px;
+    vertical-align: bottom; padding-bottom: 6px; font-size: 9px; white-space: nowrap;
+  }
+  #dna-panel table.dna-hm td {
+    border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    text-align: center; padding: 5px 3px;
+  }
+  #dna-panel table.dna-hm td.dna-td-name {
+    text-align: left; padding: 7px 8px 7px 12px;
+    background: var(--bg2) !important; border-right: 1px solid var(--border2); white-space: nowrap;
+  }
+  #dna-panel table.dna-hm td.dna-td-name .dna-fam { font-size: 9px; color: var(--text3); display: block; }
+  #dna-panel table.dna-hm td.dna-td-count { background: var(--bg2) !important; font-weight: 600; border-left: 1px solid var(--border2); }
+  #dna-panel .dna-cell-l {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; font-size: 9px; font-weight: 700;
+    background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); border-radius: 3px;
+  }
+  #dna-panel .dna-cell-s {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; font-size: 9px; font-weight: 700;
+    background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); border-radius: 3px;
+  }
+  #dna-panel .dna-cell-empty { color: var(--border2); font-size: 12px; }
+  #dna-panel .dna-count-pill {
+    display: inline-block; padding: 1px 7px; font-size: 11px; font-weight: 600;
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; color: var(--text);
+  }
+  #dna-panel .dna-count-high { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+  #dna-panel .dna-count-med  { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
+  #dna-panel .dna-rank-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1.5rem;
+  }
+  @media(max-width:600px){ #dna-panel .dna-rank-grid { grid-template-columns: 1fr; } }
+  #dna-panel .dna-rank-card {
+    border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--bg);
+  }
+  #dna-panel .dna-rank-header {
+    padding: 10px 14px; background: var(--bg2); border-bottom: 1px solid var(--border);
+    font-size: 11px; font-weight: 600; color: var(--text2);
+  }
+  #dna-panel .dna-rank-row {
+    padding: 8px 14px; display: grid; grid-template-columns: 22px 1fr 32px 70px;
+    align-items: center; gap: 8px; border-bottom: 1px solid var(--border); font-size: 11px;
+  }
+  #dna-panel .dna-rank-row:last-child { border-bottom: none; }
+  #dna-panel .dna-rank-row:hover { background: var(--bg2); }
+  #dna-panel .dna-rnum { font-size: 10px; font-weight: 600; color: var(--text3); text-align: center; }
+  #dna-panel .dna-rnum-1 { color: #BA7517; }
+  #dna-panel .dna-rnum-2 { color: #888780; }
+  #dna-panel .dna-rnum-3 { color: #9E7354; }
+  #dna-panel .dna-rbar-bg { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+  #dna-panel .dna-rbar    { height: 4px; background: var(--green); border-radius: 2px; }
+  #dna-panel .dna-rtags   { display: flex; gap: 3px; flex-wrap: wrap; margin-top: 2px; }
+  #dna-panel .dna-tag-l   { font-size: 9px; padding: 1px 5px; background: var(--green-bg); color: var(--green); border-radius: 3px; }
+  #dna-panel .dna-tag-s   { font-size: 9px; padding: 1px 5px; background: var(--red-bg); color: var(--red); border-radius: 3px; }
+  #dna-panel .dna-tag-a   { font-size: 9px; padding: 1px 5px; background: var(--blue-bg); color: var(--blue); border-radius: 3px; }
+  #dna-panel .dna-cluster-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem;
+  }
+  @media(max-width:700px){ #dna-panel .dna-cluster-grid { grid-template-columns: 1fr; } }
+  #dna-panel .dna-cluster-card {
+    border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--bg);
+  }
+  #dna-panel .dna-cluster-head {
+    padding: 8px 12px; background: var(--bg2); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  #dna-panel .dna-cluster-name { font-size: 12px; font-weight: 600; color: var(--text); }
+  #dna-panel .dna-cluster-n {
+    font-size: 10px; padding: 1px 6px; background: var(--bg);
+    border: 1px solid var(--border2); border-radius: 10px; color: var(--text3); font-weight: 600;
+  }
+  #dna-panel .dna-cluster-body { padding: 8px 12px; display: flex; flex-direction: column; gap: 5px; }
+  #dna-panel .dna-cluster-key { font-size: 10px; color: var(--text3); margin-bottom: 4px; }
+  #dna-panel .dna-cluster-bot {
+    display: flex; align-items: center; gap: 6px; padding: 5px 8px;
+    background: var(--bg2); border-radius: var(--radius); font-size: 11px;
+  }
+  #dna-panel .dna-cbot-name { font-weight: 600; flex: 1; color: var(--text); }
+  #dna-panel .dna-cbot-meta { font-size: 10px; color: var(--text3); }
+  #dna-panel .dna-alerts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; }
+  #dna-panel .dna-alert {
+    padding: 10px 14px; border-radius: var(--radius); border: 1px solid;
+    display: grid; grid-template-columns: 28px 1fr auto;
+    align-items: start; gap: 10px; font-size: 12px;
+  }
+  #dna-panel .dna-alert-high   { background: var(--red-bg);   border-color: var(--red-border); }
+  #dna-panel .dna-alert-med    { background: var(--amber-bg); border-color: var(--amber-border); }
+  #dna-panel .dna-alert-info   { background: var(--blue-bg);  border-color: #bfdbfe; }
+  #dna-panel .dna-alert-ok     { background: var(--green-bg); border-color: var(--green-border); }
+  #dna-panel .dna-alert-title  { font-weight: 600; margin-bottom: 3px; }
+  #dna-panel .dna-alert-detail { font-size: 11px; color: var(--text2); line-height: 1.5; }
+  #dna-panel .dna-alert-badge  { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+  #dna-panel .badge-high { background: rgba(185,28,28,0.12); color: var(--red); }
+  #dna-panel .badge-med  { background: rgba(146,64,14,0.12); color: var(--amber); }
+  #dna-panel .badge-info { background: var(--blue-bg);       color: var(--blue); }
+  #dna-panel .badge-ok   { background: var(--green-bg);      color: var(--green); }
+
+  /* ── FOOTER ── */
+  .footer{margin-top:3rem;padding:2rem;border-top:1px solid var(--border);background:var(--bg2);text-align:center}
+  .footer span{font-size:12px;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<!-- ── PANTALLA SIN DATOS ── -->
+<div id="no-data-screen" style="display:none">
+  <div class="no-data-card">
+    <div class="no-data-icon">📊</div>
+    <div class="no-data-title">Sin datos del portfolio</div>
+    <div class="no-data-sub">Esta página recibe los datos del dashboard principal.<br>Seguí estos pasos para verlo:</div>
+    <div class="no-data-steps">
+      <p><span class="step-num">1</span> Abrí <strong>index.html</strong> en tu navegador</p>
+      <p><span class="step-num">2</span> Iniciá sesión en el dashboard</p>
+      <p><span class="step-num">3</span> Hacé clic en el botón <strong>📊 Overlap</strong> de la barra superior</p>
+      <p><span class="step-num">4</span> Esta página se abrirá automáticamente con los datos cargados</p>
+    </div>
+    <button class="btn-primary" onclick="window.location.href='index.html'">Ir al Dashboard</button>
+  </div>
+</div>
+
+<!-- ── APP PRINCIPAL ── -->
+<div id="app" style="display:none">
+
+  <div class="topbar">
+    <div style="display:flex;align-items:center">
+      <span class="logo">SQX<span>Dashboard</span></span>
+      <span class="module-tag">📊 Overlap de Indicadores</span>
+    </div>
+    <div class="topbar-right">
+      <span class="sync-info" id="sync-info"></span>
+      <button onclick="refreshData()" title="Volver a leer los datos del dashboard">↺ Actualizar</button>
+      <button onclick="window.close()" title="Cerrar esta pestaña">← Volver</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div id="dna-panel">
+
+      <!-- STAT CARDS -->
+      <div class="dna-stats">
+        <div class="dna-stat">
+          <div class="dna-stat-label">Estrategias</div>
+          <div class="dna-stat-val" id="dna-stat-n">—</div>
+          <div class="dna-stat-sub">pseudocódigos SQX</div>
+        </div>
+        <div class="dna-stat">
+          <div class="dna-stat-label">Indicadores únicos</div>
+          <div class="dna-stat-val" id="dna-stat-inds">—</div>
+          <div class="dna-stat-sub">familias distintas</div>
+        </div>
+        <div class="dna-stat">
+          <div class="dna-stat-label">Indicador líder</div>
+          <div class="dna-stat-val" id="dna-stat-leader" style="font-size:16px;padding-top:2px">—</div>
+          <div class="dna-stat-sub" id="dna-stat-leader-sub">—</div>
+        </div>
+        <div class="dna-stat">
+          <div class="dna-stat-label">Señal más usada</div>
+          <div class="dna-stat-val" id="dna-stat-signal" style="font-size:14px;padding-top:4px">—</div>
+          <div class="dna-stat-sub" id="dna-stat-signal-sub">—</div>
+        </div>
+        <div class="dna-stat">
+          <div class="dna-stat-label">Duplicados detectados</div>
+          <div class="dna-stat-val" id="dna-stat-dups" style="color:var(--red)">—</div>
+          <div class="dna-stat-sub" id="dna-stat-dups-sub">overlap alto riesgo</div>
+        </div>
+        <div class="dna-stat">
+          <div class="dna-stat-label">Activos distintos</div>
+          <div class="dna-stat-val" id="dna-stat-assets">—</div>
+          <div class="dna-stat-sub">diversificación</div>
+        </div>
+      </div>
+
+      <!-- BOT CARDS -->
+      <div class="dna-section-title">Bots con pseudocódigo cargado — indicadores y tipo de entrada</div>
+      <div class="dna-bot-grid" id="dna-bot-grid"></div>
+
+      <!-- HEATMAP -->
+      <div class="dna-section-title">Mapa de Similitudes — Indicadores × Bots</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+        <span><span class="dna-cell-l" style="display:inline-flex;vertical-align:middle">L</span> Long</span>
+        <span><span class="dna-cell-s" style="display:inline-flex;vertical-align:middle">S</span> Short</span>
+        <span style="color:var(--border2)">· = no usa</span>
+        <span style="margin-left:auto;font-size:10px">Columna derecha = total de bots con ese indicador</span>
+      </div>
+      <div class="dna-heatmap-wrap">
+        <table class="dna-hm" id="dna-hm-table"></table>
+      </div>
+
+      <!-- RANKINGS -->
+      <div class="dna-section-title">Ranking de Indicadores — cuáles se repiten más entre estrategias</div>
+      <div class="dna-rank-grid">
+        <div class="dna-rank-card">
+          <div class="dna-rank-header">▲ Por frecuencia total — cuántos bots lo usan</div>
+          <div id="dna-rank-freq"></div>
+        </div>
+        <div class="dna-rank-card">
+          <div class="dna-rank-header">◆ Por diversidad de activos — versatilidad</div>
+          <div id="dna-rank-asset"></div>
+        </div>
+      </div>
+
+      <!-- CLUSTERS -->
+      <div class="dna-section-title">Familias de estrategias — bots que comparten indicadores clave</div>
+      <div class="dna-cluster-grid" id="dna-clusters"></div>
+
+      <!-- ALERTS -->
+      <div class="dna-section-title">Análisis — duplicados, indicadores dominantes y distribución</div>
+      <div class="dna-alerts" id="dna-alerts"></div>
+
+      <!-- TABLA RESUMEN VISUAL -->
+      <div class="dna-section-title" style="margin-top:1.5rem">Tabla resumen — todos los indicadores detectados</div>
+      <div id="overlap-summary-table"></div>
+
+      <!-- ACTIVOS × INDICADORES -->
+      <div class="dna-section-title" style="margin-top:1.5rem">Activos × Indicadores — perfil de cada mercado</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Qué indicadores usa cada par/activo, agrupados por dirección. ATR se muestra aparte por ser gestión de riesgo.</div>
+      <div id="overlap-asset-grid"></div>
+
+    </div><!-- /dna-panel -->
+  </div><!-- /main -->
+
+  <div class="footer">
+    <span>Arquitectura Sistémica — SQX Dashboard · Overlap de Indicadores</span>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ════════════════════════════════════════════
+// CONSTANTES
+// ════════════════════════════════════════════
+const DNA_IND_FAM = {
+  HighDaily:'Precio Diario', LowDaily:'Precio Diario', CloseDaily:'Precio Diario',
+  HighestInRange:'Rango Horario', LowestInRange:'Rango Horario',
+  ParabolicSAR:'Tendencia', LinReg:'Tendencia',
+  EMA:'Media Móvil', SMA:'Media Móvil', LWMA:'Media Móvil',
+  Fibo:'Fibonacci', Lowest:'Canal Precio', Highest:'Canal Precio',
+  Pivots:'Pivots', LaguerreRSI:'Oscilador', Momentum:'Oscilador',
+  BBRange:'Volatilidad BB', ATR:'Gestión Riesgo',
+};
+
+// ════════════════════════════════════════════
+// LÓGICA OVERLAP
+// ════════════════════════════════════════════
+function findOverlapDuplicates(allBots) {
+  const SKIP = new Set(['ATR']);
+  const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const pairs = [];
+  for (let i = 0; i < allBots.length; i++) {
+    for (let j = i + 1; j < allBots.length; j++) {
+      const a = allBots[i], b = allBots[j];
+      if (a.asset === '—' || b.asset === '—') continue;
+      const na = norm(a.id), nb = norm(b.id);
+      const nameSim = na.length >= 3 && nb.length >= 3 &&
+                      (na.includes(nb) || nb.includes(na) || (na.slice(0,4) === nb.slice(0,4) && na.length > 4));
+      const setA = new Set(a.inds.filter(i => !SKIP.has(i)));
+      const setB = new Set(b.inds.filter(i => !SKIP.has(i)));
+      const shared = [...setA].filter(x => setB.has(x));
+      const union = new Set([...setA, ...setB]).size;
+      const indSim = union > 0 ? shared.length / union : 0;
+      const sameAsset = a.asset === b.asset;
+      const sameDir   = a.dir   === b.dir;
+      if (nameSim && sameAsset) {
+        pairs.push({ a, b, indSim, level: 'high',
+          reason: `Nombres muy similares + mismo activo (${a.asset})`, shared });
+      } else if (indSim >= 0.8 && sameAsset && sameDir) {
+        pairs.push({ a, b, indSim, level: indSim >= 0.95 ? 'high' : 'med',
+          reason: `Indicadores ${Math.round(indSim * 100)}% idénticos · ${a.asset} · ${a.dir}`, shared });
+      }
+    }
+  }
+  return pairs.sort((x, y) => y.indSim - x.indSim);
+}
+
+function dnaInit(allBots) {
+  const usage = {};
+  allBots.forEach(bot => {
+    bot.inds.forEach(ind => {
+      if (!usage[ind]) usage[ind] = { bots:[], long:0, short:0, assets:new Set() };
+      usage[ind].bots.push(bot);
+      bot.dir === 'Long' ? usage[ind].long++ : usage[ind].short++;
+      usage[ind].assets.add(bot.asset);
+    });
+  });
+  const indList = Object.keys(usage).sort((a,b) => usage[b].bots.length - usage[a].bots.length);
+  const maxN = indList.length ? usage[indList[0]].bots.length : 1;
+
+  // STATS
+  const leaderInd = indList[0] || '—';
+  const leaderN = indList.length ? usage[leaderInd].bots.length : 0;
+  const nonAtrList = indList.filter(i => i !== 'ATR');
+  const signalInd = nonAtrList[0] || '—';
+  const signalN = nonAtrList.length ? usage[signalInd].bots.length : 0;
+  const uniqueAssets = new Set(allBots.map(b => b.asset)).size;
+  const el = id => document.getElementById(id);
+  if (el('dna-stat-n'))          el('dna-stat-n').textContent = allBots.length;
+  if (el('dna-stat-inds'))       el('dna-stat-inds').textContent = indList.length;
+  if (el('dna-stat-leader'))     el('dna-stat-leader').textContent = leaderInd;
+  if (el('dna-stat-leader-sub')) el('dna-stat-leader-sub').textContent = `${leaderN}/${allBots.length} bots`;
+  if (el('dna-stat-signal'))     el('dna-stat-signal').textContent = signalInd;
+  if (el('dna-stat-signal-sub')) el('dna-stat-signal-sub').textContent = `${signalN}/${allBots.length} bots`;
+  if (el('dna-stat-assets'))     el('dna-stat-assets').textContent = uniqueAssets;
+
+  // BOT CARDS
+  const grid = document.getElementById('dna-bot-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const stageC = { live:'var(--green)', incubacion:'#d97706', descartado:'var(--red)' };
+  const stageL = { live:'LIVE', incubacion:'INCUB', descartado:'DESCAR' };
+  allBots.forEach(bot => {
+    const primary = bot.inds.filter(i => i !== 'ATR').slice(0,2);
+    const rest    = bot.inds.filter(i => !primary.includes(i));
+    const div = document.createElement('div');
+    div.className = 'dna-bot-card';
+    div.innerHTML = `
+      <div class="dna-bot-top">
+        <div class="dna-bot-id">${bot.id}</div>
+        <span style="font-size:9px;font-weight:600;color:${stageC[bot.stage]||'var(--text3)'}">${stageL[bot.stage]||bot.stage}</span>
+      </div>
+      <div class="dna-bot-meta">${bot.asset} · ${bot.tf} · <b style="color:${bot.dir==='Long'?'var(--green)':'var(--red)'}">${bot.dir}</b> · ${bot.entry}</div>
+      <div class="dna-chips">
+        ${primary.map(i=>`<span class="dna-chip dna-chip-primary">${i}</span>`).join('')}
+        ${rest.map(i=>`<span class="dna-chip ${bot.dir==='Short'?'dna-chip-short':''}">${i}</span>`).join('')}
+        ${bot.inds.length === 0 ? '<span class="dna-chip" style="background:#fff3cd;border-color:#ffc107;color:#856404">⚠ sin indicadores</span>' : ''}
+      </div>
+      <div style="font-size:9px;color:var(--text3);margin-top:5px;line-height:1.4">${bot.signal.substring(0,72)}${bot.signal.length>72?'…':''}</div>`;
+    grid.appendChild(div);
+  });
+
+  // HEATMAP
+  const tbl = document.getElementById('dna-hm-table');
+  if (!tbl) return;
+  let th = '<thead><tr><th class="dna-hm-ind">Indicador / Familia</th>';
+  allBots.forEach(b => {
+    const c = b.dir === 'Long' ? 'var(--green)' : 'var(--red)';
+    th += `<th class="dna-hm-bot" style="color:${c}">${b.id}</th>`;
+  });
+  th += '<th style="min-width:48px;background:var(--bg2)">Total</th></tr></thead>';
+  tbl.innerHTML = th;
+  const tbody = document.createElement('tbody');
+  indList.forEach(ind => {
+    const u = usage[ind];
+    const n = u.bots.length;
+    const cc = n >= 6 ? 'dna-count-high' : n >= 3 ? 'dna-count-med' : '';
+    let row = `<tr><td class="dna-td-name">${ind}<span class="dna-fam">${DNA_IND_FAM[ind]||'Otro'}</span></td>`;
+    allBots.forEach(bot => {
+      const found = u.bots.find(b => b.id === bot.id);
+      if (found) {
+        const cls = bot.dir === 'Long' ? 'dna-cell-l' : 'dna-cell-s';
+        const sym = bot.dir === 'Long' ? 'L' : 'S';
+        row += `<td><span class="${cls}">${sym}</span></td>`;
+      } else {
+        row += `<td><span class="dna-cell-empty">·</span></td>`;
+      }
+    });
+    row += `<td class="dna-td-count"><span class="dna-count-pill ${cc}">${n}</span></td></tr>`;
+    tbody.innerHTML += row;
+  });
+  tbl.appendChild(tbody);
+
+  // RANKING FRECUENCIA
+  const rf = document.getElementById('dna-rank-freq');
+  if (!rf) return;
+  rf.innerHTML = '';
+  const nc = ['dna-rnum-1','dna-rnum-2','dna-rnum-3'];
+  indList.slice(0,10).forEach((ind,i) => {
+    const u = usage[ind];
+    const pct = Math.round(u.bots.length / maxN * 100);
+    const tags = [
+      u.long  > 0 ? `<span class="dna-tag-l">L:${u.long}</span>` : '',
+      u.short > 0 ? `<span class="dna-tag-s">S:${u.short}</span>` : '',
+      ...[...u.assets].map(a => `<span class="dna-tag-a">${a}</span>`)
+    ].join('');
+    rf.innerHTML += `
+      <div class="dna-rank-row">
+        <div class="dna-rnum ${nc[i]||''}">${i+1}</div>
+        <div>
+          <div style="font-weight:600">${ind} <span style="font-size:10px;color:var(--text3);font-weight:400">· ${DNA_IND_FAM[ind]||'Otro'}</span></div>
+          <div class="dna-rtags">${tags}</div>
+        </div>
+        <div style="font-size:12px;font-weight:600;text-align:right">${u.bots.length}</div>
+        <div class="dna-rbar-bg"><div class="dna-rbar" style="width:${pct}%"></div></div>
+      </div>`;
+  });
+
+  // RANKING DIVERSIDAD
+  const ra = document.getElementById('dna-rank-asset');
+  if (!ra) return;
+  ra.innerHTML = '';
+  const byAsset = [...indList].sort((a,b) => usage[b].assets.size - usage[a].assets.size || usage[b].bots.length - usage[a].bots.length);
+  if (!byAsset.length) return;
+  const maxA = usage[byAsset[0]].assets.size || 1;
+  byAsset.slice(0,10).forEach((ind,i) => {
+    const u = usage[ind];
+    const pct = Math.round(u.assets.size / maxA * 100);
+    const tags = [...u.assets].map(a => `<span class="dna-tag-a">${a}</span>`).join('');
+    ra.innerHTML += `
+      <div class="dna-rank-row">
+        <div class="dna-rnum ${nc[i]||''}">${i+1}</div>
+        <div>
+          <div style="font-weight:600">${ind} <span style="font-size:10px;color:var(--text3);font-weight:400">· ${DNA_IND_FAM[ind]||'Otro'}</span></div>
+          <div class="dna-rtags">${tags}</div>
+        </div>
+        <div style="font-size:12px;font-weight:600;text-align:right">${u.assets.size}</div>
+        <div class="dna-rbar-bg"><div class="dna-rbar" style="width:${pct}%;background:var(--blue)"></div></div>
+      </div>`;
+  });
+
+  // CLUSTERS
+  const clusters = [
+    { name:'Familia HighDaily',    key:'HighDaily / LowDaily',          inds:['HighDaily','LowDaily'] },
+    { name:'Familia ParabolicSAR', key:'ParabolicSAR',                  inds:['ParabolicSAR'] },
+    { name:'Familia LinReg/EMA',   key:'LinReg / EMA / SMA / LWMA',     inds:['LinReg','EMA','SMA','LWMA'] },
+    { name:'Familia Fibonacci',    key:'Fibo (-23.6%, -61.8%)',          inds:['Fibo'] },
+    { name:'Familia Rango Horario',key:'HighestInRange / LowestInRange', inds:['HighestInRange','LowestInRange'] },
+    { name:'Familia Canal Precio', key:'Highest(N) / Lowest(N)',         inds:['Highest','Lowest'] },
+  ];
+  const cg = document.getElementById('dna-clusters');
+  if (!cg) return;
+  cg.innerHTML = '';
+  clusters.forEach(cl => {
+    const bots = allBots.filter(b => b.inds.some(i => cl.inds.includes(i)));
+    const botRows = bots.map(b => {
+      const dc = b.dir === 'Long' ? 'var(--green)' : 'var(--red)';
+      return `<div class="dna-cluster-bot">
+        <div class="dna-cbot-name">${b.id}</div>
+        <div class="dna-cbot-meta">${b.asset} ${b.tf}</div>
+        <div style="color:${dc};font-size:10px;font-weight:600;margin-left:auto">${b.dir==='Long'?'▲L':'▼S'}</div>
+      </div>`;
+    }).join('');
+    cg.innerHTML += `
+      <div class="dna-cluster-card">
+        <div class="dna-cluster-head">
+          <div class="dna-cluster-name">${cl.name}</div>
+          <div class="dna-cluster-n">${bots.length}</div>
+        </div>
+        <div class="dna-cluster-body">
+          <div class="dna-cluster-key">${cl.key}</div>
+          ${botRows || '<div style="font-size:10px;color:var(--text3)">Sin bots</div>'}
+        </div>
+      </div>`;
+  });
+
+  // ALERTS — duplicados
+  const dups = findOverlapDuplicates(allBots);
+  const highDups = dups.filter(d => d.level === 'high').length;
+  if (el('dna-stat-dups')) el('dna-stat-dups').textContent = dups.length || '0';
+  if (el('dna-stat-dups-sub')) el('dna-stat-dups-sub').textContent =
+    highDups > 0
+      ? `${highDups} crítico${highDups > 1 ? 's' : ''}, ${dups.length - highDups} medio${dups.length - highDups !== 1 ? 's' : ''}`
+      : `${dups.length} medio${dups.length !== 1 ? 's' : ''}`;
+
+  const al = document.getElementById('dna-alerts');
+  if (!al) return;
+  al.innerHTML = '';
+
+  if (dups.length === 0) {
+    al.innerHTML += `
+      <div class="dna-alert dna-alert-ok">
+        <div style="font-size:14px;font-weight:600;color:var(--green);padding-top:1px">✓</div>
+        <div><div class="dna-alert-title" style="color:var(--green)">Sin duplicados detectados</div>
+          <div class="dna-alert-detail">Todos los pseudocódigos tienen indicadores y/o activos suficientemente distintos.</div></div>
+        <div class="dna-alert-badge badge-ok">SALUDABLE</div>
+      </div>`;
+  } else {
+    dups.forEach(({ a, b, indSim, level, reason, shared }) => {
+      const color = level === 'high' ? 'var(--red)' : 'var(--amber)';
+      const icon  = level === 'high' ? '⚠' : '○';
+      const badge = level === 'high' ? 'DUPLICADO' : 'SIMILAR';
+      const pct   = Math.round(indSim * 100);
+      al.innerHTML += `
+        <div class="dna-alert dna-alert-${level}">
+          <div style="font-size:14px;font-weight:600;color:${color};padding-top:1px">${icon}</div>
+          <div style="flex:1">
+            <div class="dna-alert-title" style="color:${color}">${a.id} ↔ ${b.id}</div>
+            <div class="dna-alert-detail">${reason}${pct > 0 ? ` · Overlap ${pct}%` : ''} · Compartidos: <b>${shared.join(', ') || '—'}</b></div>
+          </div>
+          <div class="dna-alert-badge badge-${level}">${badge}</div>
+        </div>`;
+    });
+  }
+
+  // Análisis dinámico de indicadores
+  const N = allBots.length;
+  const SIGNAL_SKIP = new Set(['ATR']);
+  const atrN = allBots.filter(b => b.inds.includes('ATR')).length;
+  if (atrN > 0) {
+    al.innerHTML += `
+      <div class="dna-alert dna-alert-info">
+        <div style="font-size:14px;font-weight:600;color:var(--blue);padding-top:1px">i</div>
+        <div><div class="dna-alert-title" style="color:var(--blue)">ATR — indicador universal de gestión de riesgo</div>
+          <div class="dna-alert-detail">Presente en ${atrN}/${N} bots como coeficiente de SL/TP/TS. No indica overlap de señal — es riesgo adaptativo. Excluido del cálculo de similitud.</div></div>
+        <div class="dna-alert-badge badge-info">GESTIÓN RIESGO</div>
+      </div>`;
+  }
+
+  const signalInds = indList.filter(ind => !SIGNAL_SKIP.has(ind)).slice(0, 3);
+  signalInds.forEach(ind => {
+    const u = usage[ind];
+    const longN  = u.long, shortN = u.short;
+    const assets = [...u.assets].join(', ');
+    const dirStr = longN > 0 && shortN > 0 ? `Long (${longN}) + Short (${shortN})` :
+                   longN > 0 ? `Long (${longN})` : `Short (${shortN})`;
+    const isVersatile = u.assets.size >= 2;
+    const level = isVersatile ? 'ok' : 'info';
+    const badge = isVersatile ? 'DIVERSIFICADO' : 'INFORMATIVO';
+    const icon  = isVersatile ? '✓' : 'i';
+    const color = isVersatile ? 'var(--green)' : 'var(--blue)';
+    al.innerHTML += `
+      <div class="dna-alert dna-alert-${level}">
+        <div style="font-size:14px;font-weight:600;color:${color};padding-top:1px">${icon}</div>
+        <div><div class="dna-alert-title" style="color:${color}">${ind} — ${u.bots.length}/${N} bots · ${DNA_IND_FAM[ind] || 'Otro'}</div>
+          <div class="dna-alert-detail">Activos: ${assets} · Direcciones: ${dirStr}${isVersatile ? ' — diversificación real entre activos.' : '.'}</div></div>
+        <div class="dna-alert-badge badge-${level}">${badge}</div>
+      </div>`;
+  });
+
+  const longBots  = allBots.filter(b => b.dir === 'Long').length;
+  const shortBots = allBots.filter(b => b.dir === 'Short').length;
+  const bothBots  = allBots.filter(b => b.dir === 'Both').length;
+  const mktBots   = allBots.filter(b => b.entry === 'Market').length;
+  const stopBots  = allBots.filter(b => b.entry === 'Stop').length;
+  const assets    = [...new Set(allBots.map(b => b.asset).filter(a => a !== '—'))];
+  al.innerHTML += `
+    <div class="dna-alert dna-alert-info" style="flex-direction:column;align-items:flex-start;gap:8px">
+      <div style="font-weight:700;font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px">Resumen del portfolio analizado</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%">
+        <div style="font-size:11px"><span style="color:var(--green);font-weight:700">▲ Long:</span> ${longBots} bots</div>
+        <div style="font-size:11px"><span style="color:var(--red);font-weight:700">▼ Short:</span> ${shortBots} bots</div>
+        <div style="font-size:11px"><span style="color:var(--text3);font-weight:700">↕ Both:</span> ${bothBots} bots</div>
+        <div style="font-size:11px"><span style="font-weight:600">Market:</span> ${mktBots}</div>
+        <div style="font-size:11px"><span style="font-weight:600">Stop:</span> ${stopBots}</div>
+        <div style="font-size:11px"><span style="font-weight:600">Activos:</span> ${assets.join(', ')}</div>
+      </div>
+    </div>`;
+
+  // TABLA RESUMEN VISUAL
+  const st = document.getElementById('overlap-summary-table');
+  if (!st) return;
+  if (!indList.length) {
+    st.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:8px 0">Sin indicadores detectados. Cargá pseudocódigos en los bots para ver el análisis.</div>';
+    return;
+  }
+  const maxBotsN = usage[indList[0]].bots.length;
+  let thtml = `
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:1rem">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border)">
+          <th style="text-align:left;padding:7px 10px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Indicador</th>
+          <th style="text-align:left;padding:7px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Familia</th>
+          <th style="text-align:center;padding:7px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Bots</th>
+          <th style="padding:7px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;min-width:120px">Presencia</th>
+          <th style="text-align:center;padding:7px 8px;color:var(--green);font-size:10px;font-weight:700">▲ L</th>
+          <th style="text-align:center;padding:7px 8px;color:var(--red);font-size:10px;font-weight:700">▼ S</th>
+          <th style="text-align:left;padding:7px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Activos</th>
+          <th style="text-align:center;padding:7px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Diversidad</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+  indList.forEach((ind, idx) => {
+    const u = usage[ind];
+    const n = u.bots.length;
+    const pct = Math.round(n / maxBotsN * 100);
+    const isRisk = ind === 'ATR';
+    const maxInAsset = Math.max(...[...u.assets].map(a => u.bots.filter(b => b.asset === a).length));
+    const concLevel = (!isRisk && maxInAsset >= 4) ? 'high' : (!isRisk && maxInAsset >= 3) ? 'med' : 'ok';
+    const concColor = concLevel === 'high' ? 'var(--red)' : concLevel === 'med' ? 'var(--amber)' : 'var(--green)';
+    const concLabel = concLevel === 'high' ? 'CONCENTRADO' : concLevel === 'med' ? 'MONIT.' : 'OK';
+    const rowBg = idx % 2 === 0 ? 'transparent' : 'var(--bg2)';
+    const barColor = isRisk ? 'var(--text3)' : concLevel === 'high' ? 'var(--red)' : 'var(--green)';
+    const assetChips = [...u.assets].map(a =>
+      `<span style="font-size:9px;padding:1px 5px;background:var(--blue-bg);color:var(--blue);border-radius:3px;white-space:nowrap">${a}</span>`
+    ).join(' ');
+    thtml += `
+      <tr style="border-bottom:1px solid var(--border2);background:${rowBg}">
+        <td style="padding:7px 10px;font-weight:600;color:${isRisk ? 'var(--text3)' : 'var(--text)'};white-space:nowrap">
+          ${ind}${isRisk ? ' <span style="font-size:9px;font-weight:400;color:var(--text3)">(riesgo)</span>' : ''}
+        </td>
+        <td style="padding:7px 8px;color:var(--text3);font-size:11px">${DNA_IND_FAM[ind] || 'Otro'}</td>
+        <td style="padding:7px 8px;text-align:center;font-weight:700;font-size:14px">${n}</td>
+        <td style="padding:7px 8px">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="flex:1;height:7px;background:var(--bg3);border-radius:4px;min-width:70px;overflow:hidden">
+              <div style="height:7px;background:${barColor};border-radius:4px;width:${pct}%;transition:width 0.3s"></div>
+            </div>
+            <span style="font-size:10px;color:var(--text3);min-width:32px;text-align:right">${n}/${allBots.length}</span>
+          </div>
+        </td>
+        <td style="padding:7px 8px;text-align:center;color:var(--green);font-weight:700">${u.long || '<span style="color:var(--border2)">·</span>'}</td>
+        <td style="padding:7px 8px;text-align:center;color:var(--red);font-weight:700">${u.short || '<span style="color:var(--border2)">·</span>'}</td>
+        <td style="padding:7px 8px;display:flex;flex-wrap:wrap;gap:3px;align-items:center">${assetChips}</td>
+        <td style="padding:7px 8px;text-align:center;white-space:nowrap">
+          <span style="color:${concColor};font-weight:700;font-size:11px">●</span>
+          <span style="font-size:9px;font-weight:600;color:${concColor};margin-left:2px">${concLabel}</span>
+        </td>
+      </tr>`;
+  });
+  thtml += '</tbody></table></div>';
+  st.innerHTML = thtml;
+
+  // ACTIVOS × INDICADORES
+  const ag = document.getElementById('overlap-asset-grid');
+  if (!ag) return;
+  ag.innerHTML = '';
+  const assetMap = {};
+  allBots.forEach(bot => {
+    if (bot.asset === '—') return;
+    if (!assetMap[bot.asset]) assetMap[bot.asset] = [];
+    assetMap[bot.asset].push(bot);
+  });
+  const assetList = Object.keys(assetMap).sort((a, b) => assetMap[b].length - assetMap[a].length);
+  if (!assetList.length) {
+    ag.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:8px 0">Sin datos de activos.</div>';
+    return;
+  }
+  let agHtml = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;margin-bottom:1rem">';
+  assetList.forEach(asset => {
+    const bots = assetMap[asset];
+    const longN  = bots.filter(b => b.dir === 'Long').length;
+    const shortN = bots.filter(b => b.dir === 'Short').length;
+    const bothN  = bots.filter(b => b.dir === 'Both').length;
+    const indU = {};
+    bots.forEach(bot => {
+      bot.inds.filter(i => i !== 'ATR').forEach(ind => {
+        if (!indU[ind]) indU[ind] = { long: 0, short: 0 };
+        if (bot.dir === 'Long' || bot.dir === 'Both')  indU[ind].long++;
+        if (bot.dir === 'Short' || bot.dir === 'Both') indU[ind].short++;
+      });
+    });
+    const indsSorted = Object.entries(indU).sort((a, b) => (b[1].long + b[1].short) - (a[1].long + a[1].short));
+    const atrNasset = bots.filter(b => b.inds.includes('ATR')).length;
+    const entries = [...new Set(bots.map(b => b.entry).filter(e => e !== 'No especificado'))];
+    const headBg = longN > 0 && shortN > 0
+      ? 'linear-gradient(90deg,rgba(26,127,75,0.12),rgba(185,28,28,0.12))'
+      : longN > 0 ? 'var(--green-bg)' : 'var(--red-bg)';
+    const dirLabel = [
+      longN  > 0 ? `<span style="color:var(--green);font-weight:700">▲ ${longN}L</span>` : '',
+      shortN > 0 ? `<span style="color:var(--red);font-weight:700">▼ ${shortN}S</span>`  : '',
+      bothN  > 0 ? `<span style="color:var(--blue);font-weight:700">↕ ${bothN}B</span>`  : '',
+    ].filter(Boolean).join(' · ');
+    const indRows = indsSorted.length
+      ? indsSorted.map(([ind, c]) => {
+          const total = c.long + c.short;
+          const pct   = Math.round(total / bots.length * 100);
+          const barColor = c.long > 0 && c.short > 0 ? 'var(--blue)'
+                         : c.long  > 0 ? 'var(--green)' : 'var(--red)';
+          const fam = DNA_IND_FAM[ind] ? `<span style="font-size:9px;color:var(--text3)"> · ${DNA_IND_FAM[ind]}</span>` : '';
+          return `
+            <div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border2)">
+              <div style="min-width:130px;font-size:11px;font-weight:600;color:var(--text)">${ind}${fam}</div>
+              <div style="display:flex;gap:5px;font-size:10px;min-width:50px">
+                ${c.long  > 0 ? `<span style="color:var(--green);font-weight:700">▲${c.long}</span>`  : ''}
+                ${c.short > 0 ? `<span style="color:var(--red);font-weight:700">▼${c.short}</span>` : ''}
+              </div>
+              <div style="flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;min-width:40px">
+                <div style="height:5px;background:${barColor};border-radius:3px;width:${pct}%"></div>
+              </div>
+            </div>`;
+        }).join('')
+      : '<div style="font-size:10px;color:var(--text3);padding:4px 0">Sin indicadores de señal detectados</div>';
+    agHtml += `
+      <div class="dna-cluster-card">
+        <div class="dna-cluster-head" style="background:${headBg};padding:10px 14px">
+          <div>
+            <div class="dna-cluster-name" style="font-size:15px">${asset}</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">${dirLabel} · ${entries.join(' / ') || 'Market'}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:18px;font-weight:700;color:var(--text)">${bots.length}</div>
+            <div style="font-size:9px;color:var(--text3)">bots</div>
+          </div>
+        </div>
+        <div class="dna-cluster-body" style="padding:10px 14px">
+          <div class="dna-cluster-key">Indicadores de señal · ATR en ${atrNasset}/${bots.length} bots (riesgo)</div>
+          ${indRows}
+        </div>
+      </div>`;
+  });
+  agHtml += '</div>';
+  ag.innerHTML = agHtml;
+}
+
+// ════════════════════════════════════════════
+// INICIALIZACIÓN
+// ════════════════════════════════════════════
+const STORAGE_KEY_BOTS = 'sqx_overlap_bots';
+const STORAGE_KEY_AUTH = 'sqx_overlap_auth';
+const STORAGE_KEY_TS   = 'sqx_overlap_ts';
+
+function loadAndRender() {
+  const auth    = localStorage.getItem(STORAGE_KEY_AUTH);
+  const botsRaw = localStorage.getItem(STORAGE_KEY_BOTS);
+  const ts      = localStorage.getItem(STORAGE_KEY_TS);
+
+  if (!auth || auth !== '1' || !botsRaw) {
+    document.getElementById('no-data-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    return;
+  }
+
+  let allBots;
+  try {
+    allBots = JSON.parse(botsRaw);
+    if (!Array.isArray(allBots) || !allBots.length) throw new Error('empty');
+  } catch(e) {
+    document.getElementById('no-data-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('no-data-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  if (ts) {
+    const d = new Date(parseInt(ts, 10));
+    const hh = d.getHours().toString().padStart(2,'0');
+    const mm = d.getMinutes().toString().padStart(2,'0');
+    const syncEl = document.getElementById('sync-info');
+    if (syncEl) syncEl.textContent = `Datos sincronizados a las ${hh}:${mm}`;
+  }
+
+  dnaInit(allBots);
+}
+
+function refreshData() {
+  // Borra los renderizados anteriores antes de re-render
+  ['dna-bot-grid','dna-hm-table','dna-rank-freq','dna-rank-asset','dna-clusters','dna-alerts','overlap-summary-table','overlap-asset-grid']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
+  loadAndRender();
+}
+
+loadAndRender();
+</script>
+</body>
+</html>

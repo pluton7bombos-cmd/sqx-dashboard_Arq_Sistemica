@@ -509,6 +509,7 @@
     <button onclick="showConfig()">⚙ Config</button>
     <button class="btn-danger" onclick="clearAll()">Limpiar todo</button>
     <button onclick="toggleDnaSection()" id="btn-dna" title="Overlap de Indicadores — Similitudes entre pseudocódigos">📊 Overlap</button>
+    <button onclick="openRanking()" title="Ranking semanal de bots Myfxbook">🏆 Ranking Live</button>
     <button onclick="authChangePassword()" title="Cambiar contraseña" style="padding:0 10px">🔑</button>
     <button onclick="authLogout()" title="Cerrar sesión" style="padding:0 10px">⎋ Salir</button>
   </div>
@@ -674,7 +675,7 @@
 <!-- ══════════════════════════════════════
      WEEKLY BOT RANKING PANEL
      ══════════════════════════════════════ -->
-<div id="weekly-ranking-panel">
+<div id="weekly-ranking-panel" style="display:none">
   <div class="wr-header">
     <span class="wr-title">&#127942; RANKING SEMANAL DE BOTS</span>
     <div class="wr-controls">
@@ -10894,13 +10895,17 @@ function buildMagicNormalizer(rawMagics) {
 // Llamar tras carga de DB y tras cada importación CSV para limpiar duplicados previos.
 function repairDuplicateBots() {
   let merged = 0;
+  const normName = s => (s||'').toLowerCase().replace(/_/g,' ').replace(/\s+/g,' ').trim();
   const mfxOrphans = DB.filter(b => b.source === 'myfxbook' && b.magic);
   mfxOrphans.forEach(orphan => {
     const magicStr = String(orphan.magic);
+    // orphan.name fue construido desde el campo Comment, que === Strategy Name en SQX
+    const orphanNameNorm = normName(orphan.name);
     const target = DB.find(b => {
       if (b === orphan || b.source === 'myfxbook') return false;
       if (b.magic && String(b.magic) === magicStr) return true;
-      // Candidatos: código solo ("2623") y código+improved ("2623214")
+      // Vínculo semántico principal: comment (orphan.name) === strategy name (b.name)
+      if (orphanNameNorm && normName(b.name) === orphanNameNorm) return true;
       return nameToMagicCandidates(b.name).some(c => c === magicStr || magicStr.startsWith(c));
     });
     if (target) {
@@ -11022,83 +11027,94 @@ function importMyfxbookCSV(csvText) {
 
     if (!magic || magic === "0") return; // ignorar entradas sin magic válido
 
-    // 1. Exact match por magic number
+    // Normalización: lowercase, guiones bajos → espacio, colapsar espacios
+    const normName = s => (s||'').toLowerCase().replace(/_/g,' ').replace(/\s+/g,' ').trim();
+
+    // Extraer comment representativo del grupo (el más frecuente entre todos los trades)
+    // Comment en myfxbook === Strategy Name en SQX: es el identificador semántico definitivo
+    const commentFreq = {};
+    trades.forEach(t => { const c = normName(t.comment); if (c) commentFreq[c] = (commentFreq[c]||0)+1; });
+    const repComment = Object.entries(commentFreq).sort((a,b) => b[1]-a[1])[0]?.[0] || '';
+
+    // 1. Exact match por magic number (bots con magic ya asignado)
     const bot = DB.find(b => String(b.magic) === String(magic));
     if (bot) {
       bot.myfxbookData = mfxData;
       matched++;
     } else {
-      // 2. Prefix match: maneja variaciones de formato (ej. 2719 vs 271900, 4914 vs 4914115)
-      const prefixBot = DB.find(b => {
-        if (!b.magic) return false;
-        const bm = String(b.magic);
-        const cm = String(magic);
-        return cm.startsWith(bm) || bm.startsWith(cm);
-      });
-      if (prefixBot) {
-        prefixBot.myfxbookData = mfxData;
+      // 2. Comment → Strategy Name (match exacto — vínculo principal SQX ↔ Myfxbook)
+      // El campo Comment de myfxbook contiene exactamente el Strategy Name del databank SQX.
+      // Al encontrar el bot se guarda el magic para que futuros imports lo resuelvan por paso 1.
+      const commentBot = repComment ? DB.find(b => normName(b.name) === repComment) : null;
+      if (commentBot) {
+        if (!commentBot.magic) commentBot.magic = parseInt(magic);
+        commentBot.myfxbookData = mfxData;
         matched++;
       } else {
-        // 3. Name-based match — auto-asigna sin dialog cuando el match es determinístico
-        const magicStr = String(magic);
-        let candidate = null;
-        let esAmbiguo = false; // familia de bots con mismo código base
+        // 3. Prefix match: fallback para bots con magic asignado en formato largo (ej. 2719 vs 271900)
+        const prefixBot = DB.find(b => {
+          if (!b.magic) return false;
+          const bm = String(b.magic);
+          const cm = String(magic);
+          return cm.startsWith(bm) || bm.startsWith(cm);
+        });
+        if (prefixBot) {
+          prefixBot.myfxbookData = mfxData;
+          matched++;
+        } else {
+          // 4. Name-digits match — fallback legacy si comment está vacío
+          const magicStr = String(magic);
+          let candidate = null;
+          let esAmbiguo = false;
 
-        // 3a: full-digits exacto (ej. "1555415" === "1555415") → family-safe
-        const aMatch = DB.find(b => !b.magic && b.name.replace(/\D/g,'') === magicStr);
-        if (aMatch) { candidate = aMatch; }
+          const aMatch = DB.find(b => !b.magic && b.name.replace(/\D/g,'') === magicStr);
+          if (aMatch) { candidate = aMatch; }
 
-        if (!candidate) {
-          // 3b: compara magicStr contra todos los candidatos del nombre (código solo y código+improved)
-          // "2623214" matchea con "Strategy 2.6.23 - Improved 2.1.4" porque nameToMagicCandidates → ["2623","2623214"]
-          const bMatches = DB.filter(b => {
-            if (b.magic) return false;
-            return nameToMagicCandidates(b.name).some(c => c === magicStr || magicStr.startsWith(c));
-          });
-          if (bMatches.length === 1) {
-            candidate = bMatches[0];
-          } else if (bMatches.length > 1) {
-            // 3c: desempate por match exacto en nameToMagicCandidates
-            // "31181514" matchea exactamente ["31181","31181514"] del bot "3.1.18(1)-Improved 5.1.4"
-            // pero NO a ["31181","31181516"] del bot "3.1.18(1)-Improved 5.1.6"
-            const exactMatches = bMatches.filter(b => nameToMagicCandidates(b.name).includes(magicStr));
-            if (exactMatches.length === 1) {
-              candidate = exactMatches[0];
-            } else {
-              // Familia ambigua → NO crear bot nuevo, el usuario debe asignar magic manualmente una vez
-              esAmbiguo = true;
-              console.warn('[MFX] Familia ambigua, asigná magic manualmente:', magicStr, bMatches.map(b=>b.name));
+          if (!candidate) {
+            const bMatches = DB.filter(b => {
+              if (b.magic) return false;
+              return nameToMagicCandidates(b.name).some(c => c === magicStr || magicStr.startsWith(c));
+            });
+            if (bMatches.length === 1) {
+              candidate = bMatches[0];
+            } else if (bMatches.length > 1) {
+              const exactMatches = bMatches.filter(b => nameToMagicCandidates(b.name).includes(magicStr));
+              if (exactMatches.length === 1) {
+                candidate = exactMatches[0];
+              } else {
+                esAmbiguo = true;
+                console.warn('[MFX] Familia ambigua, asigná magic manualmente:', magicStr, bMatches.map(b=>b.name));
+              }
             }
           }
-        }
 
-        if (candidate) {
-          // Match determinístico: asignar sin dialog
-          candidate.magic = parseInt(magic);
-          candidate.myfxbookData = mfxData;
-          matched++;
-        } else if (!esAmbiguo) {
-          // Sin match y no es ambiguo → crear bot nuevo (magic desconocido en el CSV)
-          const firstName = trades[0];
-          const rawName = (firstName.comment || '').replace(/_/g,' ').replace(/\s+/g,' ').trim() || `Magic ${magic}`;
-          DB.push({
-            id:          Date.now().toString(36) + Math.random().toString(36).slice(2),
-            magic:       parseInt(magic),
-            name:        rawName,
-            symbol:      firstName.symbol || '—',
-            tf:          'H1',
-            phase:       '—',
-            sqxFilter:   '—',
-            source:      'myfxbook',
-            added:       new Date().toISOString().slice(0,10),
-            notes:       '',
-            sqn: null, stag: null, zp: null,
-            is:  null,
-            oos: null,
-            overviewData:  null,
-            myfxbookData:  mfxData,
-          });
-          created++;
+          if (candidate) {
+            candidate.magic = parseInt(magic);
+            candidate.myfxbookData = mfxData;
+            matched++;
+          } else if (!esAmbiguo) {
+            // Sin match en ningún paso → crear bot nuevo (magic verdaderamente desconocido)
+            const firstName = trades[0];
+            const rawName = (firstName.comment || '').replace(/_/g,' ').replace(/\s+/g,' ').trim() || `Magic ${magic}`;
+            DB.push({
+              id:          Date.now().toString(36) + Math.random().toString(36).slice(2),
+              magic:       parseInt(magic),
+              name:        rawName,
+              symbol:      firstName.symbol || '—',
+              tf:          'H1',
+              phase:       '—',
+              sqxFilter:   '—',
+              source:      'myfxbook',
+              added:       new Date().toISOString().slice(0,10),
+              notes:       '',
+              sqn: null, stag: null, zp: null,
+              is:  null,
+              oos: null,
+              overviewData:  null,
+              myfxbookData:  mfxData,
+            });
+            created++;
+          }
         }
       }
     }
@@ -12792,19 +12808,39 @@ function dnaInit() {
   ag.innerHTML = agHtml;
 }
 
-function toggleDnaSection() {
-  const card = document.getElementById('overlap-section-card');
-  const btn  = document.getElementById('btn-dna');
-  const isVisible = card.style.display !== 'none';
-  if (isVisible) {
-    card.style.display = 'none';
-    btn.classList.remove('btn-primary');
-  } else {
-    card.style.display = 'block';
-    btn.classList.add('btn-primary');
-    dnaInit();
-    setTimeout(() => card.scrollIntoView({ behavior:'smooth', block:'start' }), 50);
+function openRanking() {
+  try {
+    const rankingBots = DB.filter(b => b.myfxbookData).map(b => ({
+      name:   b.name   || '—',
+      magic:  b.magic  || '—',
+      symbol: b.symbol || '—',
+      dpf:    b.dpf !== undefined ? b.dpf : null,
+      estado: b.estado || b.phase || '—',
+      mfx: {
+        pf:        b.myfxbookData.pf       || 0,
+        ddPct:     b.myfxbookData.ddPct    || 0,
+        winRate:   b.myfxbookData.winRate  || 0,
+        tradeList: b.myfxbookData.tradeList || [],
+      },
+    }));
+    localStorage.setItem('sqx_ranking_bots', JSON.stringify(rankingBots));
+    localStorage.setItem('sqx_overlap_ts', Date.now().toString());
+  } catch(e) {
+    console.warn('No se pudo serializar ranking data:', e);
   }
+  window.open('ranking.html', '_blank');
+}
+
+function toggleDnaSection() {
+  try {
+    const allBots = buildDnaBots();
+    localStorage.setItem('sqx_overlap_bots', JSON.stringify(allBots));
+    localStorage.setItem('sqx_overlap_auth', '1');
+    localStorage.setItem('sqx_overlap_ts', Date.now().toString());
+  } catch(e) {
+    console.warn('No se pudo serializar data:', e);
+  }
+  window.open('overlap.html', '_blank');
 }
 
 function toggleDnaCollapse() {
