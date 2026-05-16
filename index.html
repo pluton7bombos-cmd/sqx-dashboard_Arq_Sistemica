@@ -10845,16 +10845,15 @@ function nameToMagicDigits(name) {
 
 function buildMagicNormalizer(rawMagics) {
   const map = {...MFX_MAGIC_MAPPER};
-  // Combinar: magics cortos del CSV + magics ya guardados en DB (para reusos semanales)
+  // Magics cortos del CSV + magics ya conocidos en DB (para actualizaciones semanales)
+  // NO incluir derivados de nombres: causaría colisión entre bots de la misma familia
+  // (ej. 1555415 y 1555155 ambos derivarían "1555" y se normalizarían igual)
   const dbMagics = DB.filter(b => b.magic).map(b => Number(b.magic)).filter(Boolean);
-  // También derivar magics desde nombres de bots (X.Y.Z → dígitos)
-  const nameDerivedMagics = DB.map(b => Number(nameToMagicDigits(b.name))).filter(Boolean);
+  // Ordenar de mayor a menor longitud para que el match específico gane al genérico
   const shorts = [...new Set([
     ...rawMagics.filter(m => String(m).length <= 4),
     ...dbMagics,
-    ...nameDerivedMagics,
-  ])];
-  // Normalizar magics largos que empiezan con algún magic corto conocido
+  ])].sort((a, b) => String(b).length - String(a).length);
   rawMagics.forEach(m => {
     if (String(m).length > 4 && !map[m]) {
       const match = shorts.find(s => String(m).startsWith(String(s)));
@@ -10990,16 +10989,17 @@ function importMyfxbookCSV(csvText) {
         prefixBot.myfxbookData = mfxData;
         matched++;
       } else {
-        // 3. Name-based match: extrae código X.Y.Z de nombres SQX para bots sin magic
+        // 3. Name-based match (para bots sin magic aún)
+        // Paso 3a: todos los dígitos del nombre (distingue bots de la misma familia)
+        //   "Strategy 1.5.5(5) - Improved 4.1.5" → "1555415" = magic "1555415" ✓
+        //   "Strategy 1.5.5(5) - Improved 1.1.5" → "1555115" ≠ "1555415"        ✓
+        // Paso 3b: solo X.Y.Z (para cuando el magic es solo el código base)
+        //   "Strategy 2.6.23 - Improved 2.1.4"  → "2623"    = magic "2623"      ✓
         const magicStr = String(magic);
-        const candidate = DB.find(b => {
-          if (b.magic) return false;
-          const codeDigits = nameToMagicDigits(b.name);
-          // Exact, o magic es extensión del código (2623→2623214), o viceversa
-          return codeDigits === magicStr ||
-                 magicStr.startsWith(codeDigits) ||
-                 codeDigits.startsWith(magicStr);
-        });
+        let candidate = DB.find(b => !b.magic && b.name.replace(/\D/g,'') === magicStr);
+        if (!candidate) {
+          candidate = DB.find(b => !b.magic && nameToMagicDigits(b.name) === magicStr);
+        }
 
         if (candidate && confirm(`Magic ${magic} del CSV coincide con el bot:\n"${candidate.name}"\n\n¿Cargar los datos de Myfxbook en ese bot?`)) {
           candidate.magic = parseInt(magic);
