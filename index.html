@@ -10834,31 +10834,45 @@ function processFile(file) {
 // ── MYFXBOOK CSV IMPORT ────────────────────────────────────────
 const MFX_MAGIC_MAPPER = { 4914115:4914, 2623214:2623, 1555115:1555, 2719115:2719 };
 
-// Extrae el código numérico principal de un nombre de estrategia SQX.
-// "Strategy 2.6.23 - Improved 2.1.4" → "2623"  (solo X.Y.Z, ignora Improved y paréntesis)
-// "2623 AUDUSD H1"                   → "2623"  (fallback: todos los dígitos)
+// Extrae el código numérico principal de un nombre de estrategia SQX (solo primer X.Y.Z).
+// "Strategy 2.6.23 - Improved 2.1.4" → "2623"
 function nameToMagicDigits(name) {
   const m = name.match(/\b(\d+)\.(\d+)\.(\d+)/);
   if (m) return m[1] + m[2] + m[3];
   return name.replace(/\D/g, '');
 }
 
+// Devuelve todos los candidatos de magic que puede generar un nombre SQX.
+// "Strategy 2.6.23 - Improved 2.1.4" → ["2623", "2623214"]  (código solo + código+improved)
+// Cubre el caso donde MT5 concatena ambos códigos sin puntos como magic number.
+function nameToMagicCandidates(name) {
+  const all = [...name.matchAll(/\b(\d+)\.(\d+)\.(\d+)(?:\((\d+)\))?/g)];
+  if (!all.length) return [name.replace(/\D/g,'')];
+  const codes = all.map(m => m[1]+m[2]+m[3]+(m[4]||''));
+  const candidates = [codes[0]]; // código estrategia solo
+  if (codes.length >= 2) candidates.push(codes[0]+codes[1]); // estrategia+improved
+  if (codes.length >= 3) candidates.push(codes.slice(0,3).join('')); // tres códigos
+  return [...new Set(candidates)];
+}
+
 function buildMagicNormalizer(rawMagics) {
   const map = {...MFX_MAGIC_MAPPER};
   const dbMagics = DB.filter(b => b.magic).map(b => Number(b.magic)).filter(Boolean);
   // Códigos derivados de nombre para bots SIN magic asignado — solo si son ÚNICOS
-  // (evita colisión de familia: "1555415" y "1555155" ambos derivan "1555")
+  // Todos los candidatos únicos derivados de nombres (código solo y código+improved)
+  // Si dos bots generan el mismo candidato, se excluye (colisión de familia)
   const codeCounts = {};
   DB.filter(b => !b.magic).forEach(b => {
-    const c = nameToMagicDigits(b.name);
-    if (c) codeCounts[c] = (codeCounts[c] || 0) + 1;
+    nameToMagicCandidates(b.name).forEach(c => {
+      codeCounts[c] = (codeCounts[c] || 0) + 1;
+    });
   });
   const uniqueNameCodes = Object.entries(codeCounts)
     .filter(([, n]) => n === 1)
     .map(([c]) => Number(c))
     .filter(Boolean);
   const shorts = [...new Set([
-    ...rawMagics.filter(m => String(m).length <= 4),
+    ...rawMagics.filter(m => String(m).length <= 7), // incluye magics de hasta 7 dígitos como short
     ...dbMagics,
     ...uniqueNameCodes,
   ])].sort((a, b) => String(b).length - String(a).length);
@@ -10878,11 +10892,12 @@ function repairDuplicateBots() {
   const mfxOrphans = DB.filter(b => b.source === 'myfxbook' && b.magic);
   mfxOrphans.forEach(orphan => {
     const magicStr = String(orphan.magic);
-    const target = DB.find(b =>
-      b !== orphan &&
-      b.source !== 'myfxbook' &&
-      (String(b.magic) === magicStr || nameToMagicDigits(b.name) === magicStr)
-    );
+    const target = DB.find(b => {
+      if (b === orphan || b.source === 'myfxbook') return false;
+      if (b.magic && String(b.magic) === magicStr) return true;
+      // Candidatos: código solo ("2623") y código+improved ("2623214")
+      return nameToMagicCandidates(b.name).some(c => c === magicStr || magicStr.startsWith(c));
+    });
     if (target) {
       if (orphan.myfxbookData) target.myfxbookData = orphan.myfxbookData;
       if (!target.magic) target.magic = orphan.magic;
@@ -11029,14 +11044,11 @@ function importMyfxbookCSV(csvText) {
         if (aMatch) { candidate = aMatch; }
 
         if (!candidate) {
-          // 3b: código X.Y.Z — acepta exacto O long-variant (magicStr empieza con el código)
-          // Solo si hay UN único candidato para evitar colisiones de familia
+          // 3b: compara magicStr contra todos los candidatos del nombre (código solo y código+improved)
+          // "2623214" matchea con "Strategy 2.6.23 - Improved 2.1.4" porque nameToMagicCandidates → ["2623","2623214"]
           const bMatches = DB.filter(b => {
             if (b.magic) return false;
-            const code = nameToMagicDigits(b.name);
-            if (!code || code.length < 3) return false;
-            // exacto: "2719"==="2719", o variante larga: "2719115".startsWith("2719")
-            return magicStr === code || magicStr.startsWith(code);
+            return nameToMagicCandidates(b.name).some(c => c === magicStr || magicStr.startsWith(c));
           });
           if (bMatches.length === 1) {
             candidate = bMatches[0];
